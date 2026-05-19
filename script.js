@@ -15,6 +15,61 @@ document.getElementById("linkGrupoFlutuante").href =
   CONFIGURACOES.linkGrupo;
 
 /* =========================================
+   CARREGAR OFERTAS DA PLANILHA
+========================================= */
+
+async function carregarOfertasDaPlanilha() {
+
+  const resposta = await fetch(PLANILHA_OFERTAS);
+
+  const textoCSV = await resposta.text();
+
+  const linhas = textoCSV
+    .trim()
+    .split("\n")
+    .map(linha => linha.split(","));
+
+  const cabecalho = linhas[0].map(item => item.trim());
+
+  const ofertasDaPlanilha = {};
+
+  linhas.slice(1).forEach((linha) => {
+
+    const item = {};
+
+    cabecalho.forEach((coluna, index) => {
+
+      item[coluna] = linha[index] ? linha[index].trim() : "";
+
+    });
+
+    if (item.ativo.toLowerCase() !== "sim") {
+      return;
+    }
+
+    if (!item.categoria || !item.inicio || !item.fim) {
+      return;
+    }
+
+    ofertasDaPlanilha[item.categoria] = {
+
+      inicio: item.inicio,
+
+      fim: item.fim,
+
+      imagens: item.imagens
+        ? item.imagens.split("|").map(imagem => imagem.trim())
+        : []
+
+    };
+
+  });
+
+  return ofertasDaPlanilha;
+
+}
+
+/* =========================================
    FILTRAR OFERTAS ATIVAS
 ========================================= */
 
