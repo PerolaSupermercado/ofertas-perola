@@ -73,15 +73,44 @@ async function carregarOfertasDaPlanilha() {
    FILTRAR OFERTAS ATIVAS
 ========================================= */
 
-const OFERTAS_ATIVAS = filtrarOfertasAtivas();
+let OFERTAS_ATIVAS = {};
 
-let categoriaAtual = Object.keys(OFERTAS_ATIVAS)[0];
+let categoriaAtual = "";
 
-if (!categoriaAtual) {
+async function iniciarSite() {
 
-  categoriaAtual = "Sem ofertas";
+  try {
 
-  OFERTAS_ATIVAS[categoriaAtual] = [];
+    const ofertasPlanilha =
+      await carregarOfertasDaPlanilha();
+
+    Object.keys(OFERTAS).forEach((chave) => {
+      delete OFERTAS[chave];
+    });
+
+    Object.assign(OFERTAS, ofertasPlanilha);
+
+  } catch (erro) {
+
+    console.error("Erro ao carregar planilha:", erro);
+
+  }
+
+  OFERTAS_ATIVAS = filtrarOfertasAtivas();
+
+  categoriaAtual = Object.keys(OFERTAS_ATIVAS)[0];
+
+  if (!categoriaAtual) {
+
+    categoriaAtual = "Sem ofertas";
+
+    OFERTAS_ATIVAS[categoriaAtual] = [];
+
+  }
+
+  criarAbas();
+
+  atualizarCarrossel();
 
 }
 
@@ -1227,6 +1256,4 @@ btnTopo.addEventListener(
    INICIAR
 ========================================= */
 
-criarAbas();
-
-atualizarCarrossel();
+iniciarSite();
