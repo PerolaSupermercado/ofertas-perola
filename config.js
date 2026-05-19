@@ -75,9 +75,7 @@ const OFERTAS = {
 
     ]
 
-  }
-
+  } 
+};
 const PLANILHA_OFERTAS =
   "https://docs.google.com/spreadsheets/d/e/2PACX-1vRNYQCZTP97BOoMz2wmFsr1MAIzfu2XgAGr0Th76LbMm2c7nmW3h-vj8rJe9rtvop1QzPg8Yt9lSCzp/pub?output=csv";
-  
-};
