@@ -372,10 +372,10 @@ function criarAbas() {
       paginaAtual = 0;
 
       if (typeof gtag === "function") {
-        gtag("event", "abrir_categoria", {
-          event_category: "Categorias",
-          event_label: nomeOferta,
-          value: 1
+      gtag("event", "abrir_categoria", {
+
+       categoria: nomeOferta
+
         });
       }
 
