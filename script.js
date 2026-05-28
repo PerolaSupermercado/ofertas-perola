@@ -307,8 +307,9 @@ async function iniciarSite() {
     OFERTAS_ATIVAS[categoriaAtual] = [];
   }
 
-  criarAbas();
-  atualizarCarrossel();
+  abrirOfertaPelaUrl();
+criarAbas();
+atualizarCarrossel();
 }
 
 /* =========================================
@@ -746,26 +747,43 @@ function pararArraste() {
    COMPARTILHAR SITE
 ========================================= */
 
+function gerarSlug(texto) {
+  return String(texto || "")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/ç/g, "c")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+function gerarUrlDaOferta(nomeOferta) {
+  const dominio = CONFIGURACOES.dominioSite || window.location.origin;
+  const slug = gerarSlug(nomeOferta);
+
+  return dominio + "/" + slug;
+}
+
 function compartilharSite() {
-  const url = window.location.href;
+  const url = gerarUrlDaOferta(categoriaAtual);
 
   if (typeof gtag === "function") {
     gtag("event", "compartilhar_ofertas", {
       event_category: "Engajamento",
-      event_label: "Botão Compartilhar",
+      event_label: categoriaAtual,
       value: 1
     });
   }
 
   if (navigator.share) {
     navigator.share({
-      title: CONFIGURACOES.titulo,
-      text: "Confira nossas ofertas!",
+      title: "Ofertas Pérola Supermercado",
+      text: "Confira essa oferta do Pérola!",
       url: url
     });
   } else {
     navigator.clipboard.writeText(url);
-    alert("Link copiado!");
+    alert("Link da oferta copiado!");
   }
 }
 
@@ -1015,6 +1033,27 @@ btnTopo.addEventListener(
     });
   }
 );
+
+function abrirOfertaPelaUrl() {
+  const slugUrl = window.location.pathname.replace("/", "").trim();
+
+  if (!slugUrl) {
+    categoriaAtual = Object.keys(OFERTAS_ATIVAS)[0];
+    return;
+  }
+
+  const ofertaEncontrada = Object.keys(OFERTAS_ATIVAS).find(nomeOferta => {
+    return gerarSlug(nomeOferta) === slugUrl;
+  });
+
+  if (ofertaEncontrada) {
+    categoriaAtual = ofertaEncontrada;
+    paginaAtual = 0;
+    return;
+  }
+
+  categoriaAtual = Object.keys(OFERTAS_ATIVAS)[0];
+}
 
 /* =========================================
    INICIAR
