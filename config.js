@@ -3,6 +3,8 @@ const CONFIGURACOES = {
 
   subtitulo: "",
 
+  dominioSite: "https://ofertas.perolagrupo.com.br",
+
   bannerPadrao: "img/banner.jpg",
 
   placeholder: "img/placeholder.png",
