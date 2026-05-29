@@ -81,3 +81,55 @@ document.getElementById("futuras").textContent =
 
 document.getElementById("encerradas").textContent =
 0;
+
+const modalOferta =
+document.getElementById("modalOferta");
+
+const btnNovaOferta =
+document.getElementById("novaOferta");
+
+const btnFecharModal =
+document.getElementById("fecharModal");
+
+const formOferta =
+document.getElementById("formOferta");
+
+const tituloOferta =
+document.getElementById("tituloOferta");
+
+const slugOferta =
+document.getElementById("slugOferta");
+
+function gerarSlug(texto){
+    return texto
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/ç/g, "c")
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "");
+}
+
+btnNovaOferta.addEventListener("click", () => {
+    modalOferta.classList.add("ativo");
+});
+
+btnFecharModal.addEventListener("click", () => {
+    modalOferta.classList.remove("ativo");
+});
+
+modalOferta.addEventListener("click", (evento) => {
+    if(evento.target === modalOferta){
+        modalOferta.classList.remove("ativo");
+    }
+});
+
+tituloOferta.addEventListener("input", () => {
+    slugOferta.value = gerarSlug(tituloOferta.value);
+});
+
+formOferta.addEventListener("submit", (evento) => {
+    evento.preventDefault();
+
+    alert("Oferta salva no painel visual. No próximo passo vamos ligar isso ao Supabase.");
+});
