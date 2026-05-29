@@ -30,7 +30,7 @@ function renderizarOfertas(){
 
     tbody.innerHTML = "";
 
-    ofertasMock.forEach(oferta => {
+    ofertasMock.forEach((oferta, index) => {
 
         let classeStatus = "ativa";
 
@@ -61,9 +61,9 @@ function renderizarOfertas(){
                         Editar
                     </button>
 
-                    <button class="btn-excluir">
-                        Excluir
-                    </button>
+                    <button class="btn-excluir" onclick="excluirOferta(${index})">
+    Excluir
+</button>
                 </td>
             </tr>
         `;
@@ -270,3 +270,23 @@ function formatarDataPainel(valor){
 }
 
 renderizarOfertas();
+function excluirOferta(index){
+
+    const oferta =
+    ofertasMock[index];
+
+    const confirmar =
+    confirm(
+        "Tem certeza que deseja excluir a oferta: " +
+        oferta.titulo +
+        "?"
+    );
+
+    if(!confirmar){
+        return;
+    }
+
+    ofertasMock.splice(index, 1);
+
+    renderizarOfertas();
+}
