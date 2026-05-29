@@ -1012,33 +1012,27 @@ function abrirOfertaPelaUrl() {
   const idQuery = parametros.get("id");
   const slugQuery = parametros.get("oferta");
 
+  const nomesOfertas = Object.keys(OFERTAS_ATIVAS);
+
   if (!idQuery && !slugQuery) {
-    categoriaAtual = Object.keys(OFERTAS_ATIVAS)[0];
+    categoriaAtual = nomesOfertas[0];
     paginaAtual = 0;
     return;
   }
 
-  const ofertaEncontrada = Object.keys(OFERTAS_ATIVAS).find(nomeOferta => {
+  const ofertaEncontrada = nomesOfertas.find((nomeOferta) => {
     const oferta = OFERTAS_ATIVAS[nomeOferta];
 
-    if (idQuery && oferta.id === idQuery) {
-      return true;
-    }
+    const mesmoId =
+      idQuery && String(oferta.id) === String(idQuery);
 
-    if (slugQuery && oferta.slug === slugQuery) {
-      return true;
-    }
+    const mesmoSlug =
+      slugQuery && String(oferta.slug) === String(slugQuery);
 
-    return false;
+    return mesmoId || mesmoSlug;
   });
 
-  if (ofertaEncontrada) {
-    categoriaAtual = ofertaEncontrada;
-    paginaAtual = 0;
-    return;
-  }
-
-  categoriaAtual = Object.keys(OFERTAS_ATIVAS)[0];
+  categoriaAtual = ofertaEncontrada || nomesOfertas[0];
   paginaAtual = 0;
 }
 
