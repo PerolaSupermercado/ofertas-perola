@@ -1008,15 +1008,14 @@ function abrirOfertaPelaUrl() {
   const parametros = new URLSearchParams(window.location.search);
   const slugQuery = parametros.get("oferta");
 
-  const slugUrl = slugQuery || window.location.pathname.replace("/", "").trim();
-
-  if (!slugUrl || slugUrl === "ofertas-preview.html") {
+  if (!slugQuery) {
     categoriaAtual = Object.keys(OFERTAS_ATIVAS)[0];
+    paginaAtual = 0;
     return;
   }
 
   const ofertaEncontrada = Object.keys(OFERTAS_ATIVAS).find(nomeOferta => {
-    return gerarSlug(nomeOferta) === slugUrl;
+    return gerarSlug(nomeOferta) === slugQuery;
   });
 
   if (ofertaEncontrada) {
@@ -1026,9 +1025,7 @@ function abrirOfertaPelaUrl() {
   }
 
   categoriaAtual = Object.keys(OFERTAS_ATIVAS)[0];
-}
-
-  categoriaAtual = Object.keys(OFERTAS_ATIVAS)[0];
+  paginaAtual = 0;
 }
 
 /* =========================================
