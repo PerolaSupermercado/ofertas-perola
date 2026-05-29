@@ -28,12 +28,26 @@ document.getElementById("listaOfertas");
 
 ofertasMock.forEach(oferta => {
 
+    let classeStatus = "ativa";
+
+    if(oferta.status === "Futura"){
+        classeStatus = "futura";
+    }
+
+    if(oferta.status === "Encerrada"){
+        classeStatus = "encerrada";
+    }
+
     tbody.innerHTML += `
         <tr>
 
             <td>${oferta.titulo}</td>
 
-            <td>${oferta.status}</td>
+            <td>
+                <span class="status ${classeStatus}">
+                    ${oferta.status}
+                </span>
+            </td>
 
             <td>${oferta.inicio}</td>
 
