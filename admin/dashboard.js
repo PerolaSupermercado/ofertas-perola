@@ -68,8 +68,10 @@ async function carregarOfertasApi() {
 }
 
 async function salvarOfertaApi(oferta) {
+  const metodo = oferta.id ? "PUT" : "POST";
+
   const resposta = await fetch(API_OFERTAS, {
-    method: "POST",
+    method: metodo,
     headers: {
       "Content-Type": "application/json"
     },
@@ -461,7 +463,11 @@ tituloOferta.addEventListener("input", () => {
 formOferta.addEventListener("submit", async evento => {
   evento.preventDefault();
 
+  const ofertaEditando =
+  indiceEditando !== null ? ofertas[indiceEditando] : null;
+  
   const ofertaSalva = {
+    id: ofertaEditando ? ofertaEditando.id : null,
     titulo: tituloOferta.value,
     slug: slugOferta.value,
     tipo: tipoOferta.value,
