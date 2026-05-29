@@ -493,3 +493,31 @@ textarea:focus{
     gap:10px;
   }
 }
+
+.filtros-ofertas{
+  display:grid;
+  grid-template-columns:2fr 1fr 1fr;
+  gap:12px;
+  margin-bottom:20px;
+}
+
+.filtros-ofertas input,
+.filtros-ofertas select{
+  margin-bottom:0;
+}
+
+.btn-duplicar{
+  border:none;
+  color:white;
+  padding:8px 12px;
+  border-radius:8px;
+  cursor:pointer;
+  margin-right:6px;
+  background:#6f42c1;
+}
+
+@media(max-width:800px){
+  .filtros-ofertas{
+    grid-template-columns:1fr;
+  }
+}
