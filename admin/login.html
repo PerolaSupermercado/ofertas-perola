@@ -1,1 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
 
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0">
+
+  <title>Painel de Ofertas | Pérola Supermercado</title>
+
+  <link rel="stylesheet" href="login.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+
+<body>
+
+  <main class="login-container">
+
+    <section class="login-card">
+
+      <div class="login-logo">
+        <img
+          src="../img/logo-perola-footer.png"
+          alt="Pérola Supermercado">
+      </div>
+
+      <h1>Painel de Ofertas</h1>
+
+      <p>
+        Acesse para cadastrar, editar e gerenciar as ofertas do site.
+      </p>
+
+      <form id="formLogin">
+
+        <label for="email">
+          E-mail
+        </label>
+
+        <input
+          type="email"
+          id="email"
+          placeholder="Digite seu e-mail"
+          required>
+
+        <label for="senha">
+          Senha
+        </label>
+
+        <input
+          type="password"
+          id="senha"
+          placeholder="Digite sua senha"
+          required>
+
+        <button type="submit" id="btnEntrar">
+          Entrar no painel
+        </button>
+
+      </form>
+
+      <div id="mensagemLogin" class="mensagem-login"></div>
+
+    </section>
+
+  </main>
+
+  <script src="login.js"></script>
+
+</body>
+</html>
