@@ -275,7 +275,11 @@ function gerarLinhaOferta(oferta, index, modoDashboard = false) {
       <td>${oferta.fim}</td>
 
       <td>
-        <button class="btn-editar" onclick="editarOferta(${index})">
+       <button class="btn-preview" onclick="abrirPreviewOferta(${index})">
+  Preview
+</button>
+
+<button class="btn-editar" onclick="editarOferta(${index})">
   Editar
 </button>
 
@@ -716,6 +720,16 @@ btnSalvarConfiguracoes.addEventListener(
   "click",
   salvarConfiguracoesPainel
 );
+
+function abrirPreviewOferta(index) {
+  const oferta = ofertas[index];
+
+  const slug = oferta.slug || gerarSlug(oferta.titulo);
+
+  const url = `/ofertas-preview.html?oferta=${encodeURIComponent(slug)}`;
+
+  window.open(url, "_blank");
+}
 
 async function duplicarOferta(index) {
   const ofertaOriginal = ofertas[index];
