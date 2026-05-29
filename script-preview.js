@@ -1005,9 +1005,12 @@ btnTopo.addEventListener(
 );
 
 function abrirOfertaPelaUrl() {
-  const slugUrl = window.location.pathname.replace("/", "").trim();
+  const parametros = new URLSearchParams(window.location.search);
+  const slugQuery = parametros.get("oferta");
 
-  if (!slugUrl) {
+  const slugUrl = slugQuery || window.location.pathname.replace("/", "").trim();
+
+  if (!slugUrl || slugUrl === "ofertas-preview.html") {
     categoriaAtual = Object.keys(OFERTAS_ATIVAS)[0];
     return;
   }
@@ -1021,6 +1024,9 @@ function abrirOfertaPelaUrl() {
     paginaAtual = 0;
     return;
   }
+
+  categoriaAtual = Object.keys(OFERTAS_ATIVAS)[0];
+}
 
   categoriaAtual = Object.keys(OFERTAS_ATIVAS)[0];
 }
