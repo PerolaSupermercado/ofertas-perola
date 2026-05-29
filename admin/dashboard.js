@@ -3,7 +3,7 @@ const API_CONFIGURACOES = "/api/configuracoes";
 const CHAVE_CONFIG = "configuracoesOfertasPerola";
 
 let ofertas = [];
-let configuracoes = carregarConfiguracoes();
+let configuracoes = {};
 let imagensSelecionadas = [];
 let indiceEditando = null;
 
