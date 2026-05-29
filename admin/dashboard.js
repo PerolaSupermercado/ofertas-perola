@@ -466,9 +466,19 @@ function renderizarPreviewImagens() {
 
       <span>${index + 1}</span>
 
-      <button type="button" onclick="removerImagem(${index})">
-        ×
-      </button>
+      <div class="preview-acoes">
+        <button type="button" onclick="moverImagem(${index}, -1)">
+          ↑
+        </button>
+
+        <button type="button" onclick="moverImagem(${index}, 1)">
+          ↓
+        </button>
+
+        <button type="button" onclick="removerImagem(${index})">
+          ×
+        </button>
+      </div>
     `;
 
     previewImagens.appendChild(item);
@@ -477,6 +487,21 @@ function renderizarPreviewImagens() {
 
 function removerImagem(index) {
   imagensSelecionadas.splice(index, 1);
+  renderizarPreviewImagens();
+}
+
+function moverImagem(index, direcao) {
+  const novoIndex = index + direcao;
+
+  if (novoIndex < 0 || novoIndex >= imagensSelecionadas.length) {
+    return;
+  }
+
+  const imagemAtual = imagensSelecionadas[index];
+
+  imagensSelecionadas[index] = imagensSelecionadas[novoIndex];
+  imagensSelecionadas[novoIndex] = imagemAtual;
+
   renderizarPreviewImagens();
 }
 
