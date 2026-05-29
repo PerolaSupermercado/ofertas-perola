@@ -1008,16 +1008,28 @@ btnTopo.addEventListener(
 
 function abrirOfertaPelaUrl() {
   const parametros = new URLSearchParams(window.location.search);
+
+  const idQuery = parametros.get("id");
   const slugQuery = parametros.get("oferta");
 
-  if (!slugQuery) {
+  if (!idQuery && !slugQuery) {
     categoriaAtual = Object.keys(OFERTAS_ATIVAS)[0];
     paginaAtual = 0;
     return;
   }
 
   const ofertaEncontrada = Object.keys(OFERTAS_ATIVAS).find(nomeOferta => {
-    return gerarSlug(nomeOferta) === slugQuery;
+    const oferta = OFERTAS_ATIVAS[nomeOferta];
+
+    if (idQuery && oferta.id === idQuery) {
+      return true;
+    }
+
+    if (slugQuery && oferta.slug === slugQuery) {
+      return true;
+    }
+
+    return false;
   });
 
   if (ofertaEncontrada) {
