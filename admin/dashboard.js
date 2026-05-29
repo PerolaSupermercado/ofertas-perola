@@ -449,9 +449,6 @@ async function adicionarImagens(arquivos) {
   renderizarPreviewImagens();
 }
 
-  renderizarPreviewImagens();
-}
-
 function renderizarPreviewImagens() {
   previewImagens.innerHTML = "";
 
