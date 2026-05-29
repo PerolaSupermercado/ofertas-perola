@@ -133,3 +133,90 @@ formOferta.addEventListener("submit", (evento) => {
 
     alert("Oferta salva no painel visual. No próximo passo vamos ligar isso ao Supabase.");
 });
+
+const uploadArea =
+document.getElementById("uploadArea");
+
+const imagensOferta =
+document.getElementById("imagensOferta");
+
+const previewImagens =
+document.getElementById("previewImagens");
+
+let imagensSelecionadas = [];
+
+uploadArea.addEventListener("click", () => {
+    imagensOferta.click();
+});
+
+imagensOferta.addEventListener("change", (evento) => {
+    adicionarImagens(evento.target.files);
+});
+
+uploadArea.addEventListener("dragover", (evento) => {
+    evento.preventDefault();
+    uploadArea.classList.add("ativo");
+});
+
+uploadArea.addEventListener("dragleave", () => {
+    uploadArea.classList.remove("ativo");
+});
+
+uploadArea.addEventListener("drop", (evento) => {
+    evento.preventDefault();
+    uploadArea.classList.remove("ativo");
+
+    adicionarImagens(evento.dataTransfer.files);
+});
+
+function adicionarImagens(arquivos){
+
+    const novosArquivos =
+    Array.from(arquivos).filter(arquivo =>
+        arquivo.type.startsWith("image/")
+    );
+
+    imagensSelecionadas =
+    imagensSelecionadas.concat(novosArquivos);
+
+    renderizarPreviewImagens();
+}
+
+function renderizarPreviewImagens(){
+
+    previewImagens.innerHTML = "";
+
+    imagensSelecionadas.forEach((arquivo, index) => {
+
+        const urlTemporaria =
+        URL.createObjectURL(arquivo);
+
+        const item =
+        document.createElement("div");
+
+        item.className = "preview-item";
+
+        item.innerHTML = `
+            <img src="${urlTemporaria}" alt="Imagem da oferta">
+
+            <span>
+                ${index + 1}
+            </span>
+
+            <button type="button" onclick="removerImagem(${index})">
+                ×
+            </button>
+        `;
+
+        previewImagens.appendChild(item);
+
+    });
+
+}
+
+function removerImagem(index){
+
+    imagensSelecionadas.splice(index, 1);
+
+    renderizarPreviewImagens();
+}
