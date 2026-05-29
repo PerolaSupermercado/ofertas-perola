@@ -1030,27 +1030,8 @@ function abrirOfertaPelaUrl() {
   const ofertaEncontrada = nomesOfertas.find((nomeOferta) => {
     const oferta = OFERTAS_ATIVAS[nomeOferta];
 
-    const mesmoId =
-      idQuery && String(oferta.id) === String(idQuery);
-
-    const mesmoSlug =
-      slugQuery && String(oferta.slug) === String(slugQuery);
-
-    return mesmoId || mesmoSlug;
-  });
-
-  categoriaAtual = ofertaEncontrada || nomesOfertas[0];
-  paginaAtual = 0;
-}
-
-  const ofertaEncontrada = nomesOfertas.find((nomeOferta) => {
-    const oferta = OFERTAS_ATIVAS[nomeOferta];
-
-    const mesmoId =
-      idQuery && String(oferta.id) === String(idQuery);
-
-    const mesmoSlug =
-      slugQuery && String(oferta.slug) === String(slugQuery);
+    const mesmoId = idQuery && String(oferta.id) === String(idQuery);
+    const mesmoSlug = slugQuery && String(oferta.slug) === String(slugQuery);
 
     return mesmoId || mesmoSlug;
   });
