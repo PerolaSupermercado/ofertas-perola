@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Configurações do Site - Pérola</title>
+
+<link rel="stylesheet" href="configuracoes.css">
+</head>
+
+<body>
+
+<div class="layout">
+
+    <aside class="sidebar">
+
+        <div class="logo">
+            <h2>Painel Ofertas</h2>
+        </div>
+
+        <nav>
+
+            <a href="dashboard.html">
+                📊 Dashboard
+            </a>
+
+            <a href="dashboard.html">
+                🏷️ Ofertas
+            </a>
+
+            <a href="configuracoes.html" class="active">
+                ⚙️ Configurações
+            </a>
+
+        </nav>
+
+    </aside>
+
+    <main class="content">
+
+        <header class="topbar">
+
+            <div>
+                <h1>Configurações Gerais</h1>
+                <p>Controle as principais informações do site de ofertas.</p>
+            </div>
+
+            <button id="salvarConfiguracoes">
+                Salvar configurações
+            </button>
+
+        </header>
+
+        <section class="form-section">
+
+            <h2>Informações do Site</h2>
+
+            <label>Título principal</label>
+            <input
+                type="text"
+                id="tituloSite"
+                placeholder="Escolha uma categoria e confira nossas promoções">
+
+            <label>Subtítulo</label>
+            <input
+                type="text"
+                id="subtituloSite"
+                placeholder="Texto complementar opcional">
+
+            <label>Link do grupo WhatsApp</label>
+            <input
+                type="url"
+                id="linkGrupo"
+                placeholder="https://chat.whatsapp.com/...">
+
+        </section>
+
+        <section class="form-section">
+
+            <h2>Imagens do Site</h2>
+
+            <label>Banner principal</label>
+            <input
+                type="text"
+                id="bannerPrincipal"
+                placeholder="img/banner.jpg">
+
+            <label>Imagem placeholder</label>
+            <input
+                type="text"
+                id="placeholderImagem"
+                placeholder="img/placeholder.png">
+
+        </section>
+
+        <section class="form-section">
+
+            <h2>Compartilhamento / WhatsApp</h2>
+
+            <label>Título de compartilhamento</label>
+            <input
+                type="text"
+                id="tituloCompartilhamento"
+                placeholder="Ofertas Pérola Supermercado">
+
+            <label>Descrição de compartilhamento</label>
+            <textarea
+                id="descricaoCompartilhamento"
+                placeholder="Confira as promoções disponíveis no Pérola Supermercado."></textarea>
+
+            <label>Imagem de compartilhamento</label>
+            <input
+                type="text"
+                id="imagemCompartilhamento"
+                placeholder="img/preview-whatsapp.jpg">
+
+        </section>
+
+        <div
+            class="mensagem"
+            id="mensagem">
+        </div>
+
+    </main>
+
+</div>
+
+<script src="configuracoes.js"></script>
+
+</body>
+</html>
