@@ -422,19 +422,6 @@ textarea:focus{
   border-radius:999px;
 }
 
-.preview-item button{
-  position:absolute;
-  top:6px;
-  right:6px;
-  width:26px;
-  height:26px;
-  border:none;
-  border-radius:50%;
-  background:rgba(0,0,0,.75);
-  color:white;
-  cursor:pointer;
-}
-
 .btn-salvar{
   width:100%;
   border:none;
@@ -543,4 +530,31 @@ textarea:focus{
 
 .preview-item > button{
   display:none;
+}
+
+.preview-acoes{
+  position:absolute;
+  top:6px;
+  right:6px;
+  display:flex;
+  gap:4px;
+  z-index:5;
+}
+
+.preview-acoes button{
+  position:static;
+  width:24px;
+  height:24px;
+  border:none;
+  border-radius:50%;
+  background:rgba(0,0,0,.8);
+  color:white;
+  cursor:pointer;
+  font-size:12px;
+  line-height:1;
+  padding:0;
+}
+
+.preview-acoes button:hover{
+  background:#b30000;
 }
