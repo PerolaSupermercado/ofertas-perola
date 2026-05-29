@@ -34,11 +34,11 @@ function renderizarOfertas(){
 
         let classeStatus = "ativa";
 
-        if(oferta.status === "Futura"){
+        if(statusAtual === "Futura"){
             classeStatus = "futura";
         }
 
-        if(oferta.status === "Encerrada"){
+        if(statusAtual === "Encerrada"){
             classeStatus = "encerrada";
         }
 
@@ -48,7 +48,7 @@ function renderizarOfertas(){
 
                 <td>
                     <span class="status ${classeStatus}">
-                        ${oferta.status}
+                        ${statusAtual}
                     </span>
                 </td>
 
@@ -157,18 +157,18 @@ formOferta.addEventListener("submit", (evento) => {
     evento.preventDefault();
 
     const ofertaSalva = {
-        titulo: tituloOferta.value,
-        slug: slugOferta.value,
-        status: ativoOferta.checked
-    ? calcularStatus(dataInicio.value, dataFim.value)
-    : "Encerrada",
-        inicio: formatarDataPainel(dataInicio.value),
-        fim: formatarDataPainel(dataFim.value),
-        prioridade: prioridadeOferta.value,
-        cor: corOferta.value,
-        ocultar: ocultarOferta.checked,
-        imagens: imagensSelecionadas
-    };
+    titulo: tituloOferta.value,
+    slug: slugOferta.value,
+    ativo: ativoOferta.checked,
+    inicioOriginal: dataInicio.value,
+    fimOriginal: dataFim.value,
+    inicio: formatarDataPainel(dataInicio.value),
+    fim: formatarDataPainel(dataFim.value),
+    prioridade: prioridadeOferta.value,
+    cor: corOferta.value,
+    ocultar: ocultarOferta.checked,
+    imagens: imagensSelecionadas
+};
 
     if(indiceEditando !== null){
         ofertasMock[indiceEditando] = ofertaSalva;
@@ -177,6 +177,9 @@ formOferta.addEventListener("submit", (evento) => {
     }
 
     renderizarOfertas();
+    const statusAtual = oferta.ativo === false
+    ? "Encerrada"
+    : calcularStatus(oferta.inicioOriginal, oferta.fimOriginal);
     fecharModalOferta();
 });
 
@@ -269,17 +272,24 @@ function removerImagem(index){
 
 function atualizarCards(){
 
+    const statusDasOfertas =
+    ofertasMock.map(oferta => {
+        return oferta.ativo === false
+            ? "Encerrada"
+            : calcularStatus(oferta.inicioOriginal, oferta.fimOriginal);
+    });
+
     document.getElementById("totalOfertas").textContent =
     ofertasMock.length;
 
     document.getElementById("ativas").textContent =
-    ofertasMock.filter(oferta => oferta.status === "Ativa").length;
+    statusDasOfertas.filter(status => status === "Ativa").length;
 
     document.getElementById("futuras").textContent =
-    ofertasMock.filter(oferta => oferta.status === "Futura").length;
+    statusDasOfertas.filter(status => status === "Futura").length;
 
     document.getElementById("encerradas").textContent =
-    ofertasMock.filter(oferta => oferta.status === "Encerrada").length;
+    statusDasOfertas.filter(status => status === "Encerrada").length;
 }
 
 function formatarDataPainel(valor){
@@ -347,14 +357,14 @@ function editarOferta(index){
     tituloOferta.value = oferta.titulo || "";
     slugOferta.value = oferta.slug || gerarSlug(oferta.titulo || "");
 
-    dataInicio.value = converterDataParaInput(oferta.inicio);
-    dataFim.value = converterDataParaInput(oferta.fim);
+    dataInicio.value = oferta.inicioOriginal || converterDataParaInput(oferta.inicio);
+dataFim.value = oferta.fimOriginal || converterDataParaInput(oferta.fim);
 
     prioridadeOferta.value = oferta.prioridade || 999;
     corOferta.value = oferta.cor || "#c40000";
 
     ativoOferta.checked =
-    oferta.status === "Ativa";
+oferta.ativo !== false;
 
     ocultarOferta.checked =
     oferta.ocultar || false;
