@@ -441,3 +441,7 @@ form select:focus{
     background:#fff3cd;
     color:#664d03;
 }
+
+.sidebar a{
+    text-decoration:none;
+}
