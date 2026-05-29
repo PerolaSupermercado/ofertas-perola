@@ -26,49 +26,51 @@ const ofertasMock = [
 const tbody =
 document.getElementById("listaOfertas");
 
-ofertasMock.forEach(oferta => {
+function renderizarOfertas(){
 
-    let classeStatus = "ativa";
+    tbody.innerHTML = "";
 
-    if(oferta.status === "Futura"){
-        classeStatus = "futura";
-    }
+    ofertasMock.forEach(oferta => {
 
-    if(oferta.status === "Encerrada"){
-        classeStatus = "encerrada";
-    }
+        let classeStatus = "ativa";
 
-    tbody.innerHTML += `
-        <tr>
+        if(oferta.status === "Futura"){
+            classeStatus = "futura";
+        }
 
-            <td>${oferta.titulo}</td>
+        if(oferta.status === "Encerrada"){
+            classeStatus = "encerrada";
+        }
 
-            <td>
-                <span class="status ${classeStatus}">
-                    ${oferta.status}
-                </span>
-            </td>
+        tbody.innerHTML += `
+            <tr>
+                <td>${oferta.titulo}</td>
 
-            <td>${oferta.inicio}</td>
+                <td>
+                    <span class="status ${classeStatus}">
+                        ${oferta.status}
+                    </span>
+                </td>
 
-            <td>${oferta.fim}</td>
+                <td>${oferta.inicio}</td>
 
-            <td>
+                <td>${oferta.fim}</td>
 
-                <button class="btn-editar">
-                    Editar
-                </button>
+                <td>
+                    <button class="btn-editar">
+                        Editar
+                    </button>
 
-                <button class="btn-excluir">
-                    Excluir
-                </button>
+                    <button class="btn-excluir">
+                        Excluir
+                    </button>
+                </td>
+            </tr>
+        `;
+    });
 
-            </td>
-
-        </tr>
-    `;
-
-});
+    atualizarCards();
+}
 
 document.getElementById("totalOfertas").textContent =
 ofertasMock.length;
@@ -131,7 +133,27 @@ tituloOferta.addEventListener("input", () => {
 formOferta.addEventListener("submit", (evento) => {
     evento.preventDefault();
 
-    alert("Oferta salva no painel visual. No próximo passo vamos ligar isso ao Supabase.");
+    const novaOferta = {
+        titulo: tituloOferta.value,
+        status: "Ativa",
+        inicio: formatarDataPainel(dataInicio.value),
+        fim: formatarDataPainel(dataFim.value)
+    };
+
+    ofertasMock.push(novaOferta);
+
+    renderizarOfertas();
+
+    formOferta.reset();
+
+    imagensSelecionadas = [];
+    previewImagens.innerHTML = "";
+
+    ativoOferta.checked = true;
+    prioridadeOferta.value = 999;
+    corOferta.value = "#c40000";
+
+    modalOferta.classList.remove("ativo");
 });
 
 const uploadArea =
@@ -220,3 +242,31 @@ function removerImagem(index){
 
     renderizarPreviewImagens();
 }
+
+function atualizarCards(){
+
+    document.getElementById("totalOfertas").textContent =
+    ofertasMock.length;
+
+    document.getElementById("ativas").textContent =
+    ofertasMock.filter(oferta => oferta.status === "Ativa").length;
+
+    document.getElementById("futuras").textContent =
+    ofertasMock.filter(oferta => oferta.status === "Futura").length;
+
+    document.getElementById("encerradas").textContent =
+    ofertasMock.filter(oferta => oferta.status === "Encerrada").length;
+}
+
+function formatarDataPainel(valor){
+
+    if(!valor){
+        return "-";
+    }
+
+    const data = new Date(valor);
+
+    return data.toLocaleDateString("pt-BR");
+}
+
+renderizarOfertas();
