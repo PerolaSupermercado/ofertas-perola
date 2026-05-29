@@ -163,6 +163,12 @@ function renderizarOfertas() {
           </span>
         </td>
 
+        <td>
+  <span class="tipo-badge ${oferta.tipo || "oferta"}">
+    ${(oferta.tipo || "oferta") === "banner" ? "Banner" : "Oferta"}
+  </span>
+</td>
+
         <td>${oferta.inicio}</td>
 
         <td>${oferta.fim}</td>
