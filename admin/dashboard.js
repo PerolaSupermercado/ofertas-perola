@@ -1,4 +1,5 @@
 const API_OFERTAS = "/api/ofertas";
+const API_CONFIGURACOES = "/api/configuracoes";
 const CHAVE_CONFIG = "configuracoesOfertasPerola";
 
 let ofertas = [];
@@ -87,25 +88,36 @@ async function salvarOfertaApi(oferta) {
   return dados;
 }
 
-function carregarConfiguracoes() {
-  const salvas = localStorage.getItem(CHAVE_CONFIG);
+async function carregarConfiguracoesApi() {
 
-  if (salvas) {
-    return JSON.parse(salvas);
+  try {
+
+    const resposta =
+      await fetch(API_CONFIGURACOES);
+
+    const dados =
+      await resposta.json();
+
+    if(!resposta.ok){
+      throw new Error(
+        dados.erro || "Erro ao carregar configurações"
+      );
+    }
+
+    configuracoes = dados;
+
+    preencherConfiguracoes();
+
+  } catch(erro){
+
+    console.error(
+      "Erro ao carregar configurações:",
+      erro
+    );
+
   }
 
-  return {
-    tituloSite: "Escolha uma categoria e confira nossas promoções",
-    subtituloSite: "",
-    linkGrupo: "https://chat.whatsapp.com/HCEt8q7P5vgDIPVq8B68Du?mode=gi_t",
-    bannerPrincipal: "img/banner.jpg",
-    placeholder: "img/placeholder.png",
-    imagemCompartilhamento: "img/preview-whatsapp.jpg",
-    tituloCompartilhamento: "Ofertas Pérola Supermercado",
-    descricaoCompartilhamento: "Confira as promoções disponíveis no Pérola Supermercado."
-  };
 }
-
 function trocarAba(nomeAba) {
   abas.forEach(aba => aba.classList.remove("ativa"));
   botoesMenu.forEach(botao => botao.classList.remove("active"));
@@ -414,29 +426,86 @@ function preencherConfiguracoes() {
   camposConfig.descricaoCompartilhamento.value = configuracoes.descricaoCompartilhamento || "";
 }
 
-function salvarConfiguracoesPainel() {
-  configuracoes = {
-    tituloSite: camposConfig.tituloSite.value,
-    subtituloSite: camposConfig.subtituloSite.value,
-    linkGrupo: camposConfig.linkGrupo.value,
-    bannerPrincipal: camposConfig.bannerPrincipal.value,
-    placeholder: camposConfig.placeholder.value,
-    imagemCompartilhamento: camposConfig.imagemCompartilhamento.value,
-    tituloCompartilhamento: camposConfig.tituloCompartilhamento.value,
-    descricaoCompartilhamento: camposConfig.descricaoCompartilhamento.value
-  };
+async function salvarConfiguracoesPainel() {
 
-  localStorage.setItem(
-    CHAVE_CONFIG,
-    JSON.stringify(configuracoes)
-  );
+  try {
 
-  mensagemConfig.textContent = "Configurações salvas com sucesso.";
-  mensagemConfig.classList.add("ativo");
+    const configuracaoAtualizada = {
 
-  setTimeout(() => {
-    mensagemConfig.classList.remove("ativo");
-  }, 3000);
+      tituloSite:
+        camposConfig.tituloSite.value,
+
+      subtituloSite:
+        camposConfig.subtituloSite.value,
+
+      linkGrupo:
+        camposConfig.linkGrupo.value,
+
+      bannerPrincipal:
+        camposConfig.bannerPrincipal.value,
+
+      placeholder:
+        camposConfig.placeholder.value,
+
+      imagemCompartilhamento:
+        camposConfig.imagemCompartilhamento.value,
+
+      tituloCompartilhamento:
+        camposConfig.tituloCompartilhamento.value,
+
+      descricaoCompartilhamento:
+        camposConfig.descricaoCompartilhamento.value
+
+    };
+
+    const resposta =
+      await fetch(
+        API_CONFIGURACOES,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(
+            configuracaoAtualizada
+          )
+        }
+      );
+
+    const dados =
+      await resposta.json();
+
+    if(!resposta.ok){
+      throw new Error(
+        dados.erro || "Erro ao salvar"
+      );
+    }
+
+    mensagemConfig.textContent =
+      "Configurações salvas com sucesso.";
+
+    mensagemConfig.classList.add(
+      "ativo"
+    );
+
+    setTimeout(() => {
+
+      mensagemConfig.classList.remove(
+        "ativo"
+      );
+
+    }, 3000);
+
+  } catch(erro){
+
+    console.error(erro);
+
+    alert(
+      "Erro ao salvar configurações."
+    );
+
+  }
+
 }
 
 botoesMenu.forEach(botao => {
@@ -524,5 +593,5 @@ btnSalvarConfiguracoes.addEventListener(
   salvarConfiguracoesPainel
 );
 
-preencherConfiguracoes();
+carregarConfiguracoesApi();
 carregarOfertasApi();
