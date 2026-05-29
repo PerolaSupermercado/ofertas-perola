@@ -558,3 +558,31 @@ textarea:focus{
 .preview-acoes button:hover{
   background:#b30000;
 }
+
+.publicacao-badge{
+  display:inline-block;
+  padding:6px 12px;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:bold;
+}
+
+.publicacao-badge.publicada{
+  background:#d1e7dd;
+  color:#0f5132;
+}
+
+.publicacao-badge.oculta{
+  background:#fff3cd;
+  color:#664d03;
+}
+
+.publicacao-badge.desativada{
+  background:#f8d7da;
+  color:#842029;
+}
+
+.qtd-imagens{
+  font-weight:bold;
+  color:#444;
+}
