@@ -57,9 +57,9 @@ function renderizarOfertas(){
                 <td>${oferta.fim}</td>
 
                 <td>
-                    <button class="btn-editar">
-                        Editar
-                    </button>
+                    <button class="btn-editar" onclick="editarOferta(${index})">
+    Editar
+</button>
 
                     <button class="btn-excluir" onclick="excluirOferta(${index})">
     Excluir
@@ -87,6 +87,29 @@ document.getElementById("encerradas").textContent =
 const modalOferta =
 document.getElementById("modalOferta");
 
+const tituloModalOferta =
+document.getElementById("tituloModalOferta");
+
+const dataInicio =
+document.getElementById("dataInicio");
+
+const dataFim =
+document.getElementById("dataFim");
+
+const prioridadeOferta =
+document.getElementById("prioridadeOferta");
+
+const corOferta =
+document.getElementById("corOferta");
+
+const ativoOferta =
+document.getElementById("ativoOferta");
+
+const ocultarOferta =
+document.getElementById("ocultarOferta");
+
+let indiceEditando = null;
+
 const btnNovaOferta =
 document.getElementById("novaOferta");
 
@@ -113,16 +136,16 @@ function gerarSlug(texto){
 }
 
 btnNovaOferta.addEventListener("click", () => {
-    modalOferta.classList.add("ativo");
+    abrirModalNovaOferta();
 });
 
 btnFecharModal.addEventListener("click", () => {
-    modalOferta.classList.remove("ativo");
+    fecharModalOferta();
 });
 
 modalOferta.addEventListener("click", (evento) => {
     if(evento.target === modalOferta){
-        modalOferta.classList.remove("ativo");
+        fecharModalOferta();
     }
 });
 
@@ -133,27 +156,26 @@ tituloOferta.addEventListener("input", () => {
 formOferta.addEventListener("submit", (evento) => {
     evento.preventDefault();
 
-    const novaOferta = {
+    const ofertaSalva = {
         titulo: tituloOferta.value,
-        status: "Ativa",
+        slug: slugOferta.value,
+        status: ativoOferta.checked ? "Ativa" : "Encerrada",
         inicio: formatarDataPainel(dataInicio.value),
-        fim: formatarDataPainel(dataFim.value)
+        fim: formatarDataPainel(dataFim.value),
+        prioridade: prioridadeOferta.value,
+        cor: corOferta.value,
+        ocultar: ocultarOferta.checked,
+        imagens: imagensSelecionadas
     };
 
-    ofertasMock.push(novaOferta);
+    if(indiceEditando !== null){
+        ofertasMock[indiceEditando] = ofertaSalva;
+    } else {
+        ofertasMock.push(ofertaSalva);
+    }
 
     renderizarOfertas();
-
-    formOferta.reset();
-
-    imagensSelecionadas = [];
-    previewImagens.innerHTML = "";
-
-    ativoOferta.checked = true;
-    prioridadeOferta.value = 999;
-    corOferta.value = "#c40000";
-
-    modalOferta.classList.remove("ativo");
+    fecharModalOferta();
 });
 
 const uploadArea =
@@ -289,4 +311,92 @@ function excluirOferta(index){
     ofertasMock.splice(index, 1);
 
     renderizarOfertas();
+}
+
+function abrirModalNovaOferta(){
+
+    indiceEditando = null;
+
+    tituloModalOferta.textContent = "Nova Oferta";
+
+    formOferta.reset();
+
+    slugOferta.value = "";
+    prioridadeOferta.value = 999;
+    corOferta.value = "#c40000";
+    ativoOferta.checked = true;
+    ocultarOferta.checked = false;
+
+    imagensSelecionadas = [];
+    previewImagens.innerHTML = "";
+
+    modalOferta.classList.add("ativo");
+}
+
+function editarOferta(index){
+
+    const oferta =
+    ofertasMock[index];
+
+    indiceEditando = index;
+
+    tituloModalOferta.textContent = "Editar Oferta";
+
+    tituloOferta.value = oferta.titulo || "";
+    slugOferta.value = oferta.slug || gerarSlug(oferta.titulo || "");
+
+    dataInicio.value = converterDataParaInput(oferta.inicio);
+    dataFim.value = converterDataParaInput(oferta.fim);
+
+    prioridadeOferta.value = oferta.prioridade || 999;
+    corOferta.value = oferta.cor || "#c40000";
+
+    ativoOferta.checked =
+    oferta.status === "Ativa";
+
+    ocultarOferta.checked =
+    oferta.ocultar || false;
+
+    imagensSelecionadas =
+    oferta.imagens || [];
+
+    renderizarPreviewImagens();
+
+    modalOferta.classList.add("ativo");
+}
+
+function fecharModalOferta(){
+
+    modalOferta.classList.remove("ativo");
+
+    indiceEditando = null;
+
+    formOferta.reset();
+
+    imagensSelecionadas = [];
+    previewImagens.innerHTML = "";
+}
+
+function converterDataParaInput(dataBR){
+
+    if(!dataBR || dataBR === "-"){
+        return "";
+    }
+
+    if(dataBR.includes("T")){
+        return dataBR.slice(0, 16);
+    }
+
+    const partes =
+    dataBR.split("/");
+
+    if(partes.length !== 3){
+        return "";
+    }
+
+    const dia = partes[0];
+    const mes = partes[1];
+    const ano = partes[2];
+
+    return `${ano}-${mes}-${dia}T00:00`;
 }
