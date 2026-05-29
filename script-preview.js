@@ -221,12 +221,14 @@ async function carregarDadosDaApi() {
     }
 
     ofertas[categoria] = {
-      inicio,
-      fim,
-      imagens,
-      prioridade,
-      cor
-    };
+  id: item.id,
+  slug: item.slug,
+  inicio,
+  fim,
+  imagens,
+  prioridade,
+  cor
+};
   });
 
   const ofertasOrdenadas = Object.entries(ofertas)
