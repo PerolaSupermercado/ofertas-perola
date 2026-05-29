@@ -46,6 +46,7 @@ const modalOferta = document.getElementById("modalOferta");
 const btnNovaOferta = document.getElementById("novaOferta");
 const btnFecharModal = document.getElementById("fecharModal");
 const formOferta = document.getElementById("formOferta");
+const tipoOferta = document.getElementById("tipoOferta");
 
 const tituloModalOferta = document.getElementById("tituloModalOferta");
 const tituloOferta = document.getElementById("tituloOferta");
@@ -183,6 +184,7 @@ function renderizarOfertas() {
 }
 
 function abrirModalNovaOferta() {
+  tipoOferta.value = "oferta";
   indiceEditando = null;
 
   tituloModalOferta.textContent = "Nova Oferta";
@@ -216,6 +218,7 @@ function editarOferta(index) {
   const oferta = ofertasMock[index];
 
   indiceEditando = index;
+  tipoOferta.value = oferta.tipo || "oferta";
 
   tituloModalOferta.textContent = "Editar Oferta";
 
@@ -317,6 +320,7 @@ formOferta.addEventListener("submit", (evento) => {
   const ofertaSalva = {
     titulo: tituloOferta.value,
     slug: slugOferta.value,
+    tipo: tipoOferta.value,
     ativo: ativoOferta.checked,
     inicioOriginal: dataInicio.value,
     fimOriginal: dataFim.value,
