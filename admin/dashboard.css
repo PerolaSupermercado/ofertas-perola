@@ -586,3 +586,13 @@ textarea:focus{
   font-weight:bold;
   color:#444;
 }
+
+.btn-preview{
+  border:none;
+  color:white;
+  padding:8px 12px;
+  border-radius:8px;
+  cursor:pointer;
+  margin-right:6px;
+  background:#198754;
+}
