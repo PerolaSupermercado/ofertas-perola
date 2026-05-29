@@ -132,6 +132,73 @@ export default async function handler(req, res) {
       return resposta(res, 200, resultado);
     }
 
+if (req.method === "PUT") {
+  const oferta = req.body;
+
+  if (!oferta.id) {
+    return resposta(res, 400, {
+      erro: "ID da oferta não informado."
+    });
+  }
+
+  await consultarSupabase(
+    `${SUPABASE_URL}/rest/v1/ofertas_items?id=eq.${oferta.id}`,
+    {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        titulo: oferta.titulo,
+        slug: oferta.slug,
+        tipo: oferta.tipo,
+        ativo: oferta.ativo,
+        ocultar: oferta.ocultar,
+        data_inicio: oferta.inicioOriginal,
+        data_fim: oferta.fimOriginal,
+        prioridade: Number(oferta.prioridade || 999),
+        cor: oferta.cor
+      })
+    }
+  );
+
+  await consultarSupabase(
+    `${SUPABASE_URL}/rest/v1/ofertas_imagens?oferta_id=eq.${oferta.id}`,
+    {
+      method: "DELETE"
+    }
+  );
+
+  for (let i = 0; i < oferta.imagens.length; i++) {
+    const imagem = oferta.imagens[i];
+
+    let urlImagem = typeof imagem === "string" ? imagem : imagem.url;
+
+    if (urlImagem.startsWith("data:image")) {
+      urlImagem = await uploadImagem(imagem, oferta.id, i);
+    }
+
+    await consultarSupabase(
+      `${SUPABASE_URL}/rest/v1/ofertas_imagens`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          oferta_id: oferta.id,
+          imagem_url: urlImagem,
+          ordem: i
+        })
+      }
+    );
+  }
+
+  return resposta(res, 200, {
+    sucesso: true
+  });
+}
+    
     if (req.method === "POST") {
       const oferta = req.body;
 
