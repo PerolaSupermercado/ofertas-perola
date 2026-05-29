@@ -116,6 +116,123 @@
 
 </div>
 
+<div class="modal" id="modalOferta">
+
+    <div class="modal-content">
+
+        <div class="modal-header">
+
+            <h2>Nova Oferta</h2>
+
+            <button id="fecharModal">
+                ×
+            </button>
+
+        </div>
+
+        <form id="formOferta">
+
+            <label>
+                Título da oferta
+            </label>
+
+            <input
+                type="text"
+                id="tituloOferta"
+                placeholder="Ex: Operação Fecha Mês"
+                required>
+
+            <label>
+                Slug / Link da oferta
+            </label>
+
+            <input
+                type="text"
+                id="slugOferta"
+                placeholder="operacao-fecha-mes"
+                readonly>
+
+            <div class="grid-form">
+
+                <div>
+                    <label>
+                        Data e hora de início
+                    </label>
+
+                    <input
+                        type="datetime-local"
+                        id="dataInicio"
+                        required>
+                </div>
+
+                <div>
+                    <label>
+                        Data e hora de fim
+                    </label>
+
+                    <input
+                        type="datetime-local"
+                        id="dataFim"
+                        required>
+                </div>
+
+            </div>
+
+            <div class="grid-form">
+
+                <div>
+                    <label>
+                        Prioridade
+                    </label>
+
+                    <input
+                        type="number"
+                        id="prioridadeOferta"
+                        value="999">
+                </div>
+
+                <div>
+                    <label>
+                        Cor da categoria
+                    </label>
+
+                    <input
+                        type="color"
+                        id="corOferta"
+                        value="#c40000">
+                </div>
+
+            </div>
+
+            <div class="checks">
+
+                <label>
+                    <input
+                        type="checkbox"
+                        id="ativoOferta"
+                        checked>
+                    Oferta ativa
+                </label>
+
+                <label>
+                    <input
+                        type="checkbox"
+                        id="ocultarOferta">
+                    Ocultar oferta
+                </label>
+
+            </div>
+
+            <button type="submit" class="btn-salvar">
+                Salvar oferta
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+    
 <script src="dashboard.js"></script>
 
 </body>
