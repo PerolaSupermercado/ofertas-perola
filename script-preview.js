@@ -147,20 +147,7 @@ function aplicarPlaceholderNaImagem(elemento) {
 }
 
 /* =========================================
-   LER CSV DA PLANILHA
-========================================= */
-
-
-
-  resultado.push(valorAtual);
-
-  return resultado;
-}
-
-
-
-/* =========================================
-   CARREGAR OFERTAS DA PLANILHA
+   CARREGAR DADOS DA API
 ========================================= */
 async function carregarConfiguracoesDaApi() {
   const resposta = await fetch(API_CONFIGURACOES);
@@ -741,7 +728,7 @@ function gerarSlug(texto) {
 }
 
 function gerarUrlDaOferta(nomeOferta) {
-  const dominio = CONFIGURACOES.dominioSite || window.location.origin;
+  const dominio = window.location.origin;
   const slug = gerarSlug(nomeOferta);
 
   return dominio + "/" + slug;
