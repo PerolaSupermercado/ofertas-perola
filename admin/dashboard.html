@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Painel de Ofertas - Pérola</title>
+
+<link rel="stylesheet" href="dashboard.css">
+</head>
+
+<body>
+
+<div class="layout">
+
+    <aside class="sidebar">
+
+        <div class="logo">
+            <h2>Painel Ofertas</h2>
+        </div>
+
+        <nav>
+
+            <button class="menu-btn active">
+                Dashboard
+            </button>
+
+            <button class="menu-btn">
+                Ofertas
+            </button>
+
+            <button class="menu-btn">
+                Banner
+            </button>
+
+            <button class="menu-btn">
+                Configurações
+            </button>
+
+        </nav>
+
+    </aside>
+
+    <main class="content">
+
+        <header class="topbar">
+
+            <h1>
+                Dashboard
+            </h1>
+
+            <button id="novaOferta">
+                + Nova Oferta
+            </button>
+
+        </header>
+
+        <section class="cards">
+
+            <div class="card">
+                <span>Total de Ofertas</span>
+                <strong id="totalOfertas">
+                    0
+                </strong>
+            </div>
+
+            <div class="card">
+                <span>Ativas</span>
+                <strong id="ativas">
+                    0
+                </strong>
+            </div>
+
+            <div class="card">
+                <span>Futuras</span>
+                <strong id="futuras">
+                    0
+                </strong>
+            </div>
+
+            <div class="card">
+                <span>Encerradas</span>
+                <strong id="encerradas">
+                    0
+                </strong>
+            </div>
+
+        </section>
+
+        <section class="tabela-section">
+
+            <div class="section-header">
+
+                <h2>
+                    Ofertas Cadastradas
+                </h2>
+
+            </div>
+
+            <table>
+
+                <thead>
+
+                    <tr>
+                        <th>Título</th>
+                        <th>Status</th>
+                        <th>Início</th>
+                        <th>Fim</th>
+                        <th>Ações</th>
+                    </tr>
+
+                </thead>
+
+                <tbody id="listaOfertas">
+
+                </tbody>
+
+            </table>
+
+        </section>
+
+    </main>
+
+</div>
+
+<script src="dashboard.js"></script>
+
+</body>
+</html>
