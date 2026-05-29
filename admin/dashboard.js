@@ -1,7 +1,8 @@
+const API_OFERTAS = "/api/ofertas";
 const CHAVE_OFERTAS = "painelOfertasPerola";
 const CHAVE_CONFIG = "configuracoesOfertasPerola";
 
-let ofertas = carregarOfertas();
+let ofertas = [];
 let configuracoes = carregarConfiguracoes();
 
 let imagensSelecionadas = [];
@@ -49,12 +50,23 @@ const camposConfig = {
 const btnSalvarConfiguracoes = document.getElementById("salvarConfiguracoes");
 const mensagemConfig = document.getElementById("mensagemConfig");
 
-function carregarOfertas(){
-  const salvas = localStorage.getItem(CHAVE_OFERTAS);
+async function carregarOfertasApi(){
+  try{
+    const resposta = await fetch(API_OFERTAS);
+    const dados = await resposta.json();
 
-  if(salvas){
-    return JSON.parse(salvas);
+    if(!resposta.ok){
+      throw new Error(dados.erro || "Erro ao carregar ofertas");
+    }
+
+    ofertas = dados;
+    renderizarOfertas();
+
+  }catch(erro){
+    console.error("Erro ao carregar ofertas:", erro);
+    alert("Erro ao carregar ofertas do Supabase.");
   }
+}
 
   return [
     {
@@ -102,11 +114,22 @@ function carregarOfertas(){
   ];
 }
 
-function salvarOfertas(){
-  localStorage.setItem(
-    CHAVE_OFERTAS,
-    JSON.stringify(ofertas)
-  );
+async function salvarOfertaApi(oferta){
+  const resposta = await fetch(API_OFERTAS, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(oferta)
+  });
+
+  const dados = await resposta.json();
+
+  if(!resposta.ok){
+    throw new Error(dados.erro || "Erro ao salvar oferta");
+  }
+
+  return dados;
 }
 
 function carregarConfiguracoes(){
@@ -377,8 +400,13 @@ function editarOferta(index){
   modalOferta.classList.add("ativo");
 }
 
-function excluirOferta(index){
+async function excluirOferta(index){
   const oferta = ofertas[index];
+
+  if(!oferta.id){
+    alert("Essa oferta ainda não possui ID no Supabase.");
+    return;
+  }
 
   const confirmar = confirm(
     "Tem certeza que deseja excluir a oferta: " + oferta.titulo + "?"
@@ -388,10 +416,23 @@ function excluirOferta(index){
     return;
   }
 
-  ofertas.splice(index,1);
+  try{
+    const resposta = await fetch(`${API_OFERTAS}?id=${oferta.id}`, {
+      method: "DELETE"
+    });
 
-  salvarOfertas();
-  renderizarOfertas();
+    const dados = await resposta.json();
+
+    if(!resposta.ok){
+      throw new Error(dados.erro || "Erro ao excluir oferta");
+    }
+
+    await carregarOfertasApi();
+
+  }catch(erro){
+    console.error("Erro ao excluir oferta:", erro);
+    alert("Erro ao excluir oferta no Supabase.");
+  }
 }
 
 function arquivoParaBase64(arquivo){
@@ -509,7 +550,7 @@ tituloOferta.addEventListener("input", () => {
   slugOferta.value = gerarSlug(tituloOferta.value);
 });
 
-formOferta.addEventListener("submit", evento => {
+formOferta.addEventListener("submit", async evento => {
   evento.preventDefault();
 
   const ofertaSalva = {
@@ -527,15 +568,19 @@ formOferta.addEventListener("submit", evento => {
     imagens: imagensSelecionadas
   };
 
-  if(indiceEditando !== null){
-    ofertas[indiceEditando] = ofertaSalva;
-  } else {
-    ofertas.push(ofertaSalva);
-  }
+  try{
+    await salvarOfertaApi(ofertaSalva);
 
-  salvarOfertas();
-  renderizarOfertas();
-  fecharModalOferta();
+    await carregarOfertasApi();
+
+    fecharModalOferta();
+
+    alert("Oferta salva com sucesso!");
+
+  }catch(erro){
+    console.error("Erro ao salvar oferta:", erro);
+    alert("Erro ao salvar oferta no Supabase.");
+  }
 });
 
 uploadArea.addEventListener("click", () => {
@@ -567,4 +612,4 @@ btnSalvarConfiguracoes.addEventListener(
 );
 
 preencherConfiguracoes();
-renderizarOfertas();
+carregarOfertasApi();
