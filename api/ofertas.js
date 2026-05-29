@@ -20,6 +20,35 @@ function base64ParaBuffer(base64) {
   return Buffer.from(partes[1], "base64");
 }
 
+async function consultarSupabase(url, opcoes = {}) {
+  const respostaApi = await fetch(url, {
+    ...opcoes,
+    headers: {
+      apikey: SUPABASE_SERVICE_KEY,
+      Authorization: `Bearer ${SUPABASE_SERVICE_KEY}`,
+      ...(opcoes.headers || {})
+    }
+  });
+
+  const texto = await respostaApi.text();
+
+  let json;
+
+  try {
+    json = texto ? JSON.parse(texto) : null;
+  } catch {
+    json = {
+      resposta_bruta: texto
+    };
+  }
+
+  if (!respostaApi.ok) {
+    throw new Error(JSON.stringify(json));
+  }
+
+  return json;
+}
+
 async function uploadImagem(imagem, ofertaId, index) {
   const extensao = getExtensao(imagem.url, imagem.nome);
   const nomeArquivo = `${ofertaId}/${Date.now()}-${index}.${extensao}`;
@@ -40,8 +69,10 @@ async function uploadImagem(imagem, ofertaId, index) {
     }
   );
 
+  const texto = await respostaUpload.text();
+
   if (!respostaUpload.ok) {
-    throw new Error("Erro ao subir imagem");
+    throw new Error(texto);
   }
 
   return `${SUPABASE_URL}/storage/v1/object/public/ofertas-imagens/${nomeArquivo}`;
@@ -56,29 +87,27 @@ export default async function handler(req, res) {
     }
 
     if (req.method === "GET") {
-      const respostaOfertas = await fetch(
-        `${SUPABASE_URL}/rest/v1/ofertas_items?select=*&order=prioridade.asc`,
-        {
-          headers: {
-            apikey: SUPABASE_SERVICE_KEY,
-            Authorization: `Bearer ${SUPABASE_SERVICE_KEY}`
-          }
-        }
+      const ofertas = await consultarSupabase(
+        `${SUPABASE_URL}/rest/v1/ofertas_items?select=*&order=prioridade.asc`
       );
 
-      const ofertas = await respostaOfertas.json();
-
-      const respostaImagens = await fetch(
-        `${SUPABASE_URL}/rest/v1/ofertas_imagens?select=*&order=ordem.asc`,
-        {
-          headers: {
-            apikey: SUPABASE_SERVICE_KEY,
-            Authorization: `Bearer ${SUPABASE_SERVICE_KEY}`
-          }
-        }
+      const imagens = await consultarSupabase(
+        `${SUPABASE_URL}/rest/v1/ofertas_imagens?select=*&order=ordem.asc`
       );
 
-      const imagens = await respostaImagens.json();
+      if (!Array.isArray(ofertas)) {
+        return resposta(res, 500, {
+          erro: "Resposta de ofertas_items não veio como lista.",
+          retorno: ofertas
+        });
+      }
+
+      if (!Array.isArray(imagens)) {
+        return resposta(res, 500, {
+          erro: "Resposta de ofertas_imagens não veio como lista.",
+          retorno: imagens
+        });
+      }
 
       const resultado = ofertas.map((oferta) => {
         return {
@@ -88,10 +117,10 @@ export default async function handler(req, res) {
           tipo: oferta.tipo,
           ativo: oferta.ativo,
           ocultar: oferta.ocultar,
-          inicioOriginal: oferta.data_inicio?.slice(0, 16),
-          fimOriginal: oferta.data_fim?.slice(0, 16),
-          inicio: new Date(oferta.data_inicio).toLocaleDateString("pt-BR"),
-          fim: new Date(oferta.data_fim).toLocaleDateString("pt-BR"),
+          inicioOriginal: oferta.data_inicio ? oferta.data_inicio.slice(0, 16) : "",
+          fimOriginal: oferta.data_fim ? oferta.data_fim.slice(0, 16) : "",
+          inicio: oferta.data_inicio ? new Date(oferta.data_inicio).toLocaleDateString("pt-BR") : "-",
+          fim: oferta.data_fim ? new Date(oferta.data_fim).toLocaleDateString("pt-BR") : "-",
           prioridade: oferta.prioridade,
           cor: oferta.cor,
           imagens: imagens
@@ -106,13 +135,11 @@ export default async function handler(req, res) {
     if (req.method === "POST") {
       const oferta = req.body;
 
-      const respostaInsert = await fetch(
+      const ofertaCriada = await consultarSupabase(
         `${SUPABASE_URL}/rest/v1/ofertas_items`,
         {
           method: "POST",
           headers: {
-            apikey: SUPABASE_SERVICE_KEY,
-            Authorization: `Bearer ${SUPABASE_SERVICE_KEY}`,
             "Content-Type": "application/json",
             Prefer: "return=representation"
           },
@@ -130,12 +157,6 @@ export default async function handler(req, res) {
         }
       );
 
-      const ofertaCriada = await respostaInsert.json();
-
-      if (!respostaInsert.ok) {
-        return resposta(res, 400, ofertaCriada);
-      }
-
       const ofertaId = ofertaCriada[0].id;
 
       for (let i = 0; i < oferta.imagens.length; i++) {
@@ -147,19 +168,20 @@ export default async function handler(req, res) {
           urlImagem = await uploadImagem(imagem, ofertaId, i);
         }
 
-        await fetch(`${SUPABASE_URL}/rest/v1/ofertas_imagens`, {
-          method: "POST",
-          headers: {
-            apikey: SUPABASE_SERVICE_KEY,
-            Authorization: `Bearer ${SUPABASE_SERVICE_KEY}`,
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            oferta_id: ofertaId,
-            imagem_url: urlImagem,
-            ordem: i
-          })
-        });
+        await consultarSupabase(
+          `${SUPABASE_URL}/rest/v1/ofertas_imagens`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              oferta_id: ofertaId,
+              imagem_url: urlImagem,
+              ordem: i
+            })
+          }
+        );
       }
 
       return resposta(res, 200, {
@@ -170,14 +192,10 @@ export default async function handler(req, res) {
     if (req.method === "DELETE") {
       const { id } = req.query;
 
-      await fetch(
+      await consultarSupabase(
         `${SUPABASE_URL}/rest/v1/ofertas_items?id=eq.${id}`,
         {
-          method: "DELETE",
-          headers: {
-            apikey: SUPABASE_SERVICE_KEY,
-            Authorization: `Bearer ${SUPABASE_SERVICE_KEY}`
-          }
+          method: "DELETE"
         }
       );
 
