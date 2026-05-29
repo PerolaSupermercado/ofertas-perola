@@ -159,7 +159,9 @@ formOferta.addEventListener("submit", (evento) => {
     const ofertaSalva = {
         titulo: tituloOferta.value,
         slug: slugOferta.value,
-        status: ativoOferta.checked ? "Ativa" : "Encerrada",
+        status: ativoOferta.checked
+    ? calcularStatus(dataInicio.value, dataFim.value)
+    : "Encerrada",
         inicio: formatarDataPainel(dataInicio.value),
         fim: formatarDataPainel(dataFim.value),
         prioridade: prioridadeOferta.value,
@@ -399,4 +401,29 @@ function converterDataParaInput(dataBR){
     const ano = partes[2];
 
     return `${ano}-${mes}-${dia}T00:00`;
+}
+
+function calcularStatus(dataInicioValor, dataFimValor){
+
+    const agora = new Date();
+
+    const inicio =
+    new Date(dataInicioValor);
+
+    const fim =
+    new Date(dataFimValor);
+
+    if(!dataInicioValor || !dataFimValor){
+        return "Encerrada";
+    }
+
+    if(agora < inicio){
+        return "Futura";
+    }
+
+    if(agora > fim){
+        return "Encerrada";
+    }
+
+    return "Ativa";
 }
