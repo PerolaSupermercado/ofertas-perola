@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,262 +13,301 @@
 
 <div class="layout">
 
-    <aside class="sidebar">
+  <aside class="sidebar">
 
-        <div class="logo">
-            <h2>Painel Ofertas</h2>
+    <div class="logo">
+      <h2>Painel Ofertas</h2>
+      <span>Pérola Supermercado</span>
+    </div>
+
+    <nav>
+      <button class="menu-btn active" data-aba="dashboard">
+        📊 Dashboard
+      </button>
+
+      <button class="menu-btn" data-aba="ofertas">
+        🏷️ Ofertas
+      </button>
+
+      <button class="menu-btn" data-aba="configuracoes">
+        ⚙️ Configurações
+      </button>
+    </nav>
+
+  </aside>
+
+  <main class="content">
+
+    <section class="aba ativa" id="aba-dashboard">
+
+      <header class="topbar">
+        <div>
+          <h1>Dashboard</h1>
+          <p>Resumo geral das ofertas cadastradas.</p>
         </div>
 
-        <nav>
+        <button id="novaOfertaDashboard">
+          + Nova Oferta
+        </button>
+      </header>
 
-            <button class="menu-btn active">
-                Dashboard
-            </button>
+      <section class="cards">
 
-            <button class="menu-btn">
-                Ofertas
-            </button>
+        <div class="card total">
+          <span>Total de Ofertas</span>
+          <strong id="totalOfertas">0</strong>
+        </div>
 
-            <button class="menu-btn">
-                Banner
-            </button>
+        <div class="card ativas">
+          <span>Ativas</span>
+          <strong id="ativas">0</strong>
+        </div>
 
-            <a class="menu-btn" href="configuracoes.html">
-    ⚙️ Configurações
-</a>
+        <div class="card futuras">
+          <span>Futuras</span>
+          <strong id="futuras">0</strong>
+        </div>
 
-        </nav>
+        <div class="card encerradas">
+          <span>Encerradas</span>
+          <strong id="encerradas">0</strong>
+        </div>
 
-    </aside>
+      </section>
 
-    <main class="content">
+      <section class="tabela-section">
 
-        <header class="topbar">
+        <div class="section-header">
+          <h2>Últimas ofertas</h2>
+        </div>
 
-            <h1>
-                Dashboard
-            </h1>
+        <table>
+          <thead>
+            <tr>
+              <th>Título</th>
+              <th>Status</th>
+              <th>Tipo</th>
+              <th>Início</th>
+              <th>Fim</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
 
-            <button id="novaOferta">
-                + Nova Oferta
-            </button>
+          <tbody id="listaOfertasDashboard"></tbody>
+        </table>
 
-        </header>
+      </section>
 
-        <section class="cards">
+    </section>
 
-    <div class="card total">
-        <span>Total de Ofertas</span>
-        <strong id="totalOfertas">0</strong>
-    </div>
+    <section class="aba" id="aba-ofertas">
 
-    <div class="card ativas">
-        <span>Ativas</span>
-        <strong id="ativas">0</strong>
-    </div>
+      <header class="topbar">
+        <div>
+          <h1>Ofertas</h1>
+          <p>Cadastre, edite e organize as ofertas do site.</p>
+        </div>
 
-    <div class="card futuras">
-        <span>Futuras</span>
-        <strong id="futuras">0</strong>
-    </div>
+        <button id="novaOferta">
+          + Nova Oferta
+        </button>
+      </header>
 
-    <div class="card encerradas">
-        <span>Encerradas</span>
-        <strong id="encerradas">0</strong>
-    </div>
+      <section class="tabela-section">
 
-</section>
+        <div class="section-header">
+          <h2>Ofertas cadastradas</h2>
+        </div>
 
-        <section class="tabela-section">
+        <table>
+          <thead>
+            <tr>
+              <th>Título</th>
+              <th>Status</th>
+              <th>Tipo</th>
+              <th>Prioridade</th>
+              <th>Início</th>
+              <th>Fim</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
 
-            <div class="section-header">
+          <tbody id="listaOfertas"></tbody>
+        </table>
 
-                <h2>
-                    Ofertas Cadastradas
-                </h2>
+      </section>
 
-            </div>
+    </section>
 
-            <table>
+    <section class="aba" id="aba-configuracoes">
 
-                <thead>
+      <header class="topbar">
+        <div>
+          <h1>Configurações Gerais</h1>
+          <p>Controle as informações principais do site de ofertas.</p>
+        </div>
 
-                    <tr>
-                        <th>Título</th>
-                        <th>Status</th>
-                        <th>Tipo</th>
-                        <th>Início</th>
-                        <th>Fim</th>
-                        <th>Ações</th>
-                    </tr>
+        <button id="salvarConfiguracoes">
+          Salvar Configurações
+        </button>
+      </header>
 
-                </thead>
+      <section class="form-section">
 
-                <tbody id="listaOfertas">
+        <h2>Informações do Site</h2>
 
-                </tbody>
+        <label>Título principal</label>
+        <input type="text" id="configTituloSite">
 
-            </table>
+        <label>Subtítulo</label>
+        <input type="text" id="configSubtituloSite">
 
-        </section>
+        <label>Link do grupo WhatsApp</label>
+        <input type="url" id="configLinkGrupo">
 
-    </main>
+      </section>
+
+      <section class="form-section">
+
+        <h2>Imagens</h2>
+
+        <label>Banner principal</label>
+        <input type="text" id="configBannerPrincipal">
+
+        <label>Placeholder</label>
+        <input type="text" id="configPlaceholder">
+
+        <label>Imagem de compartilhamento</label>
+        <input type="text" id="configImagemCompartilhamento">
+
+      </section>
+
+      <section class="form-section">
+
+        <h2>Compartilhamento</h2>
+
+        <label>Título de compartilhamento</label>
+        <input type="text" id="configTituloCompartilhamento">
+
+        <label>Descrição de compartilhamento</label>
+        <textarea id="configDescricaoCompartilhamento"></textarea>
+
+      </section>
+
+      <div class="mensagem" id="mensagemConfig"></div>
+
+    </section>
+
+  </main>
 
 </div>
 
 <div class="modal" id="modalOferta">
 
-    <div class="modal-content">
+  <div class="modal-content">
 
-        <div class="modal-header">
+    <div class="modal-header">
+      <h2 id="tituloModalOferta">Nova Oferta</h2>
 
-            <h2 id="tituloModalOferta">Nova Oferta</h2>
-
-            <button id="fecharModal">
-                ×
-            </button>
-
-        </div>
-
-        <form id="formOferta">
-
-            <label>
-                Título da oferta
-            </label>
-
-            <input
-                type="text"
-                id="tituloOferta"
-                placeholder="Ex: Operação Fecha Mês"
-                required>
-
-            <label>
-                Slug / Link da oferta
-            </label>
-
-            <input
-                type="text"
-                id="slugOferta"
-                placeholder="operacao-fecha-mes"
-                readonly>
-
-<label>
-    Tipo
-</label>
-
-<select id="tipoOferta">
-    <option value="oferta">Oferta</option>
-    <option value="banner">Banner principal</option>
-</select>
-            
-            <div class="grid-form">
-
-                <div>
-                    <label>
-                        Data e hora de início
-                    </label>
-
-                    <input
-                        type="datetime-local"
-                        id="dataInicio"
-                        required>
-                </div>
-
-                <div>
-                    <label>
-                        Data e hora de fim
-                    </label>
-
-                    <input
-                        type="datetime-local"
-                        id="dataFim"
-                        required>
-                </div>
-
-            </div>
-
-            <div class="grid-form">
-
-                <div>
-                    <label>
-                        Prioridade
-                    </label>
-
-                    <input
-                        type="number"
-                        id="prioridadeOferta"
-                        value="999">
-                </div>
-
-                <div>
-                    <label>
-                        Cor da categoria
-                    </label>
-
-                    <input
-                        type="color"
-                        id="corOferta"
-                        value="#c40000">
-                </div>
-
-            </div>
-
-            <div class="checks">
-
-                <label>
-                    <input
-                        type="checkbox"
-                        id="ativoOferta"
-                        checked>
-                    Oferta ativa
-                </label>
-
-                <label>
-                    <input
-                        type="checkbox"
-                        id="ocultarOferta">
-                    Ocultar oferta
-                </label>
-
-            </div>
-
-<label>
-    Imagens da oferta
-</label>
-
-<div class="upload-area" id="uploadArea">
-
-    <input
-        type="file"
-        id="imagensOferta"
-        accept="image/*"
-        multiple>
-
-    <p>
-        Clique ou arraste as imagens aqui
-    </p>
-
-    <small>
-        Você pode selecionar várias páginas da oferta de uma vez.
-    </small>
-
-</div>
-
-<div
-    class="preview-imagens"
-    id="previewImagens">
-</div>
-            
-            <button type="submit" class="btn-salvar">
-                Salvar oferta
-            </button>
-
-        </form>
-
+      <button id="fecharModal">
+        ×
+      </button>
     </div>
 
+    <form id="formOferta">
+
+      <label>Título da oferta</label>
+      <input
+        type="text"
+        id="tituloOferta"
+        placeholder="Ex: Operação Fecha Mês"
+        required>
+
+      <label>Slug / Link da oferta</label>
+      <input
+        type="text"
+        id="slugOferta"
+        placeholder="operacao-fecha-mes"
+        readonly>
+
+      <label>Tipo</label>
+      <select id="tipoOferta">
+        <option value="oferta">Oferta</option>
+        <option value="banner">Banner principal</option>
+      </select>
+
+      <div class="grid-form">
+
+        <div>
+          <label>Data e hora de início</label>
+          <input type="datetime-local" id="dataInicio" required>
+        </div>
+
+        <div>
+          <label>Data e hora de fim</label>
+          <input type="datetime-local" id="dataFim" required>
+        </div>
+
+      </div>
+
+      <div class="grid-form">
+
+        <div>
+          <label>Prioridade</label>
+          <input type="number" id="prioridadeOferta" value="999">
+        </div>
+
+        <div>
+          <label>Cor da categoria</label>
+          <input type="color" id="corOferta" value="#c40000">
+        </div>
+
+      </div>
+
+      <div class="checks">
+
+        <label>
+          <input type="checkbox" id="ativoOferta" checked>
+          Oferta ativa
+        </label>
+
+        <label>
+          <input type="checkbox" id="ocultarOferta">
+          Ocultar oferta
+        </label>
+
+      </div>
+
+      <label>Imagens da oferta</label>
+
+      <div class="upload-area" id="uploadArea">
+
+        <input
+          type="file"
+          id="imagensOferta"
+          accept="image/*"
+          multiple>
+
+        <p>Clique ou arraste as imagens aqui</p>
+
+        <small>
+          Você pode selecionar várias páginas da oferta de uma vez.
+        </small>
+
+      </div>
+
+      <div class="preview-imagens" id="previewImagens"></div>
+
+      <button type="submit" class="btn-salvar">
+        Salvar oferta
+      </button>
+
+    </form>
+
+  </div>
+
 </div>
-    
+
 <script src="dashboard.js"></script>
 
 </body>
