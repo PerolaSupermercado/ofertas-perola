@@ -1,10 +1,8 @@
 const API_OFERTAS = "/api/ofertas";
-const CHAVE_OFERTAS = "painelOfertasPerola";
 const CHAVE_CONFIG = "configuracoesOfertasPerola";
 
 let ofertas = [];
 let configuracoes = carregarConfiguracoes();
-
 let imagensSelecionadas = [];
 let indiceEditando = null;
 
@@ -50,71 +48,26 @@ const camposConfig = {
 const btnSalvarConfiguracoes = document.getElementById("salvarConfiguracoes");
 const mensagemConfig = document.getElementById("mensagemConfig");
 
-async function carregarOfertasApi(){
-  try{
+async function carregarOfertasApi() {
+  try {
     const resposta = await fetch(API_OFERTAS);
     const dados = await resposta.json();
 
-    if(!resposta.ok){
+    if (!resposta.ok) {
       throw new Error(dados.erro || "Erro ao carregar ofertas");
     }
 
-    ofertas = dados;
+    ofertas = Array.isArray(dados) ? dados : [];
+
     renderizarOfertas();
 
-  }catch(erro){
+  } catch (erro) {
     console.error("Erro ao carregar ofertas:", erro);
     alert("Erro ao carregar ofertas do Supabase.");
   }
 }
 
-  return [
-    {
-      titulo:"Operação Fecha Mês",
-      slug:"operacao-fecha-mes",
-      tipo:"oferta",
-      ativo:true,
-      ocultar:false,
-      inicioOriginal:"2026-05-29T00:00",
-      fimOriginal:"2026-05-31T23:59",
-      inicio:"29/05/2026",
-      fim:"31/05/2026",
-      prioridade:1,
-      cor:"#c40000",
-      imagens:[]
-    },
-    {
-      titulo:"Quinta Filé",
-      slug:"quinta-file",
-      tipo:"oferta",
-      ativo:true,
-      ocultar:false,
-      inicioOriginal:"2026-05-21T00:00",
-      fimOriginal:"2026-05-21T23:59",
-      inicio:"21/05/2026",
-      fim:"21/05/2026",
-      prioridade:2,
-      cor:"#c40000",
-      imagens:[]
-    },
-    {
-      titulo:"Seleção de Ofertas",
-      slug:"selecao-de-ofertas",
-      tipo:"oferta",
-      ativo:true,
-      ocultar:false,
-      inicioOriginal:"2026-05-21T00:00",
-      fimOriginal:"2026-05-24T23:59",
-      inicio:"21/05/2026",
-      fim:"24/05/2026",
-      prioridade:3,
-      cor:"#c40000",
-      imagens:[]
-    }
-  ];
-}
-
-async function salvarOfertaApi(oferta){
+async function salvarOfertaApi(oferta) {
   const resposta = await fetch(API_OFERTAS, {
     method: "POST",
     headers: {
@@ -125,102 +78,72 @@ async function salvarOfertaApi(oferta){
 
   const dados = await resposta.json();
 
-  if(!resposta.ok){
+  if (!resposta.ok) {
     throw new Error(dados.erro || "Erro ao salvar oferta");
   }
 
   return dados;
 }
 
-function carregarConfiguracoes(){
+function carregarConfiguracoes() {
   const salvas = localStorage.getItem(CHAVE_CONFIG);
 
-  if(salvas){
+  if (salvas) {
     return JSON.parse(salvas);
   }
 
   return {
-    tituloSite:"Escolha uma categoria e confira nossas promoções",
-    subtituloSite:"",
-    linkGrupo:"https://chat.whatsapp.com/HCEt8q7P5vgDIPVq8B68Du?mode=gi_t",
-    bannerPrincipal:"img/banner.jpg",
-    placeholder:"img/placeholder.png",
-    imagemCompartilhamento:"img/preview-whatsapp.jpg",
-    tituloCompartilhamento:"Ofertas Pérola Supermercado",
-    descricaoCompartilhamento:"Confira as promoções disponíveis no Pérola Supermercado."
+    tituloSite: "Escolha uma categoria e confira nossas promoções",
+    subtituloSite: "",
+    linkGrupo: "https://chat.whatsapp.com/HCEt8q7P5vgDIPVq8B68Du?mode=gi_t",
+    bannerPrincipal: "img/banner.jpg",
+    placeholder: "img/placeholder.png",
+    imagemCompartilhamento: "img/preview-whatsapp.jpg",
+    tituloCompartilhamento: "Ofertas Pérola Supermercado",
+    descricaoCompartilhamento: "Confira as promoções disponíveis no Pérola Supermercado."
   };
 }
 
-function salvarConfiguracoesLocal(){
-  localStorage.setItem(
-    CHAVE_CONFIG,
-    JSON.stringify(configuracoes)
-  );
+function trocarAba(nomeAba) {
+  abas.forEach(aba => aba.classList.remove("ativa"));
+  botoesMenu.forEach(botao => botao.classList.remove("active"));
+
+  document.getElementById("aba-" + nomeAba).classList.add("ativa");
+  document.querySelector(`[data-aba="${nomeAba}"]`).classList.add("active");
 }
 
-function trocarAba(nomeAba){
-  abas.forEach(aba => {
-    aba.classList.remove("ativa");
-  });
-
-  botoesMenu.forEach(botao => {
-    botao.classList.remove("active");
-  });
-
-  document
-    .getElementById("aba-" + nomeAba)
-    .classList.add("ativa");
-
-  document
-    .querySelector(`[data-aba="${nomeAba}"]`)
-    .classList.add("active");
-}
-
-function gerarSlug(texto){
+function gerarSlug(texto) {
   return String(texto || "")
     .toLowerCase()
     .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g,"")
-    .replace(/ç/g,"c")
-    .replace(/[^a-z0-9]+/g,"-")
-    .replace(/^-+|-+$/g,"");
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/ç/g, "c")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
 }
 
-function calcularStatus(inicioValor, fimValor, ativo){
-  if(!ativo){
-    return "Encerrada";
-  }
-
-  if(!inicioValor || !fimValor){
-    return "Encerrada";
-  }
+function calcularStatus(inicioValor, fimValor, ativo) {
+  if (!ativo) return "Encerrada";
+  if (!inicioValor || !fimValor) return "Encerrada";
 
   const agora = new Date();
   const inicio = new Date(inicioValor);
   const fim = new Date(fimValor);
 
-  if(agora < inicio){
-    return "Futura";
-  }
-
-  if(agora > fim){
-    return "Encerrada";
-  }
+  if (agora < inicio) return "Futura";
+  if (agora > fim) return "Encerrada";
 
   return "Ativa";
 }
 
-function formatarDataPainel(valor){
-  if(!valor){
-    return "-";
-  }
+function formatarDataPainel(valor) {
+  if (!valor) return "-";
 
   const data = new Date(valor);
-
   return data.toLocaleDateString("pt-BR");
 }
 
-function atualizarCards(){
+function atualizarCards() {
   const status = ofertas.map(oferta => {
     return calcularStatus(
       oferta.inicioOriginal,
@@ -229,20 +152,13 @@ function atualizarCards(){
     );
   });
 
-  document.getElementById("totalOfertas").textContent =
-    ofertas.length;
-
-  document.getElementById("ativas").textContent =
-    status.filter(item => item === "Ativa").length;
-
-  document.getElementById("futuras").textContent =
-    status.filter(item => item === "Futura").length;
-
-  document.getElementById("encerradas").textContent =
-    status.filter(item => item === "Encerrada").length;
+  document.getElementById("totalOfertas").textContent = ofertas.length;
+  document.getElementById("ativas").textContent = status.filter(item => item === "Ativa").length;
+  document.getElementById("futuras").textContent = status.filter(item => item === "Futura").length;
+  document.getElementById("encerradas").textContent = status.filter(item => item === "Encerrada").length;
 }
 
-function gerarLinhaOferta(oferta, index, modoDashboard = false){
+function gerarLinhaOferta(oferta, index, modoDashboard = false) {
   const statusAtual = calcularStatus(
     oferta.inicioOriginal,
     oferta.fimOriginal,
@@ -251,17 +167,12 @@ function gerarLinhaOferta(oferta, index, modoDashboard = false){
 
   let classeStatus = "ativa";
 
-  if(statusAtual === "Futura"){
-    classeStatus = "futura";
-  }
-
-  if(statusAtual === "Encerrada"){
-    classeStatus = "encerrada";
-  }
+  if (statusAtual === "Futura") classeStatus = "futura";
+  if (statusAtual === "Encerrada") classeStatus = "encerrada";
 
   const tipoAtual = oferta.tipo || "oferta";
 
-  if(modoDashboard){
+  if (modoDashboard) {
     return `
       <tr>
         <td>${oferta.titulo}</td>
@@ -323,10 +234,8 @@ function gerarLinhaOferta(oferta, index, modoDashboard = false){
   `;
 }
 
-function renderizarOfertas(){
-  ofertas.sort((a,b) => {
-    return Number(a.prioridade || 999) - Number(b.prioridade || 999);
-  });
+function renderizarOfertas() {
+  ofertas.sort((a, b) => Number(a.prioridade || 999) - Number(b.prioridade || 999));
 
   listaOfertas.innerHTML = "";
   listaOfertasDashboard.innerHTML = "";
@@ -334,7 +243,7 @@ function renderizarOfertas(){
   ofertas.forEach((oferta, index) => {
     listaOfertas.innerHTML += gerarLinhaOferta(oferta, index, false);
 
-    if(index < 5){
+    if (index < 5) {
       listaOfertasDashboard.innerHTML += gerarLinhaOferta(oferta, index, true);
     }
   });
@@ -342,7 +251,7 @@ function renderizarOfertas(){
   atualizarCards();
 }
 
-function abrirModalNovaOferta(){
+function abrirModalNovaOferta() {
   indiceEditando = null;
 
   tituloModalOferta.textContent = "Nova Oferta";
@@ -362,7 +271,7 @@ function abrirModalNovaOferta(){
   modalOferta.classList.add("ativo");
 }
 
-function fecharModalOferta(){
+function fecharModalOferta() {
   modalOferta.classList.remove("ativo");
 
   indiceEditando = null;
@@ -373,7 +282,7 @@ function fecharModalOferta(){
   previewImagens.innerHTML = "";
 }
 
-function editarOferta(index){
+function editarOferta(index) {
   const oferta = ofertas[index];
 
   indiceEditando = index;
@@ -400,10 +309,10 @@ function editarOferta(index){
   modalOferta.classList.add("ativo");
 }
 
-async function excluirOferta(index){
+async function excluirOferta(index) {
   const oferta = ofertas[index];
 
-  if(!oferta.id){
+  if (!oferta.id) {
     alert("Essa oferta ainda não possui ID no Supabase.");
     return;
   }
@@ -412,31 +321,29 @@ async function excluirOferta(index){
     "Tem certeza que deseja excluir a oferta: " + oferta.titulo + "?"
   );
 
-  if(!confirmar){
-    return;
-  }
+  if (!confirmar) return;
 
-  try{
+  try {
     const resposta = await fetch(`${API_OFERTAS}?id=${oferta.id}`, {
       method: "DELETE"
     });
 
     const dados = await resposta.json();
 
-    if(!resposta.ok){
+    if (!resposta.ok) {
       throw new Error(dados.erro || "Erro ao excluir oferta");
     }
 
     await carregarOfertasApi();
 
-  }catch(erro){
+  } catch (erro) {
     console.error("Erro ao excluir oferta:", erro);
     alert("Erro ao excluir oferta no Supabase.");
   }
 }
 
-function arquivoParaBase64(arquivo){
-  return new Promise((resolve,reject) => {
+function arquivoParaBase64(arquivo) {
+  return new Promise((resolve, reject) => {
     const leitor = new FileReader();
 
     leitor.onload = () => resolve(leitor.result);
@@ -446,12 +353,12 @@ function arquivoParaBase64(arquivo){
   });
 }
 
-async function adicionarImagens(arquivos){
+async function adicionarImagens(arquivos) {
   const novosArquivos = Array.from(arquivos).filter(arquivo => {
     return arquivo.type && arquivo.type.startsWith("image/");
   });
 
-  for(const arquivo of novosArquivos){
+  for (const arquivo of novosArquivos) {
     const base64 = await arquivoParaBase64(arquivo);
 
     imagensSelecionadas.push({
@@ -463,10 +370,10 @@ async function adicionarImagens(arquivos){
   renderizarPreviewImagens();
 }
 
-function renderizarPreviewImagens(){
+function renderizarPreviewImagens() {
   previewImagens.innerHTML = "";
 
-  imagensSelecionadas.forEach((imagem,index) => {
+  imagensSelecionadas.forEach((imagem, index) => {
     const url = typeof imagem === "string"
       ? imagem
       : imagem.url;
@@ -489,12 +396,12 @@ function renderizarPreviewImagens(){
   });
 }
 
-function removerImagem(index){
-  imagensSelecionadas.splice(index,1);
+function removerImagem(index) {
+  imagensSelecionadas.splice(index, 1);
   renderizarPreviewImagens();
 }
 
-function preencherConfiguracoes(){
+function preencherConfiguracoes() {
   camposConfig.tituloSite.value = configuracoes.tituloSite || "";
   camposConfig.subtituloSite.value = configuracoes.subtituloSite || "";
   camposConfig.linkGrupo.value = configuracoes.linkGrupo || "";
@@ -505,7 +412,7 @@ function preencherConfiguracoes(){
   camposConfig.descricaoCompartilhamento.value = configuracoes.descricaoCompartilhamento || "";
 }
 
-function salvarConfiguracoesPainel(){
+function salvarConfiguracoesPainel() {
   configuracoes = {
     tituloSite: camposConfig.tituloSite.value,
     subtituloSite: camposConfig.subtituloSite.value,
@@ -517,16 +424,17 @@ function salvarConfiguracoesPainel(){
     descricaoCompartilhamento: camposConfig.descricaoCompartilhamento.value
   };
 
-  salvarConfiguracoesLocal();
+  localStorage.setItem(
+    CHAVE_CONFIG,
+    JSON.stringify(configuracoes)
+  );
 
-  mensagemConfig.textContent =
-    "Configurações salvas com sucesso.";
-
+  mensagemConfig.textContent = "Configurações salvas com sucesso.";
   mensagemConfig.classList.add("ativo");
 
   setTimeout(() => {
     mensagemConfig.classList.remove("ativo");
-  },3000);
+  }, 3000);
 }
 
 botoesMenu.forEach(botao => {
@@ -541,7 +449,7 @@ btnNovaOfertaDashboard.addEventListener("click", abrirModalNovaOferta);
 btnFecharModal.addEventListener("click", fecharModalOferta);
 
 modalOferta.addEventListener("click", evento => {
-  if(evento.target === modalOferta){
+  if (evento.target === modalOferta) {
     fecharModalOferta();
   }
 });
@@ -568,16 +476,15 @@ formOferta.addEventListener("submit", async evento => {
     imagens: imagensSelecionadas
   };
 
-  try{
+  try {
     await salvarOfertaApi(ofertaSalva);
-
     await carregarOfertasApi();
 
     fecharModalOferta();
 
     alert("Oferta salva com sucesso!");
 
-  }catch(erro){
+  } catch (erro) {
     console.error("Erro ao salvar oferta:", erro);
     alert("Erro ao salvar oferta no Supabase.");
   }
