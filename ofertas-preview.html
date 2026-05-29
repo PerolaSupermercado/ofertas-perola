@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0">
+
+  <!-- SEO -->
+  <title>Ofertas Pérola Supermercado</title>
+
+  <meta
+    name="description"
+    content="Confira as promoções disponíveis no Pérola Supermercado.">
+
+  <!-- OPEN GRAPH / WHATSAPP -->
+  <meta
+    property="og:title"
+    content="Ofertas Pérola Supermercado">
+
+  <meta
+    property="og:description"
+    content="Confira as promoções disponíveis no Pérola Supermercado.">
+
+  <meta
+    property="og:image"
+    content="https://ofertas-perola.vercel.app/img/preview-whatsapp.jpg">
+
+  <meta
+    property="og:url"
+    content="https://ofertas-perola.vercel.app/">
+
+  <meta
+    property="og:type"
+    content="website">
+
+  <!-- TWITTER / X -->
+  <meta
+    name="twitter:card"
+    content="summary_large_image">
+
+  <meta
+    name="twitter:title"
+    content="Ofertas Pérola Supermercado">
+
+  <meta
+    name="twitter:description"
+    content="Confira as promoções disponíveis no Pérola Supermercado.">
+
+  <meta
+    name="twitter:image"
+    content="https://ofertas-perola.vercel.app/img/preview-whatsapp.jpg">
+
+  <!-- FAVICON -->
+  <link
+    rel="icon"
+    type="image/png"
+    href="img/favicon-perola.png">
+
+  <!-- ÍCONES -->
+  <link
+    rel="stylesheet"
+    href="https://cdn-uicons.flaticon.com/uicons-brands/css/uicons-brands.css">
+
+  <link
+    rel="stylesheet"
+    href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css">
+
+  <!-- CSS -->
+  <link
+    rel="stylesheet"
+    href="style.css">
+
+<!-- GOOGLE ANALYTICS -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-MEQ6CND5PB"></script>
+
+<script>
+  window.dataLayer = window.dataLayer || [];
+
+  function gtag() {
+    dataLayer.push(arguments);
+  }
+
+  gtag("js", new Date());
+
+  gtag("config", "G-MEQ6CND5PB");
+</script>
+
+</head>
+
+<body>
+
+  <!-- BANNER -->
+  <img
+    class="banner-topo"
+    id="bannerTopo"
+    src=""
+    alt="Banner">
+
+  <!-- HEADER -->
+  <header>
+
+    <h1 id="tituloSite"></h1>
+
+    <p id="subtituloSite"></p>
+
+  </header>
+
+  <!-- ABAS -->
+  <nav
+    class="abas"
+    id="abas"></nav>
+
+  <!-- CONTEÚDO -->
+  <main class="container">
+
+    <h2
+      class="titulo-categoria"
+      id="tituloCategoria"></h2>
+
+    <!-- CARROSSEL -->
+    <section class="carrossel">
+
+      <button
+        class="seta seta-esquerda"
+        id="btnAnterior">
+
+        ‹
+
+      </button>
+
+      <img
+     class="pagina"
+     id="imagemOferta"
+     src=""
+     alt="Oferta"
+     loading="lazy"
+     decoding="async">
+
+      <button
+        class="seta seta-direita"
+        id="btnProximo">
+
+        ›
+
+      </button>
+
+    </section>
+
+    <!-- CONTADOR -->
+    <div
+      class="contador"
+      id="contador"></div>
+
+      <p class="dica-swipe">
+      Arraste para o lado para ver mais ofertas
+      </p>
+
+    <!-- MINIATURAS -->
+    <div
+      class="miniaturas"
+      id="miniaturas"></div>
+
+    <!-- SEM OFERTAS -->
+    <div
+  id="semOfertas"
+  class="sem-ofertas">
+
+  <div class="sem-ofertas-icone">
+    🛒
+  </div>
+
+  <h3>
+    Novas ofertas em breve!
+  </h3>
+
+  <p>
+    No momento não temos ofertas ativas nesta categoria.
+    Entre no nosso grupo e receba as próximas promoções em primeira mão.
+  </p>
+
+  <a
+    class="sem-ofertas-botao"
+    id="linkSemOfertas"
+    href="#"
+    target="_blank">
+
+    Entrar no grupo de ofertas
+
+  </a>
+
+</div>
+
+    <!-- AÇÕES -->
+    <div class="acoes">
+
+      <button
+      class="btn-compartilhar"
+      onclick="compartilharSite()">
+
+     Compartilhar ofertas
+
+      </button>
+
+    </div>
+
+    <!-- TEXTOS LEGAIS -->
+    <div class="textos-legais">
+
+      <p>
+        <strong>Ofertas válidas</strong>
+        enquanto durarem os estoques.
+      </p>
+
+      <p>
+        Imagens meramente ilustrativas.
+        Os preços, condições e produtos podem variar conforme disponibilidade da loja.
+      </p>
+
+      <p>
+        Em caso de divergência de valores,
+        prevalecerá o preço praticado na loja física no momento da compra.
+      </p>
+
+      <p>
+        A venda e o consumo de bebidas alcoólicas são proibidos para menores de 18 anos.
+        Se beber, não dirija.
+      </p>
+
+    </div>
+
+  </main>
+
+  <!-- GRUPO FLUTUANTE -->
+  <div
+  class="grupo-flutuante"
+  id="grupoFlutuante">
+
+  <button
+    class="grupo-flutuante-fechar"
+    id="btnMinimizarGrupo"
+    aria-label="Minimizar grupo">
+
+    ×
+
+  </button>
+
+  <div class="grupo-flutuante-conteudo">
+
+    <div class="grupo-flutuante-titulo">
+      🔥 NÃO PERCA NENHUMA OFERTA!
+    </div>
+
+    <div class="grupo-flutuante-subtitulo">
+      Receba em primeira mão as melhores promoções da semana.
+    </div>
+
+    <a
+      class="grupo-flutuante-botao"
+      id="linkGrupoFlutuante"
+      href="#"
+      target="_blank">
+
+      Entrar no grupo
+
+    </a>
+
+  </div>
+
+  <button
+    class="grupo-flutuante-mini"
+    id="btnAbrirGrupo"
+    aria-label="Abrir grupo de ofertas">
+
+    <span class="grupo-mini-icone">🔥</span>
+    <span class="grupo-mini-texto">Não perca as Melhores Ofertas</span>
+
+  </button>
+
+</div>
+
+  <!-- MODAL ZOOM -->
+  <div
+    class="modal-zoom"
+    id="modalZoom">
+
+    <button
+      class="fechar-zoom"
+      id="btnFecharZoom">
+
+      ×
+
+    </button>
+
+    <div class="zoom-controles">
+
+      <button id="btnMenosZoom">−</button>
+
+      <button id="btnResetZoom">
+        Redefinir
+      </button>
+
+      <button id="btnMaisZoom">+</button>
+
+      <button id="btnTelaCheia">
+        Tela cheia
+      </button>
+
+    </div>
+
+    <img
+      id="imagemZoom"
+      src=""
+      alt="Imagem ampliada"
+      loading="lazy"
+      decoding="async">
+
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+
+    <div class="footer-container">
+
+      <img
+        class="footer-logo"
+        src="img/logo-perola-footer.png"
+        alt="Pérola Supermercado">
+
+      <div class="footer-divisor">
+
+        <div class="footer-linha"></div>
+
+        <div class="footer-bolinha"></div>
+
+        <div class="footer-linha"></div>
+
+      </div>
+
+      <div class="footer-redes">
+
+        <a
+          href="https://www.instagram.com/supermercadoperola/"
+          target="_blank"
+          aria-label="Instagram">
+
+          <i class="fi fi-brands-instagram"></i>
+
+        </a>
+
+        <a
+          href="https://wa.me/5562998660725"
+          target="_blank"
+          aria-label="WhatsApp">
+
+          <i class="fi fi-brands-whatsapp"></i>
+
+        </a>
+
+      </div>
+
+      <div class="footer-texto">
+
+        © 2026
+        <strong>Pérola Distribuição e Logística S/A</strong>
+
+        <br>
+
+        Todos os direitos reservados.
+
+      </div>
+
+    </div>
+
+  </footer>
+
+  <!-- BOTÃO VOLTAR AO TOPO -->
+<button
+  class="btn-topo"
+  id="btnTopo"
+  aria-label="Voltar ao topo">
+
+  ↑
+
+</button>
+
+<!-- CONFIG -->
+<script src="config.js"></script>
+
+<!-- SCRIPT -->
+<script src="script-preview.js"></script>
+
+</body>
+
+</html>
