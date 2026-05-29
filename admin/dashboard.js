@@ -424,11 +424,30 @@ async function adicionarImagens(arquivos) {
   for (const arquivo of novosArquivos) {
     const base64 = await arquivoParaBase64(arquivo);
 
-    imagensSelecionadas.push({
-      nome: arquivo.name,
-      url: base64
+    const resposta = await fetch(API_UPLOAD, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        arquivoBase64: base64,
+        nomeArquivo: arquivo.name
+      })
     });
+
+    const dados = await resposta.json();
+
+    if (!resposta.ok) {
+      alert("Erro ao enviar imagem.");
+      console.error(dados);
+      continue;
+    }
+
+    imagensSelecionadas.push(dados.url);
   }
+
+  renderizarPreviewImagens();
+}
 
   renderizarPreviewImagens();
 }
