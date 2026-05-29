@@ -493,3 +493,29 @@ textarea:focus{
     gap:10px;
   }
 }
+
+.toast{
+  position:fixed;
+  right:24px;
+  bottom:24px;
+  background:#198754;
+  color:white;
+  padding:14px 18px;
+  border-radius:12px;
+  font-weight:bold;
+  box-shadow:0 10px 30px rgba(0,0,0,.22);
+  opacity:0;
+  transform:translateY(20px);
+  pointer-events:none;
+  transition:.25s;
+  z-index:9999;
+}
+
+.toast.ativo{
+  opacity:1;
+  transform:translateY(0);
+}
+
+.toast.erro{
+  background:#dc3545;
+}
