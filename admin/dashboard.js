@@ -177,6 +177,30 @@ function atualizarCards() {
   document.getElementById("encerradas").textContent = status.filter(item => item === "Encerrada").length;
 }
 
+function gerarBadgePublicacao(oferta) {
+  if (oferta.ativo === false) {
+    return `
+      <span class="publicacao-badge desativada">
+        Desativada
+      </span>
+    `;
+  }
+
+  if (oferta.ocultar === true) {
+    return `
+      <span class="publicacao-badge oculta">
+        Oculta
+      </span>
+    `;
+  }
+
+  return `
+    <span class="publicacao-badge publicada">
+      Publicada
+    </span>
+  `;
+}
+
 function gerarLinhaOferta(oferta, index, modoDashboard = false) {
   const statusAtual = calcularStatus(
     oferta.inicioOriginal,
@@ -230,13 +254,23 @@ function gerarLinhaOferta(oferta, index, modoDashboard = false) {
         </span>
       </td>
 
-      <td>
-        <span class="tipo-badge ${tipoAtual}">
-          ${tipoAtual === "banner" ? "Banner" : "Oferta"}
-        </span>
-      </td>
+     <td>
+  <span class="tipo-badge ${tipoAtual}">
+    ${tipoAtual === "banner" ? "Banner" : "Oferta"}
+  </span>
+</td>
 
-      <td>${oferta.prioridade || 999}</td>
+<td>
+  ${gerarBadgePublicacao(oferta)}
+</td>
+
+<td>
+  <span class="qtd-imagens">
+    ${(oferta.imagens || []).length}
+  </span>
+</td>
+
+<td>${oferta.prioridade || 999}</td>
       <td>${oferta.inicio}</td>
       <td>${oferta.fim}</td>
 
