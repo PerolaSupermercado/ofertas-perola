@@ -6,11 +6,9 @@
 
 <title>Teste Supabase</title>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <style>
 body{
-  font-family:Arial, sans-serif;
+  font-family: Arial, sans-serif;
   padding:30px;
 }
 
@@ -21,6 +19,7 @@ pre{
   overflow:auto;
 }
 </style>
+
 </head>
 <body>
 
@@ -32,23 +31,23 @@ Conectando...
 
 <pre id="resultado"></pre>
 
-<script>
+<script type="module">
 
-const SUPABASE_URL = "https://givlthpzaqnjsetsdjmn.supabase.co";
-const SUPABASE_ANON_KEY = "sb_publishable_vV7JQMjvV1V6o9je46IN8A_sPWOjIHj";
+import { createClient }
+from "https://esm.sh/@supabase/supabase-js@2";
 
-const clienteSupabase =
-  window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_ANON_KEY
-  );
+const SUPABASE_URL =
+"https://givlthpzaqnjsetsdjmn.supabase.co";
+
+const SUPABASE_ANON_KEY =
+"sb_publishable_vV7JQMjvV1V6o9je46IN8A_sPWOjIHj";
+
+const supabase = createClient(
+  SUPABASE_URL,
+  SUPABASE_ANON_KEY
+);
 
 async function testar() {
-
-  const { data, error } =
-  await clienteSupabase
-    .from("ofertas_configuracoes")
-    .select("*");
 
   const status =
     document.getElementById("status");
@@ -56,23 +55,33 @@ async function testar() {
   const resultado =
     document.getElementById("resultado");
 
-  if(error){
+  try {
+
+    const { data, error } =
+      await supabase
+        .from("ofertas_configuracoes")
+        .select("*");
+
+    if (error) {
+      throw error;
+    }
+
+    status.innerHTML =
+      "✅ Conectado ao Supabase";
+
+    resultado.textContent =
+      JSON.stringify(data, null, 2);
+
+  } catch (erro) {
 
     status.innerHTML =
       "❌ Erro de conexão";
 
     resultado.textContent =
-      JSON.stringify(error, null, 2);
+      JSON.stringify(erro, null, 2);
 
-    return;
+    console.error(erro);
   }
-
-  status.innerHTML =
-    "✅ Conectado ao Supabase";
-
-  resultado.textContent =
-    JSON.stringify(data, null, 2);
-
 }
 
 testar();
