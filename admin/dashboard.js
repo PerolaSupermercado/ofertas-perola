@@ -724,9 +724,7 @@ btnSalvarConfiguracoes.addEventListener(
 function abrirPreviewOferta(index) {
   const oferta = ofertas[index];
 
-  const slug = oferta.slug || gerarSlug(oferta.titulo);
-
-  const url = `/ofertas-preview.html?oferta=${encodeURIComponent(slug)}`;
+  const url = `/ofertas-preview.html?id=${encodeURIComponent(oferta.id)}`;
 
   window.open(url, "_blank");
 }
