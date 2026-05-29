@@ -186,6 +186,10 @@ async function carregarDadosDaApi() {
     throw new Error("Erro ao carregar ofertas");
   }
 
+  const parametros = new URLSearchParams(window.location.search);
+  const idPreview = parametros.get("id");
+  const slugPreview = parametros.get("oferta");
+
   const ofertas = {};
   let banner = "";
 
@@ -200,16 +204,19 @@ async function carregarDadosDaApi() {
     const prioridade = Number(item.prioridade || 999);
     const cor = item.cor || "";
 
-    if (!ativo) return;
-    if (ocultar) return;
-    if (!inicio || !fim) return;
+    const ehPreviewDireto =
+      (idPreview && String(item.id) === String(idPreview)) ||
+      (slugPreview && String(item.slug) === String(slugPreview));
 
-    if (!estaDentroDoPeriodo(inicio, fim)) {
-      return;
+    if (!ehPreviewDireto) {
+      if (!ativo) return;
+      if (ocultar) return;
+      if (!inicio || !fim) return;
+      if (!estaDentroDoPeriodo(inicio, fim)) return;
     }
 
     if (tipo === "banner") {
-      if (imagens.length > 0) {
+      if (imagens.length > 0 && !banner) {
         banner = imagens[0];
       }
 
@@ -221,14 +228,14 @@ async function carregarDadosDaApi() {
     }
 
     ofertas[categoria] = {
-  id: item.id,
-  slug: item.slug,
-  inicio,
-  fim,
-  imagens,
-  prioridade,
-  cor
-};
+      id: item.id,
+      slug: item.slug,
+      inicio,
+      fim,
+      imagens,
+      prioridade,
+      cor
+    };
   });
 
   const ofertasOrdenadas = Object.entries(ofertas)
@@ -1019,6 +1026,22 @@ function abrirOfertaPelaUrl() {
     paginaAtual = 0;
     return;
   }
+
+  const ofertaEncontrada = nomesOfertas.find((nomeOferta) => {
+    const oferta = OFERTAS_ATIVAS[nomeOferta];
+
+    const mesmoId =
+      idQuery && String(oferta.id) === String(idQuery);
+
+    const mesmoSlug =
+      slugQuery && String(oferta.slug) === String(slugQuery);
+
+    return mesmoId || mesmoSlug;
+  });
+
+  categoriaAtual = ofertaEncontrada || nomesOfertas[0];
+  paginaAtual = 0;
+}
 
   const ofertaEncontrada = nomesOfertas.find((nomeOferta) => {
     const oferta = OFERTAS_ATIVAS[nomeOferta];
