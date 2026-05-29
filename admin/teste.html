@@ -37,7 +37,7 @@ Conectando...
 const SUPABASE_URL = "COLE_AQUI_SUA_URL";
 const SUPABASE_ANON_KEY = "COLE_AQUI_SUA_PUBLISHABLE_KEY";
 
-const supabase =
+const clienteSupabase =
   window.supabase.createClient(
     SUPABASE_URL,
     SUPABASE_ANON_KEY
@@ -46,9 +46,9 @@ const supabase =
 async function testar() {
 
   const { data, error } =
-    await supabase
-      .from("ofertas_configuracoes")
-      .select("*");
+  await clienteSupabase
+    .from("ofertas_configuracoes")
+    .select("*");
 
   const status =
     document.getElementById("status");
