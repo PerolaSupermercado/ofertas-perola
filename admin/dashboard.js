@@ -1,5 +1,6 @@
 const API_OFERTAS = "/api/ofertas";
 const API_CONFIGURACOES = "/api/configuracoes";
+const API_UPLOAD = "/api/upload";
 const CHAVE_CONFIG = "configuracoesOfertasPerola";
 
 let ofertas = [];
