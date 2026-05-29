@@ -35,6 +35,10 @@ const uploadArea = document.getElementById("uploadArea");
 const imagensOferta = document.getElementById("imagensOferta");
 const previewImagens = document.getElementById("previewImagens");
 
+const buscaOferta = document.getElementById("buscaOferta");
+const filtroStatus = document.getElementById("filtroStatus");
+const filtroTipo = document.getElementById("filtroTipo");
+
 const camposConfig = {
   tituloSite: document.getElementById("configTituloSite"),
   subtituloSite: document.getElementById("configSubtituloSite"),
@@ -237,12 +241,16 @@ function gerarLinhaOferta(oferta, index, modoDashboard = false) {
 
       <td>
         <button class="btn-editar" onclick="editarOferta(${index})">
-          Editar
-        </button>
+  Editar
+</button>
 
-        <button class="btn-excluir" onclick="excluirOferta(${index})">
-          Excluir
-        </button>
+<button class="btn-duplicar" onclick="duplicarOferta(${index})">
+  Duplicar
+</button>
+
+<button class="btn-excluir" onclick="excluirOferta(${index})">
+  Excluir
+</button>
       </td>
     </tr>
   `;
@@ -254,12 +262,52 @@ function renderizarOfertas() {
   listaOfertas.innerHTML = "";
   listaOfertasDashboard.innerHTML = "";
 
-  ofertas.forEach((oferta, index) => {
-    listaOfertas.innerHTML += gerarLinhaOferta(oferta, index, false);
+  const termoBusca = buscaOferta
+    ? buscaOferta.value.trim().toLowerCase()
+    : "";
 
-    if (index < 5) {
-      listaOfertasDashboard.innerHTML += gerarLinhaOferta(oferta, index, true);
-    }
+  const statusSelecionado = filtroStatus
+    ? filtroStatus.value
+    : "todos";
+
+  const tipoSelecionado = filtroTipo
+    ? filtroTipo.value
+    : "todos";
+
+  const ofertasFiltradas = ofertas.filter((oferta) => {
+    const statusAtual = calcularStatus(
+      oferta.inicioOriginal,
+      oferta.fimOriginal,
+      oferta.ativo
+    );
+
+    const tipoAtual = oferta.tipo || "oferta";
+
+    const passaBusca =
+      !termoBusca ||
+      String(oferta.titulo || "").toLowerCase().includes(termoBusca);
+
+    const passaStatus =
+      statusSelecionado === "todos" ||
+      statusSelecionado === statusAtual;
+
+    const passaTipo =
+      tipoSelecionado === "todos" ||
+      tipoSelecionado === tipoAtual;
+
+    return passaBusca && passaStatus && passaTipo;
+  });
+
+  ofertasFiltradas.forEach((oferta) => {
+    const indexReal = ofertas.indexOf(oferta);
+
+    listaOfertas.innerHTML += gerarLinhaOferta(oferta, indexReal, false);
+  });
+
+  ofertas.slice(0, 5).forEach((oferta) => {
+    const indexReal = ofertas.indexOf(oferta);
+
+    listaOfertasDashboard.innerHTML += gerarLinhaOferta(oferta, indexReal, true);
   });
 
   atualizarCards();
@@ -592,6 +640,55 @@ btnSalvarConfiguracoes.addEventListener(
   "click",
   salvarConfiguracoesPainel
 );
+
+async function duplicarOferta(index) {
+  const ofertaOriginal = ofertas[index];
+
+  const confirmar = confirm(
+    "Deseja duplicar a oferta: " + ofertaOriginal.titulo + "?"
+  );
+
+  if (!confirmar) {
+    return;
+  }
+
+  const copia = {
+    titulo: ofertaOriginal.titulo + " - Cópia",
+    slug: gerarSlug(ofertaOriginal.titulo + "-copia-" + Date.now()),
+    tipo: ofertaOriginal.tipo || "oferta",
+    ativo: false,
+    ocultar: true,
+    inicioOriginal: ofertaOriginal.inicioOriginal,
+    fimOriginal: ofertaOriginal.fimOriginal,
+    inicio: ofertaOriginal.inicio,
+    fim: ofertaOriginal.fim,
+    prioridade: Number(ofertaOriginal.prioridade || 999) + 1,
+    cor: ofertaOriginal.cor || "#c40000",
+    imagens: ofertaOriginal.imagens || []
+  };
+
+  try {
+    await salvarOfertaApi(copia);
+    await carregarOfertasApi();
+
+    alert("Oferta duplicada com sucesso!");
+  } catch (erro) {
+    console.error("Erro ao duplicar oferta:", erro);
+    alert("Erro ao duplicar oferta.");
+  }
+}
+
+if (buscaOferta) {
+  buscaOferta.addEventListener("input", renderizarOfertas);
+}
+
+if (filtroStatus) {
+  filtroStatus.addEventListener("change", renderizarOfertas);
+}
+
+if (filtroTipo) {
+  filtroTipo.addEventListener("change", renderizarOfertas);
+}
 
 carregarConfiguracoesApi();
 carregarOfertasApi();
