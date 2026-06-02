@@ -37,132 +37,49 @@ async function verificarLoginAdmin() {
 
   loginAdmin.classList.remove("oculto");
 
-  return new Promise((resolve) => {
-    formLoginAdmin.onsubmit = async (evento) => {
-      evento.preventDefault();
+return new Promise((resolve) => {
+  formLoginAdmin.onsubmit = async function(evento) {
+    evento.preventDefault();
 
-      const senha = senhaAdmin.value;
+    const senha = senhaAdmin.value;
 
-      if (senha === "") {
-        mostrarErroLogin("Digite a senha para continuar.");
+    if (senha === "") {
+      mostrarErroLogin("Digite a senha para continuar.");
+      return;
+    }
+
+    try {
+      const resposta = await fetch(API_AUTH, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          senha: senha
+        })
+      });
+
+      const dados = await resposta.json();
+
+      if (!resposta.ok) {
+        mostrarErroLogin(dados.erro || "Senha incorreta.");
+        senhaAdmin.value = "";
+        senhaAdmin.focus();
         return;
       }
 
-      try {
-        const resposta = await fetch(API_AUTH, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            senha: senha
-          })
-        });
+      sessionStorage.setItem(TOKEN_ADMIN_KEY, dados.token);
 
-        const dados = await resposta.json();
+      loginAdmin.classList.add("oculto");
 
-        if (!resposta.ok) {
-          mostrarErroLogin(dados.erro || "Senha incorreta.");
-          senhaAdmin.value = "";
-          senhaAdmin.focus();
-          return;
-        }
+      resolve(true);
 
-        sessionStorage.setItem(TOKEN_ADMIN_KEY, dados.token);
-
-        loginAdmin.classList.add("oculto");
-
-        resolve(true);
-
-      } catch (erro) {
-        console.error("Erro no login:", erro);
-        mostrarErroLogin("Erro ao conectar com o login.");
-      }
-    };
-  });
-}
-
-  return new Promise((resolve) => {
-    const formLoginAdmin = document.getElementById("formLoginAdmin");
-    const senhaAdmin = document.getElementById("senhaAdmin");
-
-    formLoginAdmin.addEventListener("submit", async (evento) => {
-      evento.preventDefault();
-
-      const senha = senhaAdmin.value;
-
-if (!senha) {
-  mostrarErroLogin("Digite a senha para continuar.");
-  return;
-}
-
-      try {
-        const resposta = await fetch(API_AUTH, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            senha
-          })
-        });
-
-        const dados = await resposta.json();
-
-        if (!resposta.ok) {
-          mostrarErroLogin(dados.erro || "Senha incorreta.");
-          senhaAdmin.value = "";
-          senhaAdmin.focus();
-          return;
-        }
-
-        sessionStorage.setItem(TOKEN_ADMIN_KEY, dados.token);
-
-        loginAdmin.classList.add("oculto");
-
-        resolve(true);
-
-      } catch (erro) {
-        console.error("Erro no login:", erro);
-        mostrarErroLogin("Erro ao fazer login. Tente novamente.");
-      }
-    });
-  });
-}
-
-  const senha = prompt("Digite a senha do painel administrativo:");
-
-  if (!senha) {
-    document.body.innerHTML =
-      "<h2 style='font-family:Arial;padding:30px'>Acesso não autorizado.</h2>";
-
-    return false;
-  }
-
-  const resposta = await fetch(API_AUTH, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      senha
-    })
-  });
-
-  const dados = await resposta.json();
-
-  if (!resposta.ok) {
-    alert(dados.erro || "Senha incorreta.");
-
-    document.body.innerHTML =
-      "<h2 style='font-family:Arial;padding:30px'>Acesso não autorizado.</h2>";
-
-    return false;
-  }
-
-  sessionStorage.setItem(TOKEN_ADMIN_KEY, dados.token);
-
-  return true;
+    } catch (erro) {
+      console.error("Erro no login:", erro);
+      mostrarErroLogin("Erro ao conectar com o login.");
+    }
+  };
+});
 }
 
 let ofertas = [];
