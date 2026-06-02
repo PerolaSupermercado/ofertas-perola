@@ -1438,3 +1438,88 @@ textarea:focus{
     grid-column:auto;
   }
 }
+
+/* ===============================
+   GALERIA DE PÁGINAS - DETALHES
+================================ */
+
+.galeria-paginas{
+  margin:-4px 0 18px;
+}
+
+.galeria-paginas-topo{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  margin-bottom:10px;
+}
+
+.galeria-paginas-topo strong{
+  font-size:14px;
+  color:#1c1e21;
+}
+
+.galeria-paginas-topo span{
+  font-size:12px;
+  color:#65676b;
+}
+
+.galeria-paginas-lista{
+  display:flex;
+  gap:10px;
+  overflow-x:auto;
+  padding:2px 2px 8px;
+}
+
+.galeria-pagina{
+  position:relative;
+  width:58px;
+  height:76px;
+  flex:0 0 auto;
+  border:2px solid transparent;
+  background:#f2f3f5;
+  border-radius:12px;
+  overflow:hidden;
+  cursor:pointer;
+  padding:0;
+  transition:.16s;
+}
+
+.galeria-pagina:hover{
+  transform:translateY(-2px);
+  border-color:#d6dbe1;
+}
+
+.galeria-pagina.ativa{
+  border-color:#b30000;
+  box-shadow:0 6px 16px rgba(179,0,0,.18);
+}
+
+.galeria-pagina img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+
+.galeria-pagina span{
+  position:absolute;
+  top:4px;
+  left:4px;
+  min-width:20px;
+  height:20px;
+  padding:0 6px;
+  border-radius:999px;
+  background:rgba(0,0,0,.72);
+  color:white;
+  font-size:11px;
+  font-weight:bold;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.detalhe-capa img{
+  transition:.18s;
+}
