@@ -568,7 +568,8 @@ function gerarGaleriaPaginasOferta(oferta) {
             <button
               type="button"
               class="galeria-pagina ${index === 0 ? "ativa" : ""}"
-              onclick="trocarImagemDetalheOferta('${imagem}', this)">
+             data-imagem="${imagem}"
+onclick="trocarImagemDetalheOferta(this)"
 
               <img
                 src="${imagem}"
@@ -582,6 +583,28 @@ function gerarGaleriaPaginasOferta(oferta) {
       </div>
     </div>
   `;
+}
+
+function trocarImagemDetalheOferta(botaoClicado) {
+  const imagemDetalhe = document.getElementById("imagemDetalheOferta");
+
+  if (!imagemDetalhe || !botaoClicado) {
+    return;
+  }
+
+  const urlImagem = botaoClicado.getAttribute("data-imagem");
+
+  if (!urlImagem) {
+    return;
+  }
+
+  imagemDetalhe.src = urlImagem;
+
+  document
+    .querySelectorAll(".galeria-pagina")
+    .forEach(botao => botao.classList.remove("ativa"));
+
+  botaoClicado.classList.add("ativa");
 }
 
 function renderizarDetalhesOferta(index) {
