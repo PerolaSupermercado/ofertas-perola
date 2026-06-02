@@ -29,11 +29,14 @@ async function verificarLoginAdmin() {
   const loginAdmin = document.getElementById("loginAdmin");
   const formLoginAdmin = document.getElementById("formLoginAdmin");
   const senhaAdmin = document.getElementById("senhaAdmin");
+  const layoutAdmin = document.getElementById("layoutAdmin");
 
   if (token) {
-    loginAdmin.classList.add("oculto");
-    return true;
-  }
+  loginAdmin.classList.add("oculto");
+  layoutAdmin.classList.remove("painel-bloqueado");
+  layoutAdmin.classList.add("painel-liberado");
+  return true;
+}
 
   loginAdmin.classList.remove("oculto");
 
@@ -70,9 +73,11 @@ return new Promise((resolve) => {
 
       sessionStorage.setItem(TOKEN_ADMIN_KEY, dados.token);
 
-      loginAdmin.classList.add("oculto");
+     loginAdmin.classList.add("oculto");
+layoutAdmin.classList.remove("painel-bloqueado");
+layoutAdmin.classList.add("painel-liberado");
 
-      resolve(true);
+resolve(true);
 
     } catch (erro) {
       console.error("Erro no login:", erro);
