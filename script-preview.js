@@ -146,6 +146,12 @@ function aplicarPlaceholderNaImagem(elemento) {
   };
 }
 
+function registrarEventoAnalytics(nomeEvento, parametros = {}) {
+  if (typeof gtag === "function") {
+    gtag("event", nomeEvento, parametros);
+  }
+}
+
 /* =========================================
    CARREGAR DADOS DA API
 ========================================= */
@@ -456,6 +462,11 @@ function atualizarCarrossel() {
   atualizarSetas(imagens);
   criarMiniaturas(imagens);
   preCarregarImagens(imagens);
+   registrarEventoAnalytics("oferta_aberta", {
+  oferta: categoriaAtual,
+  slug: oferta.slug || "",
+  quantidade_paginas: imagens.length
+});
 }
 
 /* =========================================
