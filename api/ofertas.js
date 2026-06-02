@@ -57,7 +57,6 @@ async function consultarSupabase(url, opcoes = {}) {
 async function uploadImagem(imagem, ofertaId, index) {
   const extensao = getExtensao(imagem.url, imagem.nome);
   const nomeArquivo = `${ofertaId}/${Date.now()}-${index}.${extensao}`;
-
   const buffer = base64ParaBuffer(imagem.url);
 
   const respostaUpload = await fetch(
@@ -91,6 +90,15 @@ export default async function handler(req, res) {
       });
     }
 
+    if (
+      ["POST", "PUT", "DELETE"].includes(req.method) &&
+      !tokenAdminValido(req)
+    ) {
+      return resposta(res, 401, {
+        erro: "Acesso não autorizado."
+      });
+    }
+
     if (req.method === "GET") {
       const ofertas = await consultarSupabase(
         `${SUPABASE_URL}/rest/v1/ofertas_items?select=*&order=prioridade.asc`
@@ -100,29 +108,6 @@ export default async function handler(req, res) {
         `${SUPABASE_URL}/rest/v1/ofertas_imagens?select=*&order=ordem.asc`
       );
 
-      if (!Array.isArray(ofertas)) {
-        return resposta(res, 500, {
-          erro: "Resposta de ofertas_items não veio como lista.",
-          retorno: ofertas
-        });
-      }
-
-      if (!Array.isArray(imagens)) {
-        return resposta(res, 500, {
-          erro: "Resposta de ofertas_imagens não veio como lista.",
-          retorno: imagens
-        });
-      }
-
-      if (
-  ["POST", "PUT", "DELETE"].includes(req.method) &&
-  !tokenAdminValido(req)
-) {
-  return resposta(res, 401, {
-    erro: "Acesso não autorizado."
-  });
-}
-   
       const resultado = ofertas.map((oferta) => {
         return {
           id: oferta.id,
@@ -146,73 +131,73 @@ export default async function handler(req, res) {
       return resposta(res, 200, resultado);
     }
 
-if (req.method === "PUT") {
-  const oferta = req.body;
+    if (req.method === "PUT") {
+      const oferta = req.body;
 
-  if (!oferta.id) {
-    return resposta(res, 400, {
-      erro: "ID da oferta não informado."
-    });
-  }
-
-  await consultarSupabase(
-    `${SUPABASE_URL}/rest/v1/ofertas_items?id=eq.${oferta.id}`,
-    {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        titulo: oferta.titulo,
-        slug: oferta.slug,
-        tipo: oferta.tipo,
-        ativo: oferta.ativo,
-        ocultar: oferta.ocultar,
-        data_inicio: oferta.inicioOriginal,
-        data_fim: oferta.fimOriginal,
-        prioridade: Number(oferta.prioridade || 999),
-        cor: oferta.cor
-      })
-    }
-  );
-  
-  await consultarSupabase(
-    `${SUPABASE_URL}/rest/v1/ofertas_imagens?oferta_id=eq.${oferta.id}`,
-    {
-      method: "DELETE"
-    }
-  );
-
-  for (let i = 0; i < oferta.imagens.length; i++) {
-    const imagem = oferta.imagens[i];
-
-    let urlImagem = typeof imagem === "string" ? imagem : imagem.url;
-
-    if (urlImagem.startsWith("data:image")) {
-      urlImagem = await uploadImagem(imagem, oferta.id, i);
-    }
-
-    await consultarSupabase(
-      `${SUPABASE_URL}/rest/v1/ofertas_imagens`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          oferta_id: oferta.id,
-          imagem_url: urlImagem,
-          ordem: i
-        })
+      if (!oferta.id) {
+        return resposta(res, 400, {
+          erro: "ID da oferta não informado."
+        });
       }
-    );
-  }
 
-  return resposta(res, 200, {
-    sucesso: true
-  });
-}
-    
+      await consultarSupabase(
+        `${SUPABASE_URL}/rest/v1/ofertas_items?id=eq.${oferta.id}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            titulo: oferta.titulo,
+            slug: oferta.slug,
+            tipo: oferta.tipo,
+            ativo: oferta.ativo,
+            ocultar: oferta.ocultar,
+            data_inicio: oferta.inicioOriginal,
+            data_fim: oferta.fimOriginal,
+            prioridade: Number(oferta.prioridade || 999),
+            cor: oferta.cor
+          })
+        }
+      );
+
+      await consultarSupabase(
+        `${SUPABASE_URL}/rest/v1/ofertas_imagens?oferta_id=eq.${oferta.id}`,
+        {
+          method: "DELETE"
+        }
+      );
+
+      for (let i = 0; i < oferta.imagens.length; i++) {
+        const imagem = oferta.imagens[i];
+
+        let urlImagem = typeof imagem === "string" ? imagem : imagem.url;
+
+        if (urlImagem.startsWith("data:image")) {
+          urlImagem = await uploadImagem(imagem, oferta.id, i);
+        }
+
+        await consultarSupabase(
+          `${SUPABASE_URL}/rest/v1/ofertas_imagens`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              oferta_id: oferta.id,
+              imagem_url: urlImagem,
+              ordem: i
+            })
+          }
+        );
+      }
+
+      return resposta(res, 200, {
+        sucesso: true
+      });
+    }
+
     if (req.method === "POST") {
       const oferta = req.body;
 
@@ -271,6 +256,19 @@ if (req.method === "PUT") {
     }
 
     if (req.method === "DELETE") {
+      const { id } = req.query;
+
+      await consultarSupabase(
+        `${SUPABASE_URL}/rest/v1/ofertas_items?id=eq.${id}`,
+        {
+          method: "DELETE"
+        }
+      );
+
+      return resposta(res, 200, {
+        sucesso: true
+      });
+    }
 
     return resposta(res, 405, {
       erro: "Método não permitido"
