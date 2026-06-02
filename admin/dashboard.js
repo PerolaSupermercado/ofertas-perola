@@ -92,9 +92,7 @@ async function salvarOfertaApi(oferta) {
 
   const resposta = await fetch(API_OFERTAS, {
     method: metodo,
-    headers: {
-      "Content-Type": "application/json"
-    },
+    headers: headersAdmin(),
     body: JSON.stringify(oferta)
   });
 
@@ -440,8 +438,11 @@ async function excluirOferta(index) {
 
   try {
     const resposta = await fetch(`${API_OFERTAS}?id=${oferta.id}`, {
-      method: "DELETE"
-    });
+  method: "DELETE",
+  headers: {
+    "x-admin-token": obterTokenAdmin()
+  }
+});
 
     const dados = await resposta.json();
 
@@ -478,9 +479,7 @@ async function adicionarImagens(arquivos) {
 
     const resposta = await fetch(API_UPLOAD, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
+      headers: headersAdmin(),
       body: JSON.stringify({
         arquivoBase64: base64,
         nomeArquivo: arquivo.name
@@ -605,9 +604,7 @@ async function salvarConfiguracoesPainel() {
         API_CONFIGURACOES,
         {
           method: "PUT",
-          headers: {
-            "Content-Type": "application/json"
-          },
+          headers: headersAdmin(),
           body: JSON.stringify(
             configuracaoAtualizada
           )
