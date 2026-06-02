@@ -253,12 +253,14 @@ async function carregarDadosDaPlanilha() {
     }
 
     ofertas[categoria] = {
-      inicio,
-      fim,
-      imagens,
-      prioridade,
-      cor
-    };
+  id: item.id,
+  slug: item.slug,
+  inicio,
+  fim,
+  imagens,
+  prioridade,
+  cor
+};
   });
 
   const ofertasOrdenadas = Object.entries(ofertas)
@@ -1035,24 +1037,29 @@ btnTopo.addEventListener(
 );
 
 function abrirOfertaPelaUrl() {
-  const slugUrl = window.location.pathname.replace("/", "").trim();
+  const slugUrl = window.location.pathname
+    .replace(/^\/+|\/+$/g, "")
+    .trim();
+
+  const nomesOfertas = Object.keys(OFERTAS_ATIVAS);
 
   if (!slugUrl) {
-    categoriaAtual = Object.keys(OFERTAS_ATIVAS)[0];
-    return;
-  }
-
-  const ofertaEncontrada = Object.keys(OFERTAS_ATIVAS).find(nomeOferta => {
-    return gerarSlug(nomeOferta) === slugUrl;
-  });
-
-  if (ofertaEncontrada) {
-    categoriaAtual = ofertaEncontrada;
+    categoriaAtual = nomesOfertas[0];
     paginaAtual = 0;
     return;
   }
 
-  categoriaAtual = Object.keys(OFERTAS_ATIVAS)[0];
+  const ofertaEncontrada = nomesOfertas.find((nomeOferta) => {
+    const oferta = OFERTAS_ATIVAS[nomeOferta];
+
+    return (
+      String(oferta.slug || "") === slugUrl ||
+      gerarSlug(nomeOferta) === slugUrl
+    );
+  });
+
+  categoriaAtual = ofertaEncontrada || nomesOfertas[0];
+  paginaAtual = 0;
 }
 
 /* =========================================
