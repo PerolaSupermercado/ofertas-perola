@@ -6,7 +6,16 @@ const API_AUTH = "/api/auth";
 const TOKEN_ADMIN_KEY = "tokenAdminPerola";
 const TOKEN_ADMIN_EXPIRA_KEY = "tokenAdminPerolaExpira";
 const TEMPO_SESSAO_ADMIN = 24 * 60 * 60 * 1000;
-const CHAVE_CONFIG = "configuracoesOfertasPerola";
+
+let ofertas = [];
+let configuracoes = {};
+let imagensSelecionadas = [];
+let indiceEditando = null;
+let ofertaSelecionadaIndex = null;
+
+/* ===============================
+   SESSÃO / LOGIN
+================================ */
 
 function obterTokenAdmin() {
   const token = sessionStorage.getItem(TOKEN_ADMIN_KEY);
@@ -39,12 +48,17 @@ function headersAdmin() {
 function mostrarErroLogin(mensagem) {
   const loginErro = document.getElementById("loginErro");
 
+  if (!loginErro) {
+    return;
+  }
+
   loginErro.textContent = mensagem;
   loginErro.classList.add("ativo");
 }
 
 async function verificarLoginAdmin() {
   const token = obterTokenAdmin();
+
   const loginAdmin = document.getElementById("loginAdmin");
   const formLoginAdmin = document.getElementById("formLoginAdmin");
   const senhaAdmin = document.getElementById("senhaAdmin");
@@ -54,6 +68,7 @@ async function verificarLoginAdmin() {
     loginAdmin.classList.add("oculto");
     layoutAdmin.classList.remove("painel-bloqueado");
     layoutAdmin.classList.add("painel-liberado");
+
     return true;
   }
 
@@ -111,10 +126,9 @@ async function verificarLoginAdmin() {
   });
 }
 
-let ofertas = [];
-let configuracoes = {};
-let imagensSelecionadas = [];
-let indiceEditando = null;
+/* ===============================
+   ELEMENTOS
+================================ */
 
 const abas = document.querySelectorAll(".aba");
 const botoesMenu = document.querySelectorAll(".menu-btn");
@@ -122,6 +136,7 @@ const botoesMenu = document.querySelectorAll(".menu-btn");
 const listaOfertas = document.getElementById("listaOfertas");
 const listaOfertasDashboard = document.getElementById("listaOfertasDashboard");
 const listaEstatisticas = document.getElementById("listaEstatisticas");
+const detalhesOferta = document.getElementById("detalhesOferta");
 
 const modalOferta = document.getElementById("modalOferta");
 const formOferta = document.getElementById("formOferta");
@@ -163,6 +178,10 @@ const camposConfig = {
 const btnSalvarConfiguracoes = document.getElementById("salvarConfiguracoes");
 const mensagemConfig = document.getElementById("mensagemConfig");
 const btnSairAdmin = document.getElementById("btnSairAdmin");
+
+/* ===============================
+   API
+================================ */
 
 async function carregarOfertasApi() {
   try {
@@ -219,12 +238,24 @@ async function carregarConfiguracoesApi() {
   }
 }
 
+/* ===============================
+   FUNÇÕES AUXILIARES
+================================ */
+
 function trocarAba(nomeAba) {
   abas.forEach(aba => aba.classList.remove("ativa"));
   botoesMenu.forEach(botao => botao.classList.remove("active"));
 
-  document.getElementById("aba-" + nomeAba).classList.add("ativa");
-  document.querySelector(`[data-aba="${nomeAba}"]`).classList.add("active");
+  const abaAtual = document.getElementById("aba-" + nomeAba);
+  const botaoAtual = document.querySelector(`[data-aba="${nomeAba}"]`);
+
+  if (abaAtual) {
+    abaAtual.classList.add("ativa");
+  }
+
+  if (botaoAtual) {
+    botaoAtual.classList.add("active");
+  }
 }
 
 function gerarSlug(texto) {
@@ -252,9 +283,12 @@ function calcularStatus(inicioValor, fimValor, ativo) {
 }
 
 function formatarDataPainel(valor) {
-  if (!valor) return "-";
+  if (!valor) {
+    return "-";
+  }
 
   const data = new Date(valor);
+
   return data.toLocaleDateString("pt-BR");
 }
 
@@ -263,6 +297,24 @@ function gerarUrlOfertaPainel(oferta) {
   const slug = oferta.slug || gerarSlug(oferta.titulo || "");
 
   return dominio + "/" + slug;
+}
+
+function obterCapaOferta(oferta) {
+  if (!oferta || !oferta.imagens || oferta.imagens.length === 0) {
+    return "";
+  }
+
+  return oferta.imagens[0];
+}
+
+function obterClasseStatus(statusAtual) {
+  if (statusAtual === "Futura") return "futura";
+  if (statusAtual === "Encerrada") return "encerrada";
+  return "ativa";
+}
+
+function obterRotuloTipo(tipo) {
+  return tipo === "banner" ? "Banner" : "Oferta";
 }
 
 function encerraHoje(fimValor) {
@@ -309,6 +361,37 @@ function abrirQrCodeOferta(index) {
   window.open(qrUrl, "_blank");
 }
 
+function selecionarOferta(index) {
+  ofertaSelecionadaIndex = index;
+
+  renderizarOfertas();
+  renderizarDetalhesOferta(index);
+}
+
+function criarThumbOferta(oferta) {
+  const capa = obterCapaOferta(oferta);
+
+  if (!capa) {
+    return `
+      <div class="oferta-thumb">
+        <div style="height:100%;display:flex;align-items:center;justify-content:center;color:#999;font-size:24px;">
+          🏷️
+        </div>
+      </div>
+    `;
+  }
+
+  return `
+    <div class="oferta-thumb">
+      <img src="${capa}" alt="${oferta.titulo}">
+    </div>
+  `;
+}
+
+/* ===============================
+   CARDS / BADGES
+================================ */
+
 function atualizarCards() {
   const status = ofertas.map(oferta => {
     return calcularStatus(
@@ -318,10 +401,15 @@ function atualizarCards() {
     );
   });
 
-  document.getElementById("totalOfertas").textContent = ofertas.length;
-  document.getElementById("ativas").textContent = status.filter(item => item === "Ativa").length;
-  document.getElementById("futuras").textContent = status.filter(item => item === "Futura").length;
-  document.getElementById("encerradas").textContent = status.filter(item => item === "Encerrada").length;
+  const totalOfertas = document.getElementById("totalOfertas");
+  const ativas = document.getElementById("ativas");
+  const futuras = document.getElementById("futuras");
+  const encerradas = document.getElementById("encerradas");
+
+  if (totalOfertas) totalOfertas.textContent = ofertas.length;
+  if (ativas) ativas.textContent = status.filter(item => item === "Ativa").length;
+  if (futuras) futuras.textContent = status.filter(item => item === "Futura").length;
+  if (encerradas) encerradas.textContent = status.filter(item => item === "Encerrada").length;
 }
 
 function gerarBadgePublicacao(oferta) {
@@ -348,52 +436,21 @@ function gerarBadgePublicacao(oferta) {
   `;
 }
 
-function gerarLinhaOferta(oferta, index, modoDashboard = false) {
+function gerarLinhaOfertaDashboard(oferta, index) {
   const statusAtual = calcularStatus(
     oferta.inicioOriginal,
     oferta.fimOriginal,
     oferta.ativo
   );
 
-  let classeStatus = "ativa";
-
-  if (statusAtual === "Futura") classeStatus = "futura";
-  if (statusAtual === "Encerrada") classeStatus = "encerrada";
-
+  const classeStatus = obterClasseStatus(statusAtual);
   const tipoAtual = oferta.tipo || "oferta";
-
-  if (modoDashboard) {
-    return `
-      <tr>
-        <td>${oferta.titulo}</td>
-
-        <td>
-          <span class="status ${classeStatus}">
-            ${statusAtual}
-          </span>
-        </td>
-
-        <td>
-          <span class="tipo-badge ${tipoAtual}">
-            ${tipoAtual === "banner" ? "Banner" : "Oferta"}
-          </span>
-        </td>
-
-        <td>${oferta.inicio}</td>
-        <td>${oferta.fim}</td>
-
-        <td>
-          <button class="btn-editar" onclick="editarOferta(${index})">
-            Editar
-          </button>
-        </td>
-      </tr>
-    `;
-  }
 
   return `
     <tr>
-      <td>${oferta.titulo}</td>
+      <td>
+        <strong>${oferta.titulo}</strong>
+      </td>
 
       <td>
         <span class="status ${classeStatus}">
@@ -403,44 +460,246 @@ function gerarLinhaOferta(oferta, index, modoDashboard = false) {
 
       <td>
         <span class="tipo-badge ${tipoAtual}">
-          ${tipoAtual === "banner" ? "Banner" : "Oferta"}
+          ${obterRotuloTipo(tipoAtual)}
         </span>
       </td>
 
-      <td>
-        ${gerarBadgePublicacao(oferta)}
-      </td>
-
-      <td>
-        <span class="qtd-imagens">
-          ${(oferta.imagens || []).length}
-        </span>
-      </td>
-
-      <td>${oferta.prioridade || 999}</td>
       <td>${oferta.inicio}</td>
       <td>${oferta.fim}</td>
 
       <td>
-        <button class="btn-preview" onclick="abrirPreviewOferta(${index})">
-          Preview
-        </button>
-
-        <button class="btn-editar" onclick="editarOferta(${index})">
-          Editar
-        </button>
-
-        <button class="btn-duplicar" onclick="duplicarOferta(${index})">
-          Duplicar
-        </button>
-
-        <button class="btn-excluir" onclick="excluirOferta(${index})">
-          Excluir
+        <button class="btn-preview" onclick="selecionarOferta(${index}); trocarAba('ofertas');">
+          Ver detalhes
         </button>
       </td>
     </tr>
   `;
 }
+
+/* ===============================
+   LISTA ESTILO META
+================================ */
+
+function gerarItemOferta(oferta, index) {
+  const statusAtual = calcularStatus(
+    oferta.inicioOriginal,
+    oferta.fimOriginal,
+    oferta.ativo
+  );
+
+  const classeStatus = obterClasseStatus(statusAtual);
+  const tipoAtual = oferta.tipo || "oferta";
+  const ativo = ofertaSelecionadaIndex === index ? "ativo" : "";
+
+  return `
+    <div
+      class="oferta-item ${ativo}"
+      onclick="selecionarOferta(${index})">
+
+      ${criarThumbOferta(oferta)}
+
+      <div class="oferta-info">
+        <h3>${oferta.titulo}</h3>
+
+        <div class="oferta-meta">
+          <span class="status ${classeStatus}">
+            ${statusAtual}
+          </span>
+
+          <span>
+            ${obterRotuloTipo(tipoAtual)}
+          </span>
+
+          <span>
+            ${(oferta.imagens || []).length} páginas
+          </span>
+
+          <span>
+            ${oferta.inicio} a ${oferta.fim}
+          </span>
+        </div>
+      </div>
+
+      <div
+        class="oferta-item-acoes"
+        onclick="event.stopPropagation();">
+
+        <button
+          class="btn-mini"
+          title="Abrir oferta"
+          onclick="abrirOfertaSite(${index})">
+
+          ↗
+
+        </button>
+
+        <button
+          class="btn-mini"
+          title="Copiar link"
+          onclick="copiarLinkOferta(${index})">
+
+          ⧉
+
+        </button>
+
+      </div>
+
+    </div>
+  `;
+}
+
+function renderizarDetalhesOferta(index) {
+  if (!detalhesOferta) {
+    return;
+  }
+
+  const oferta = ofertas[index];
+
+  if (!oferta) {
+    detalhesOferta.innerHTML = `
+      <div class="detalhes-vazio">
+        <div class="detalhes-vazio-icone">
+          🏷️
+        </div>
+
+        <h2>Selecione uma oferta</h2>
+
+        <p>
+          Clique em uma campanha na lista para visualizar informações,
+          link, QR Code e ações rápidas.
+        </p>
+      </div>
+    `;
+
+    return;
+  }
+
+  const statusAtual = calcularStatus(
+    oferta.inicioOriginal,
+    oferta.fimOriginal,
+    oferta.ativo
+  );
+
+  const classeStatus = obterClasseStatus(statusAtual);
+  const tipoAtual = oferta.tipo || "oferta";
+  const capa = obterCapaOferta(oferta);
+  const url = gerarUrlOfertaPainel(oferta);
+
+  detalhesOferta.innerHTML = `
+    <div class="detalhe-capa">
+      ${
+        capa
+          ? `<img src="${capa}" alt="${oferta.titulo}">`
+          : `<div style="height:100%;display:flex;align-items:center;justify-content:center;color:#999;font-size:48px;">🏷️</div>`
+      }
+    </div>
+
+    <div class="detalhe-topo">
+      <h2>${oferta.titulo}</h2>
+
+      <div class="detalhe-tags">
+        <span class="status ${classeStatus}">
+          ${statusAtual}
+        </span>
+
+        <span class="tipo-badge ${tipoAtual}">
+          ${obterRotuloTipo(tipoAtual)}
+        </span>
+
+        ${gerarBadgePublicacao(oferta)}
+      </div>
+    </div>
+
+    <div class="detalhe-info-grid">
+      <div class="info-box">
+        <span>Início</span>
+        <strong>${oferta.inicio}</strong>
+      </div>
+
+      <div class="info-box">
+        <span>Fim</span>
+        <strong>${oferta.fim}</strong>
+      </div>
+
+      <div class="info-box">
+        <span>Páginas</span>
+        <strong>${(oferta.imagens || []).length}</strong>
+      </div>
+
+      <div class="info-box">
+        <span>Prioridade</span>
+        <strong>${oferta.prioridade || 999}</strong>
+      </div>
+    </div>
+
+    <div class="detalhe-link-box">
+      <span>Link público</span>
+      <code>${url}</code>
+    </div>
+
+    <div class="detalhe-acoes">
+      <button
+        class="btn-acoes primary"
+        onclick="abrirPreviewOferta(${index})">
+
+        Preview
+
+      </button>
+
+      <button
+        class="btn-acoes"
+        onclick="abrirOfertaSite(${index})">
+
+        Abrir oferta
+
+      </button>
+
+      <button
+        class="btn-acoes"
+        onclick="copiarLinkOferta(${index})">
+
+        Copiar link
+
+      </button>
+
+      <button
+        class="btn-acoes"
+        onclick="abrirQrCodeOferta(${index})">
+
+        QR Code
+
+      </button>
+
+      <button
+        class="btn-acoes"
+        onclick="editarOferta(${index})">
+
+        Editar
+
+      </button>
+
+      <button
+        class="btn-acoes"
+        onclick="duplicarOferta(${index})">
+
+        Duplicar
+
+      </button>
+
+      <button
+        class="btn-acoes danger"
+        onclick="excluirOferta(${index})">
+
+        Excluir
+
+      </button>
+    </div>
+  `;
+}
+
+/* ===============================
+   ESTATÍSTICAS
+================================ */
 
 function renderizarEstatisticasOperacionais() {
   if (!listaEstatisticas) {
@@ -491,14 +750,13 @@ function renderizarEstatisticasOperacionais() {
       oferta.ativo
     );
 
-    let classeStatus = "ativa";
-
-    if (statusAtual === "Futura") classeStatus = "futura";
-    if (statusAtual === "Encerrada") classeStatus = "encerrada";
+    const classeStatus = obterClasseStatus(statusAtual);
 
     listaEstatisticas.innerHTML += `
       <tr>
-        <td>${oferta.titulo}</td>
+        <td>
+          <strong>${oferta.titulo}</strong>
+        </td>
 
         <td>
           <span class="status ${classeStatus}">
@@ -532,11 +790,20 @@ function renderizarEstatisticasOperacionais() {
   });
 }
 
+/* ===============================
+   RENDERIZAR OFERTAS
+================================ */
+
 function renderizarOfertas() {
   ofertas.sort((a, b) => Number(a.prioridade || 999) - Number(b.prioridade || 999));
 
-  listaOfertas.innerHTML = "";
-  listaOfertasDashboard.innerHTML = "";
+  if (listaOfertas) {
+    listaOfertas.innerHTML = "";
+  }
+
+  if (listaOfertasDashboard) {
+    listaOfertasDashboard.innerHTML = "";
+  }
 
   const termoBusca = buscaOferta
     ? buscaOferta.value.trim().toLowerCase()
@@ -574,21 +841,61 @@ function renderizarOfertas() {
     return passaBusca && passaStatus && passaTipo;
   });
 
-  ofertasFiltradas.forEach((oferta) => {
-    const indexReal = ofertas.indexOf(oferta);
+  if (listaOfertas) {
+    if (ofertasFiltradas.length === 0) {
+      listaOfertas.innerHTML = `
+        <div class="detalhes-vazio" style="min-height:300px;">
+          <div class="detalhes-vazio-icone">
+            🔎
+          </div>
 
-    listaOfertas.innerHTML += gerarLinhaOferta(oferta, indexReal, false);
-  });
+          <h2>Nenhuma oferta encontrada</h2>
 
-  ofertas.slice(0, 5).forEach((oferta) => {
-    const indexReal = ofertas.indexOf(oferta);
+          <p>
+            Tente alterar os filtros ou cadastrar uma nova oferta.
+          </p>
+        </div>
+      `;
+    } else {
+      ofertasFiltradas.forEach((oferta) => {
+        const indexReal = ofertas.indexOf(oferta);
 
-    listaOfertasDashboard.innerHTML += gerarLinhaOferta(oferta, indexReal, true);
-  });
+        listaOfertas.innerHTML += gerarItemOferta(oferta, indexReal);
+      });
+    }
+  }
+
+  if (listaOfertasDashboard) {
+    ofertas.slice(0, 5).forEach((oferta) => {
+      const indexReal = ofertas.indexOf(oferta);
+
+      listaOfertasDashboard.innerHTML += gerarLinhaOfertaDashboard(oferta, indexReal);
+    });
+  }
+
+  if (
+    ofertaSelecionadaIndex === null &&
+    ofertas.length > 0
+  ) {
+    ofertaSelecionadaIndex = 0;
+  }
+
+  if (
+    ofertaSelecionadaIndex !== null &&
+    ofertas[ofertaSelecionadaIndex]
+  ) {
+    renderizarDetalhesOferta(ofertaSelecionadaIndex);
+  } else {
+    renderizarDetalhesOferta(null);
+  }
 
   atualizarCards();
   renderizarEstatisticasOperacionais();
 }
+
+/* ===============================
+   MODAL / FORMULÁRIO
+================================ */
 
 function abrirModalNovaOferta() {
   indiceEditando = null;
@@ -675,6 +982,8 @@ async function excluirOferta(index) {
     if (!resposta.ok) {
       throw new Error(dados.erro || "Erro ao excluir oferta");
     }
+
+    ofertaSelecionadaIndex = null;
 
     await carregarOfertasApi();
 
@@ -782,6 +1091,10 @@ function moverImagem(index, direcao) {
   renderizarPreviewImagens();
 }
 
+/* ===============================
+   CONFIGURAÇÕES
+================================ */
+
 function preencherConfiguracoes() {
   camposConfig.tituloSite.value = configuracoes.tituloSite || "";
   camposConfig.subtituloSite.value = configuracoes.subtituloSite || "";
@@ -864,90 +1177,9 @@ async function salvarConfiguracoesPainel() {
   }
 }
 
-botoesMenu.forEach(botao => {
-  botao.addEventListener("click", () => {
-    trocarAba(botao.dataset.aba);
-  });
-});
-
-btnNovaOferta.addEventListener("click", abrirModalNovaOferta);
-btnNovaOfertaDashboard.addEventListener("click", abrirModalNovaOferta);
-
-btnFecharModal.addEventListener("click", fecharModalOferta);
-
-modalOferta.addEventListener("click", evento => {
-  if (evento.target === modalOferta) {
-    fecharModalOferta();
-  }
-});
-
-tituloOferta.addEventListener("input", () => {
-  slugOferta.value = gerarSlug(tituloOferta.value);
-});
-
-formOferta.addEventListener("submit", async evento => {
-  evento.preventDefault();
-
-  const ofertaEditando =
-    indiceEditando !== null ? ofertas[indiceEditando] : null;
-
-  const ofertaSalva = {
-    id: ofertaEditando ? ofertaEditando.id : null,
-    titulo: tituloOferta.value,
-    slug: slugOferta.value,
-    tipo: tipoOferta.value,
-    ativo: ativoOferta.checked,
-    ocultar: ocultarOferta.checked,
-    inicioOriginal: dataInicio.value,
-    fimOriginal: dataFim.value,
-    inicio: formatarDataPainel(dataInicio.value),
-    fim: formatarDataPainel(dataFim.value),
-    prioridade: prioridadeOferta.value || 999,
-    cor: corOferta.value || "#c40000",
-    imagens: imagensSelecionadas
-  };
-
-  try {
-    await salvarOfertaApi(ofertaSalva);
-    await carregarOfertasApi();
-
-    fecharModalOferta();
-
-    alert("Oferta salva com sucesso!");
-
-  } catch (erro) {
-    console.error("Erro ao salvar oferta:", erro);
-    alert("Erro ao salvar oferta no Supabase.");
-  }
-});
-
-uploadArea.addEventListener("click", () => {
-  imagensOferta.click();
-});
-
-imagensOferta.addEventListener("change", evento => {
-  adicionarImagens(evento.target.files);
-});
-
-uploadArea.addEventListener("dragover", evento => {
-  evento.preventDefault();
-  uploadArea.classList.add("ativo");
-});
-
-uploadArea.addEventListener("dragleave", () => {
-  uploadArea.classList.remove("ativo");
-});
-
-uploadArea.addEventListener("drop", evento => {
-  evento.preventDefault();
-  uploadArea.classList.remove("ativo");
-  adicionarImagens(evento.dataTransfer.files);
-});
-
-btnSalvarConfiguracoes.addEventListener(
-  "click",
-  salvarConfiguracoesPainel
-);
+/* ===============================
+   OUTRAS AÇÕES
+================================ */
 
 function abrirPreviewOferta(index) {
   const oferta = ofertas[index];
@@ -988,10 +1220,119 @@ async function duplicarOferta(index) {
     await carregarOfertasApi();
 
     alert("Oferta duplicada com sucesso!");
+
   } catch (erro) {
     console.error("Erro ao duplicar oferta:", erro);
     alert("Erro ao duplicar oferta.");
   }
+}
+
+/* ===============================
+   EVENTOS
+================================ */
+
+botoesMenu.forEach(botao => {
+  botao.addEventListener("click", () => {
+    trocarAba(botao.dataset.aba);
+  });
+});
+
+if (btnNovaOferta) {
+  btnNovaOferta.addEventListener("click", abrirModalNovaOferta);
+}
+
+if (btnNovaOfertaDashboard) {
+  btnNovaOfertaDashboard.addEventListener("click", abrirModalNovaOferta);
+}
+
+if (btnFecharModal) {
+  btnFecharModal.addEventListener("click", fecharModalOferta);
+}
+
+if (modalOferta) {
+  modalOferta.addEventListener("click", evento => {
+    if (evento.target === modalOferta) {
+      fecharModalOferta();
+    }
+  });
+}
+
+if (tituloOferta) {
+  tituloOferta.addEventListener("input", () => {
+    slugOferta.value = gerarSlug(tituloOferta.value);
+  });
+}
+
+if (formOferta) {
+  formOferta.addEventListener("submit", async evento => {
+    evento.preventDefault();
+
+    const ofertaEditando =
+      indiceEditando !== null ? ofertas[indiceEditando] : null;
+
+    const ofertaSalva = {
+      id: ofertaEditando ? ofertaEditando.id : null,
+      titulo: tituloOferta.value,
+      slug: slugOferta.value,
+      tipo: tipoOferta.value,
+      ativo: ativoOferta.checked,
+      ocultar: ocultarOferta.checked,
+      inicioOriginal: dataInicio.value,
+      fimOriginal: dataFim.value,
+      inicio: formatarDataPainel(dataInicio.value),
+      fim: formatarDataPainel(dataFim.value),
+      prioridade: prioridadeOferta.value || 999,
+      cor: corOferta.value || "#c40000",
+      imagens: imagensSelecionadas
+    };
+
+    try {
+      await salvarOfertaApi(ofertaSalva);
+      await carregarOfertasApi();
+
+      fecharModalOferta();
+
+      alert("Oferta salva com sucesso!");
+
+    } catch (erro) {
+      console.error("Erro ao salvar oferta:", erro);
+      alert("Erro ao salvar oferta no Supabase.");
+    }
+  });
+}
+
+if (uploadArea) {
+  uploadArea.addEventListener("click", () => {
+    imagensOferta.click();
+  });
+
+  uploadArea.addEventListener("dragover", evento => {
+    evento.preventDefault();
+    uploadArea.classList.add("ativo");
+  });
+
+  uploadArea.addEventListener("dragleave", () => {
+    uploadArea.classList.remove("ativo");
+  });
+
+  uploadArea.addEventListener("drop", evento => {
+    evento.preventDefault();
+    uploadArea.classList.remove("ativo");
+    adicionarImagens(evento.dataTransfer.files);
+  });
+}
+
+if (imagensOferta) {
+  imagensOferta.addEventListener("change", evento => {
+    adicionarImagens(evento.target.files);
+  });
+}
+
+if (btnSalvarConfiguracoes) {
+  btnSalvarConfiguracoes.addEventListener(
+    "click",
+    salvarConfiguracoesPainel
+  );
 }
 
 if (buscaOferta) {
@@ -1012,6 +1353,10 @@ if (btnSairAdmin) {
     location.reload();
   });
 }
+
+/* ===============================
+   INICIAR
+================================ */
 
 verificarLoginAdmin().then((autorizado) => {
   if (autorizado) {
