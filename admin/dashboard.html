@@ -71,14 +71,76 @@
         🏷️ Ofertas
       </button>
 
+      <button class="menu-btn" data-aba="estatisticas">
+  📈 Estatísticas
+</button>
+
       <button class="menu-btn" data-aba="configuracoes">
         ⚙️ Configurações
       </button>
+      
     </nav>
 
   </aside>
 
   <main class="content">
+
+    <section class="aba" id="aba-estatisticas">
+
+  <header class="topbar">
+    <div>
+      <h1>Estatísticas Operacionais</h1>
+      <p>Resumo rápido das ofertas publicadas no site.</p>
+    </div>
+  </header>
+
+  <section class="cards">
+
+    <div class="card ativas">
+      <span>Ofertas Ativas</span>
+      <strong id="estatAtivas">0</strong>
+    </div>
+
+    <div class="card futuras">
+      <span>Agendadas</span>
+      <strong id="estatAgendadas">0</strong>
+    </div>
+
+    <div class="card total">
+      <span>Total de Páginas</span>
+      <strong id="estatPaginas">0</strong>
+    </div>
+
+    <div class="card encerradas">
+      <span>Encerram Hoje</span>
+      <strong id="estatEncerramHoje">0</strong>
+    </div>
+
+  </section>
+
+  <section class="tabela-section">
+
+    <div class="section-header">
+      <h2>Resumo por oferta</h2>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Oferta</th>
+          <th>Status</th>
+          <th>Período</th>
+          <th>Páginas</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+
+      <tbody id="listaEstatisticas"></tbody>
+    </table>
+
+  </section>
+
+</section>
 
     <section class="aba ativa" id="aba-dashboard">
 
