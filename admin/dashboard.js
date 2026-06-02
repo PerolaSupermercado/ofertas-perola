@@ -17,6 +17,48 @@ function headersAdmin() {
   };
 }
 
+async function verificarLoginAdmin() {
+  const token = obterTokenAdmin();
+
+  if (token) {
+    return true;
+  }
+
+  const senha = prompt("Digite a senha do painel administrativo:");
+
+  if (!senha) {
+    document.body.innerHTML =
+      "<h2 style='font-family:Arial;padding:30px'>Acesso não autorizado.</h2>";
+
+    return false;
+  }
+
+  const resposta = await fetch(API_AUTH, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      senha
+    })
+  });
+
+  const dados = await resposta.json();
+
+  if (!resposta.ok) {
+    alert(dados.erro || "Senha incorreta.");
+
+    document.body.innerHTML =
+      "<h2 style='font-family:Arial;padding:30px'>Acesso não autorizado.</h2>";
+
+    return false;
+  }
+
+  sessionStorage.setItem(TOKEN_ADMIN_KEY, dados.token);
+
+  return true;
+}
+
 let ofertas = [];
 let configuracoes = {};
 let imagensSelecionadas = [];
@@ -789,5 +831,9 @@ if (filtroTipo) {
   filtroTipo.addEventListener("change", renderizarOfertas);
 }
 
-carregarConfiguracoesApi();
-carregarOfertasApi();
+verificarLoginAdmin().then((autorizado) => {
+  if (autorizado) {
+    carregarConfiguracoesApi();
+    carregarOfertasApi();
+  }
+});
