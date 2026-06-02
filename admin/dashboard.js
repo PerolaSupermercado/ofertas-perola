@@ -17,12 +17,70 @@ function headersAdmin() {
   };
 }
 
+function mostrarErroLogin(mensagem) {
+  const loginErro = document.getElementById("loginErro");
+
+  loginErro.textContent = mensagem;
+  loginErro.classList.add("ativo");
+}
+
 async function verificarLoginAdmin() {
   const token = obterTokenAdmin();
+  const loginAdmin = document.getElementById("loginAdmin");
 
   if (token) {
+    loginAdmin.classList.add("oculto");
     return true;
   }
+
+  return new Promise((resolve) => {
+    const formLoginAdmin = document.getElementById("formLoginAdmin");
+    const senhaAdmin = document.getElementById("senhaAdmin");
+
+    formLoginAdmin.addEventListener("submit", async (evento) => {
+      evento.preventDefault();
+
+      const senha = senhaAdmin.value.trim();
+
+      if (!senha) {
+        mostrarErroLogin("Digite a senha para continuar.");
+        resolve(false);
+        return;
+      }
+
+      try {
+        const resposta = await fetch(API_AUTH, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            senha
+          })
+        });
+
+        const dados = await resposta.json();
+
+        if (!resposta.ok) {
+          mostrarErroLogin(dados.erro || "Senha incorreta.");
+          senhaAdmin.value = "";
+          senhaAdmin.focus();
+          return;
+        }
+
+        sessionStorage.setItem(TOKEN_ADMIN_KEY, dados.token);
+
+        loginAdmin.classList.add("oculto");
+
+        resolve(true);
+
+      } catch (erro) {
+        console.error("Erro no login:", erro);
+        mostrarErroLogin("Erro ao fazer login. Tente novamente.");
+      }
+    });
+  });
+}
 
   const senha = prompt("Digite a senha do painel administrativo:");
 
