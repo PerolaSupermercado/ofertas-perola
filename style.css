@@ -274,29 +274,18 @@ header p {
 
 .seta {
   position: absolute;
-
   top: 50%;
   transform: translateY(-50%);
-
   width: 44px;
   height: 44px;
-
   border: none;
   border-radius: 50%;
-
   background: rgba(0, 0, 0, 0.65);
-
   color: white;
   font-size: 26px;
-
   cursor: pointer;
-
-  z-index: 30;
+  z-index: 999;
   pointer-events: auto;
-
-  transition:
-    background 0.2s,
-    transform 0.2s;
 }
 
 .seta:hover {
