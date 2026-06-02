@@ -49,15 +49,15 @@ const tituloCategoria = document.getElementById("tituloCategoria");
 const imagemOferta = document.getElementById("imagemOferta");
 const contador = document.getElementById("contador");
 const miniaturas = document.getElementById("miniaturas");
-const btnAnterior = document.getElementById("btnAnterior");
-const btnProximo = document.getElementById("btnProximo");
+const Anterior = document.getElementById("Anterior");
+const Proximo = document.getElementById("Proximo");
 const bannerTopo = document.getElementById("bannerTopo");
 const semOfertas = document.getElementById("semOfertas");
 
 /* ===== ZOOM ===== */
 const modalZoom = document.getElementById("modalZoom");
 const imagemZoom = document.getElementById("imagemZoom");
-const btnFecharZoom = document.getElementById("btnFecharZoom");
+const FecharZoom = document.getElementById("btnFecharZoom");
 const btnMaisZoom = document.getElementById("btnMaisZoom");
 const btnMenosZoom = document.getElementById("btnMenosZoom");
 const btnResetZoom = document.getElementById("btnResetZoom");
@@ -823,9 +823,20 @@ function detectarSwipe() {
    EVENTOS
 ========================================= */
 
-btnProximo.onclick = proximaPagina;
-btnAnterior.onclick = paginaAnterior;
-imagemOferta.onclick = abrirZoom;
+btnProximo.addEventListener("click", (evento) => {
+  evento.preventDefault();
+  evento.stopPropagation();
+  proximaPagina();
+});
+
+btnAnterior.addEventListener("click", (evento) => {
+  evento.preventDefault();
+  evento.stopPropagation();
+  paginaAnterior();
+});
+
+imagemOferta.addEventListener("click", abrirZoom);
+
 btnFecharZoom.onclick = fecharZoom;
 
 /* ===== BOTÕES ZOOM ===== */
