@@ -1,6 +1,16 @@
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
 
+function tokenAdminValido(req) {
+  const tokenRecebido = req.headers["x-admin-token"];
+
+  return (
+    tokenRecebido &&
+    process.env.ADMIN_TOKEN &&
+    tokenRecebido === process.env.ADMIN_TOKEN
+  );
+}
+
 function resposta(res, status, dados) {
   res.status(status).json(dados);
 }
@@ -62,7 +72,13 @@ export default async function handler(req, res) {
     }
 
     if (req.method === "PUT") {
-      const config = req.body;
+  if (!tokenAdminValido(req)) {
+    return resposta(res, 401, {
+      erro: "Acesso não autorizado."
+    });
+  }
+
+  const config = req.body;
 
       await consultarSupabase(
         `${SUPABASE_URL}/rest/v1/ofertas_configuracoes?id=eq.1`,
