@@ -132,6 +132,7 @@ const camposConfig = {
 
 const btnSalvarConfiguracoes = document.getElementById("salvarConfiguracoes");
 const mensagemConfig = document.getElementById("mensagemConfig");
+const btnSairAdmin = document.getElementById("btnSairAdmin");
 
 async function carregarOfertasApi() {
   try {
@@ -685,16 +686,16 @@ async function salvarConfiguracoesPainel() {
       );
     }
 
-    mensagemConfig.textContent =
+    fig.textContent =
       "Configurações salvas com sucesso.";
 
-    mensagemConfig.classList.add(
+    fig.classList.add(
       "ativo"
     );
 
     setTimeout(() => {
 
-      mensagemConfig.classList.remove(
+      fig.classList.remove(
         "ativo"
       );
 
@@ -797,6 +798,7 @@ btnSalvarConfiguracoes.addEventListener(
   salvarConfiguracoesPainel
 );
 
+
 function abrirPreviewOferta(index) {
   const oferta = ofertas[index];
 
@@ -852,6 +854,13 @@ if (filtroStatus) {
 
 if (filtroTipo) {
   filtroTipo.addEventListener("change", renderizarOfertas);
+}
+
+if (btnSairAdmin) {
+  btnSairAdmin.addEventListener("click", () => {
+    sessionStorage.removeItem(TOKEN_ADMIN_KEY);
+    location.reload();
+  });
 }
 
 verificarLoginAdmin().then((autorizado) => {
