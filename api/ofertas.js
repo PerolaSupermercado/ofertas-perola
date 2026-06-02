@@ -1,6 +1,11 @@
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
 
+function tokenAdminValido(req) {
+  const tokenRecebido = req.headers["x-admin-token"];
+  return tokenRecebido && tokenRecebido === process.env.ADMIN_TOKEN;
+}
+
 function resposta(res, status, dados) {
   res.status(status).json(dados);
 }
@@ -109,6 +114,15 @@ export default async function handler(req, res) {
         });
       }
 
+      if (
+  ["POST", "PUT", "DELETE"].includes(req.method) &&
+  !tokenAdminValido(req)
+) {
+  return resposta(res, 401, {
+    erro: "Acesso não autorizado."
+  });
+}
+   
       const resultado = ofertas.map((oferta) => {
         return {
           id: oferta.id,
