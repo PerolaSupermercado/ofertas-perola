@@ -51,64 +51,64 @@ async function verificarLoginAdmin() {
   const layoutAdmin = document.getElementById("layoutAdmin");
 
   if (token) {
-  loginAdmin.classList.add("oculto");
-  layoutAdmin.classList.remove("painel-bloqueado");
-  layoutAdmin.classList.add("painel-liberado");
-  return true;
-}
+    loginAdmin.classList.add("oculto");
+    layoutAdmin.classList.remove("painel-bloqueado");
+    layoutAdmin.classList.add("painel-liberado");
+    return true;
+  }
 
   loginAdmin.classList.remove("oculto");
 
-return new Promise((resolve) => {
-  formLoginAdmin.onsubmit = async function(evento) {
-    evento.preventDefault();
+  return new Promise((resolve) => {
+    formLoginAdmin.onsubmit = async function(evento) {
+      evento.preventDefault();
 
-    const senha = senhaAdmin.value;
+      const senha = senhaAdmin.value;
 
-    if (senha === "") {
-      mostrarErroLogin("Digite a senha para continuar.");
-      return;
-    }
-
-    try {
-      const resposta = await fetch(API_AUTH, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          senha: senha
-        })
-      });
-
-      const dados = await resposta.json();
-
-      if (!resposta.ok) {
-        mostrarErroLogin(dados.erro || "Senha incorreta.");
-        senhaAdmin.value = "";
-        senhaAdmin.focus();
+      if (senha === "") {
+        mostrarErroLogin("Digite a senha para continuar.");
         return;
       }
 
-      sessionStorage.setItem(TOKEN_ADMIN_KEY, dados.token);
+      try {
+        const resposta = await fetch(API_AUTH, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            senha: senha
+          })
+        });
 
-      sessionStorage.setItem(
-  TOKEN_ADMIN_EXPIRA_KEY,
-  String(Date.now() + TEMPO_SESSAO_ADMIN)
-);
+        const dados = await resposta.json();
 
-     loginAdmin.classList.add("oculto");
-layoutAdmin.classList.remove("painel-bloqueado");
-layoutAdmin.classList.add("painel-liberado");
+        if (!resposta.ok) {
+          mostrarErroLogin(dados.erro || "Senha incorreta.");
+          senhaAdmin.value = "";
+          senhaAdmin.focus();
+          return;
+        }
 
-resolve(true);
+        sessionStorage.setItem(TOKEN_ADMIN_KEY, dados.token);
 
-    } catch (erro) {
-      console.error("Erro no login:", erro);
-      mostrarErroLogin("Erro ao conectar com o login.");
-    }
-  };
-});
+        sessionStorage.setItem(
+          TOKEN_ADMIN_EXPIRA_KEY,
+          String(Date.now() + TEMPO_SESSAO_ADMIN)
+        );
+
+        loginAdmin.classList.add("oculto");
+        layoutAdmin.classList.remove("painel-bloqueado");
+        layoutAdmin.classList.add("painel-liberado");
+
+        resolve(true);
+
+      } catch (erro) {
+        console.error("Erro no login:", erro);
+        mostrarErroLogin("Erro ao conectar com o login.");
+      }
+    };
+  });
 }
 
 let ofertas = [];
@@ -121,6 +121,7 @@ const botoesMenu = document.querySelectorAll(".menu-btn");
 
 const listaOfertas = document.getElementById("listaOfertas");
 const listaOfertasDashboard = document.getElementById("listaOfertasDashboard");
+const listaEstatisticas = document.getElementById("listaEstatisticas");
 
 const modalOferta = document.getElementById("modalOferta");
 const formOferta = document.getElementById("formOferta");
@@ -148,8 +149,6 @@ const buscaOferta = document.getElementById("buscaOferta");
 const filtroStatus = document.getElementById("filtroStatus");
 const filtroTipo = document.getElementById("filtroTipo");
 
-const listaEstatisticas = document.getElementById("listaEstatisticas");
-
 const camposConfig = {
   tituloSite: document.getElementById("configTituloSite"),
   subtituloSite: document.getElementById("configSubtituloSite"),
@@ -175,156 +174,6 @@ async function carregarOfertasApi() {
     }
 
     ofertas = Array.isArray(dados) ? dados : [];
-
-    function gerarUrlOfertaPainel(oferta) {
-  const dominio = window.location.origin;
-  const slug = oferta.slug || gerarSlug(oferta.titulo || "");
-
-  return dominio + "/" + slug;
-}
-
-function encerraHoje(fimValor) {
-  if (!fimValor) return false;
-
-  const hoje = new Date();
-  const fim = new Date(fimValor);
-
-  return (
-    hoje.getFullYear() === fim.getFullYear() &&
-    hoje.getMonth() === fim.getMonth() &&
-    hoje.getDate() === fim.getDate()
-  );
-}
-
-function copiarLinkOferta(index) {
-  const oferta = ofertas[index];
-  const url = gerarUrlOfertaPainel(oferta);
-
-  navigator.clipboard.writeText(url).then(() => {
-    alert("Link copiado com sucesso!");
-  });
-}
-
-function abrirOfertaSite(index) {
-  const oferta = ofertas[index];
-  const url = gerarUrlOfertaPainel(oferta);
-
-  window.open(url, "_blank");
-}
-
-function abrirQrCodeOferta(index) {
-  const oferta = ofertas[index];
-  const url = gerarUrlOfertaPainel(oferta);
-
-  const qrUrl =
-    "https://api.qrserver.com/v1/create-qr-code/?size=600x600&data=" +
-    encodeURIComponent(url);
-
-  window.open(qrUrl, "_blank");
-}
-
-function encerraHoje(fimValor) {
-  if (!fimValor) {
-    return false;
-  }
-
-  const hoje = new Date();
-  const fim = new Date(fimValor);
-
-  return (
-    hoje.getFullYear() === fim.getFullYear() &&
-    hoje.getMonth() === fim.getMonth() &&
-    hoje.getDate() === fim.getDate()
-  );
-}
-    
-function renderizarEstatisticasOperacionais() {
-  if (!listaEstatisticas) return;
-
-  const statusLista = ofertas.map((oferta) => {
-    return calcularStatus(
-      oferta.inicioOriginal,
-      oferta.fimOriginal,
-      oferta.ativo
-    );
-  });
-
-  const totalAtivas = statusLista.filter(status => status === "Ativa").length;
-  const totalAgendadas = statusLista.filter(status => status === "Futura").length;
-
-  const totalPaginas = ofertas.reduce((total, oferta) => {
-    return total + ((oferta.imagens || []).length);
-  }, 0);
-
-  const totalEncerramHoje = ofertas.filter((oferta) => {
-    const status = calcularStatus(
-      oferta.inicioOriginal,
-      oferta.fimOriginal,
-      oferta.ativo
-    );
-
-    return status === "Ativa" && encerraHoje(oferta.fimOriginal);
-  }).length;
-
-  const estatAtivas = document.getElementById("estatAtivas");
-const estatAgendadas = document.getElementById("estatAgendadas");
-const estatPaginas = document.getElementById("estatPaginas");
-const estatEncerramHoje = document.getElementById("estatEncerramHoje");
-
-if (estatAtivas) estatAtivas.textContent = totalAtivas;
-if (estatAgendadas) estatAgendadas.textContent = totalAgendadas;
-if (estatPaginas) estatPaginas.textContent = totalPaginas;
-if (estatEncerramHoje) estatEncerramHoje.textContent = totalEncerramHoje;
-
-  listaEstatisticas.innerHTML = "";
-
-  ofertas.forEach((oferta, index) => {
-    const statusAtual = calcularStatus(
-      oferta.inicioOriginal,
-      oferta.fimOriginal,
-      oferta.ativo
-    );
-
-    let classeStatus = "ativa";
-
-    if (statusAtual === "Futura") classeStatus = "futura";
-    if (statusAtual === "Encerrada") classeStatus = "encerrada";
-
-    listaEstatisticas.innerHTML += `
-      <tr>
-        <td>${oferta.titulo}</td>
-
-        <td>
-          <span class="status ${classeStatus}">
-            ${statusAtual}
-          </span>
-        </td>
-
-        <td>${oferta.inicio} a ${oferta.fim}</td>
-
-        <td>
-          <span class="qtd-imagens">
-            ${(oferta.imagens || []).length}
-          </span>
-        </td>
-
-        <td>
-          <button class="btn-preview" onclick="copiarLinkOferta(${index})">
-            Copiar Link
-          </button>
-
-          <button class="btn-editar" onclick="abrirOfertaSite(${index})">
-            Abrir
-          </button>
-
-          <button class="btn-duplicar" onclick="abrirQrCodeOferta(${index})">
-            QR Code
-          </button>
-        </td>
-      </tr>
-    `;
-  });
-}
 
     renderizarOfertas();
 
@@ -353,35 +202,23 @@ async function salvarOfertaApi(oferta) {
 }
 
 async function carregarConfiguracoesApi() {
-
   try {
+    const resposta = await fetch(API_CONFIGURACOES);
+    const dados = await resposta.json();
 
-    const resposta =
-      await fetch(API_CONFIGURACOES);
-
-    const dados =
-      await resposta.json();
-
-    if(!resposta.ok){
-      throw new Error(
-        dados.erro || "Erro ao carregar configurações"
-      );
+    if (!resposta.ok) {
+      throw new Error(dados.erro || "Erro ao carregar configurações");
     }
 
     configuracoes = dados;
 
     preencherConfiguracoes();
 
-  } catch(erro){
-
-    console.error(
-      "Erro ao carregar configurações:",
-      erro
-    );
-
+  } catch (erro) {
+    console.error("Erro ao carregar configurações:", erro);
   }
-
 }
+
 function trocarAba(nomeAba) {
   abas.forEach(aba => aba.classList.remove("ativa"));
   botoesMenu.forEach(botao => botao.classList.remove("active"));
@@ -419,6 +256,57 @@ function formatarDataPainel(valor) {
 
   const data = new Date(valor);
   return data.toLocaleDateString("pt-BR");
+}
+
+function gerarUrlOfertaPainel(oferta) {
+  const dominio = window.location.origin;
+  const slug = oferta.slug || gerarSlug(oferta.titulo || "");
+
+  return dominio + "/" + slug;
+}
+
+function encerraHoje(fimValor) {
+  if (!fimValor) {
+    return false;
+  }
+
+  const hoje = new Date();
+  const fim = new Date(fimValor);
+
+  return (
+    hoje.getFullYear() === fim.getFullYear() &&
+    hoje.getMonth() === fim.getMonth() &&
+    hoje.getDate() === fim.getDate()
+  );
+}
+
+function copiarLinkOferta(index) {
+  const oferta = ofertas[index];
+  const url = gerarUrlOfertaPainel(oferta);
+
+  navigator.clipboard.writeText(url).then(() => {
+    alert("Link copiado com sucesso!");
+  }).catch(() => {
+    prompt("Copie o link abaixo:", url);
+  });
+}
+
+function abrirOfertaSite(index) {
+  const oferta = ofertas[index];
+  const url = gerarUrlOfertaPainel(oferta);
+
+  window.open(url, "_blank");
+}
+
+function abrirQrCodeOferta(index) {
+  const oferta = ofertas[index];
+  const url = gerarUrlOfertaPainel(oferta);
+
+  const qrUrl =
+    "https://api.qrserver.com/v1/create-qr-code/?size=600x600&data=" +
+    encodeURIComponent(url);
+
+  window.open(qrUrl, "_blank");
 }
 
 function atualizarCards() {
@@ -513,42 +401,42 @@ function gerarLinhaOferta(oferta, index, modoDashboard = false) {
         </span>
       </td>
 
-     <td>
-  <span class="tipo-badge ${tipoAtual}">
-    ${tipoAtual === "banner" ? "Banner" : "Oferta"}
-  </span>
-</td>
+      <td>
+        <span class="tipo-badge ${tipoAtual}">
+          ${tipoAtual === "banner" ? "Banner" : "Oferta"}
+        </span>
+      </td>
 
-<td>
-  ${gerarBadgePublicacao(oferta)}
-</td>
+      <td>
+        ${gerarBadgePublicacao(oferta)}
+      </td>
 
-<td>
-  <span class="qtd-imagens">
-    ${(oferta.imagens || []).length}
-  </span>
-</td>
+      <td>
+        <span class="qtd-imagens">
+          ${(oferta.imagens || []).length}
+        </span>
+      </td>
 
-<td>${oferta.prioridade || 999}</td>
+      <td>${oferta.prioridade || 999}</td>
       <td>${oferta.inicio}</td>
       <td>${oferta.fim}</td>
 
       <td>
-       <button class="btn-preview" onclick="abrirPreviewOferta(${index})">
-  Preview
-</button>
+        <button class="btn-preview" onclick="abrirPreviewOferta(${index})">
+          Preview
+        </button>
 
-<button class="btn-editar" onclick="editarOferta(${index})">
-  Editar
-</button>
+        <button class="btn-editar" onclick="editarOferta(${index})">
+          Editar
+        </button>
 
-<button class="btn-duplicar" onclick="duplicarOferta(${index})">
-  Duplicar
-</button>
+        <button class="btn-duplicar" onclick="duplicarOferta(${index})">
+          Duplicar
+        </button>
 
-<button class="btn-excluir" onclick="excluirOferta(${index})">
-  Excluir
-</button>
+        <button class="btn-excluir" onclick="excluirOferta(${index})">
+          Excluir
+        </button>
       </td>
     </tr>
   `;
@@ -776,11 +664,11 @@ async function excluirOferta(index) {
 
   try {
     const resposta = await fetch(`${API_OFERTAS}?id=${oferta.id}`, {
-  method: "DELETE",
-  headers: {
-    "x-admin-token": obterTokenAdmin()
-  }
-});
+      method: "DELETE",
+      headers: {
+        "x-admin-token": obterTokenAdmin()
+      }
+    });
 
     const dados = await resposta.json();
 
@@ -906,11 +794,8 @@ function preencherConfiguracoes() {
 }
 
 async function salvarConfiguracoesPainel() {
-
   try {
-
     const configuracaoAtualizada = {
-
       tituloSite:
         camposConfig.tituloSite.value,
 
@@ -934,7 +819,6 @@ async function salvarConfiguracoesPainel() {
 
       descricaoCompartilhamento:
         camposConfig.descricaoCompartilhamento.value
-
     };
 
     const resposta =
@@ -952,37 +836,32 @@ async function salvarConfiguracoesPainel() {
     const dados =
       await resposta.json();
 
-    if(!resposta.ok){
+    if (!resposta.ok) {
       throw new Error(
         dados.erro || "Erro ao salvar"
       );
     }
 
-    fig.textContent =
+    mensagemConfig.textContent =
       "Configurações salvas com sucesso.";
 
-    fig.classList.add(
+    mensagemConfig.classList.add(
       "ativo"
     );
 
     setTimeout(() => {
-
-      fig.classList.remove(
+      mensagemConfig.classList.remove(
         "ativo"
       );
-
     }, 3000);
 
-  } catch(erro){
-
+  } catch (erro) {
     console.error(erro);
 
     alert(
       "Erro ao salvar configurações."
     );
-
   }
-
 }
 
 botoesMenu.forEach(botao => {
@@ -1010,8 +889,8 @@ formOferta.addEventListener("submit", async evento => {
   evento.preventDefault();
 
   const ofertaEditando =
-  indiceEditando !== null ? ofertas[indiceEditando] : null;
-  
+    indiceEditando !== null ? ofertas[indiceEditando] : null;
+
   const ofertaSalva = {
     id: ofertaEditando ? ofertaEditando.id : null,
     titulo: tituloOferta.value,
@@ -1069,7 +948,6 @@ btnSalvarConfiguracoes.addEventListener(
   "click",
   salvarConfiguracoesPainel
 );
-
 
 function abrirPreviewOferta(index) {
   const oferta = ofertas[index];
@@ -1131,7 +1009,7 @@ if (filtroTipo) {
 if (btnSairAdmin) {
   btnSairAdmin.addEventListener("click", () => {
     limparSessaoAdmin();
-location.reload();
+    location.reload();
   });
 }
 
