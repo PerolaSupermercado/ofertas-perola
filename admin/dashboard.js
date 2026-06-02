@@ -4,10 +4,29 @@ const API_UPLOAD = "/api/upload";
 const API_AUTH = "/api/auth";
 
 const TOKEN_ADMIN_KEY = "tokenAdminPerola";
+const TOKEN_ADMIN_EXPIRA_KEY = "tokenAdminPerolaExpira";
+const TEMPO_SESSAO_ADMIN = 24 * 60 * 60 * 1000;
 const CHAVE_CONFIG = "configuracoesOfertasPerola";
 
 function obterTokenAdmin() {
-  return sessionStorage.getItem(TOKEN_ADMIN_KEY);
+  const token = sessionStorage.getItem(TOKEN_ADMIN_KEY);
+  const expiraEm = Number(sessionStorage.getItem(TOKEN_ADMIN_EXPIRA_KEY));
+
+  if (!token || !expiraEm) {
+    return null;
+  }
+
+  if (Date.now() > expiraEm) {
+    limparSessaoAdmin();
+    return null;
+  }
+
+  return token;
+}
+
+function limparSessaoAdmin() {
+  sessionStorage.removeItem(TOKEN_ADMIN_KEY);
+  sessionStorage.removeItem(TOKEN_ADMIN_EXPIRA_KEY);
 }
 
 function headersAdmin() {
@@ -72,6 +91,11 @@ return new Promise((resolve) => {
       }
 
       sessionStorage.setItem(TOKEN_ADMIN_KEY, dados.token);
+
+      sessionStorage.setItem(
+  TOKEN_ADMIN_EXPIRA_KEY,
+  String(Date.now() + TEMPO_SESSAO_ADMIN)
+);
 
      loginAdmin.classList.add("oculto");
 layoutAdmin.classList.remove("painel-bloqueado");
@@ -863,8 +887,8 @@ if (filtroTipo) {
 
 if (btnSairAdmin) {
   btnSairAdmin.addEventListener("click", () => {
-    sessionStorage.removeItem(TOKEN_ADMIN_KEY);
-    location.reload();
+    limparSessaoAdmin();
+location.reload();
   });
 }
 
