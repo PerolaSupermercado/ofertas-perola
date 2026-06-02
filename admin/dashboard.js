@@ -548,6 +548,42 @@ function gerarItemOferta(oferta, index) {
   `;
 }
 
+function gerarGaleriaPaginasOferta(oferta) {
+  const imagens = oferta.imagens || [];
+
+  if (imagens.length <= 1) {
+    return "";
+  }
+
+  return `
+    <div class="galeria-paginas">
+      <div class="galeria-paginas-topo">
+        <strong>Páginas da oferta</strong>
+        <span>${imagens.length} páginas</span>
+      </div>
+
+      <div class="galeria-paginas-lista">
+        ${imagens.map((imagem, index) => {
+          return `
+            <button
+              type="button"
+              class="galeria-pagina ${index === 0 ? "ativa" : ""}"
+              onclick="trocarImagemDetalheOferta('${imagem}', this)">
+
+              <img
+                src="${imagem}"
+                alt="Página ${index + 1}">
+
+              <span>${index + 1}</span>
+
+            </button>
+          `;
+        }).join("")}
+      </div>
+    </div>
+  `;
+}
+
 function renderizarDetalhesOferta(index) {
   if (!detalhesOferta) {
     return;
@@ -587,12 +623,14 @@ function renderizarDetalhesOferta(index) {
 
   detalhesOferta.innerHTML = `
     <div class="detalhe-capa">
-      ${
-        capa
-          ? `<img src="${capa}" alt="${oferta.titulo}">`
-          : `<div style="height:100%;display:flex;align-items:center;justify-content:center;color:#999;font-size:48px;">🏷️</div>`
-      }
-    </div>
+  ${
+    capa
+      ? `<img id="imagemDetalheOferta" src="${capa}" alt="${oferta.titulo}">`
+      : `<div style="height:100%;display:flex;align-items:center;justify-content:center;color:#999;font-size:48px;">🏷️</div>`
+  }
+</div>
+
+${gerarGaleriaPaginasOferta(oferta)}
 
     <div class="detalhe-topo">
       <h2>${oferta.titulo}</h2>
