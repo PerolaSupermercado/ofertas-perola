@@ -730,3 +730,11 @@ textarea:focus{
   background:white;
   color:#b30000;
 }
+
+.painel-bloqueado{
+  display:none;
+}
+
+.painel-liberado{
+  display:flex;
+}
