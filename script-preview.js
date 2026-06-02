@@ -554,9 +554,17 @@ function preCarregarImagens(imagens) {
 function proximaPagina() {
   const oferta = OFERTAS_ATIVAS[categoriaAtual];
 
-  if (!oferta || !oferta.imagens) {
-    return;
-  }
+  if (paginaAtual < imagens.length - 1) {
+  paginaAtual++;
+
+  registrarEventoAnalytics("trocar_pagina", {
+    direcao: "proxima",
+    oferta: categoriaAtual,
+    pagina: paginaAtual + 1
+  });
+
+  atualizarCarrossel();
+}
 
   const imagens = oferta.imagens;
 
@@ -568,9 +576,16 @@ function proximaPagina() {
 
 function paginaAnterior() {
   if (paginaAtual > 0) {
-    paginaAtual--;
-    atualizarCarrossel();
-  }
+  paginaAtual--;
+
+  registrarEventoAnalytics("trocar_pagina", {
+    direcao: "anterior",
+    oferta: categoriaAtual,
+    pagina: paginaAtual + 1
+  });
+
+  atualizarCarrossel();
+}
 }
 
 /* =========================================
