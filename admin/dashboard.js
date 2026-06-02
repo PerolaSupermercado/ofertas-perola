@@ -637,63 +637,79 @@ function renderizarDetalhesOferta(index) {
       <code>${url}</code>
     </div>
 
-    <div class="detalhe-acoes">
-      <button
-        class="btn-acoes primary"
-        onclick="abrirPreviewOferta(${index})">
+   <div class="detalhe-acoes acao-grid-premium">
 
-        Preview
+  <button
+    class="acao-premium acao-destaque"
+    onclick="abrirPreviewOferta(${index})">
 
-      </button>
+    <span>👁️</span>
+    <strong>Preview</strong>
+    <small>Ver oferta</small>
 
-      <button
-        class="btn-acoes"
-        onclick="abrirOfertaSite(${index})">
+  </button>
 
-        Abrir oferta
+  <button
+    class="acao-premium"
+    onclick="abrirOfertaSite(${index})">
 
-      </button>
+    <span>🔗</span>
+    <strong>Abrir</strong>
+    <small>Link público</small>
 
-      <button
-        class="btn-acoes"
-        onclick="copiarLinkOferta(${index})">
+  </button>
 
-        Copiar link
+  <button
+    class="acao-premium"
+    onclick="copiarLinkOferta(${index})">
 
-      </button>
+    <span>📋</span>
+    <strong>Copiar</strong>
+    <small>URL da oferta</small>
 
-      <button
-        class="btn-acoes"
-        onclick="abrirQrCodeOferta(${index})">
+  </button>
 
-        QR Code
+  <button
+    class="acao-premium"
+    onclick="abrirQrCodeOferta(${index})">
 
-      </button>
+    <span>📱</span>
+    <strong>QR Code</strong>
+    <small>Gerar código</small>
 
-      <button
-        class="btn-acoes"
-        onclick="editarOferta(${index})">
+  </button>
 
-        Editar
+  <button
+    class="acao-premium"
+    onclick="editarOferta(${index})">
 
-      </button>
+    <span>✏️</span>
+    <strong>Editar</strong>
+    <small>Alterar dados</small>
 
-      <button
-        class="btn-acoes"
-        onclick="duplicarOferta(${index})">
+  </button>
 
-        Duplicar
+  <button
+    class="acao-premium"
+    onclick="duplicarOferta(${index})">
 
-      </button>
+    <span>📄</span>
+    <strong>Duplicar</strong>
+    <small>Criar cópia</small>
 
-      <button
-        class="btn-acoes danger"
-        onclick="excluirOferta(${index})">
+  </button>
 
-        Excluir
+  <button
+    class="acao-premium acao-perigo"
+    onclick="excluirOferta(${index})">
 
-      </button>
-    </div>
+    <span>🗑️</span>
+    <strong>Excluir</strong>
+    <small>Remover oferta</small>
+
+  </button>
+
+</div>
   `;
 }
 
