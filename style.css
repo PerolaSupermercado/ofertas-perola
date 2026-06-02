@@ -210,6 +210,8 @@ header p {
   opacity 0.35s ease,
   transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
   filter 0.35s ease;
+  position: relative;
+  z-index: 1;
 }
 
 .pagina.trocando {
@@ -289,7 +291,8 @@ header p {
 
   cursor: pointer;
 
-  z-index: 5;
+  z-index: 30;
+  pointer-events: auto;
 
   transition:
     background 0.2s,
