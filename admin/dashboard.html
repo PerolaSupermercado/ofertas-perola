@@ -1,442 +1,665 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
 
-<title>Painel de Ofertas - Pérola</title>
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0">
 
-<link rel="stylesheet" href="dashboard.css">
+  <title>Painel de Ofertas - Pérola</title>
+
+  <link
+    rel="stylesheet"
+    href="dashboard.css">
 </head>
 
 <body>
 
-<div class="login-admin" id="loginAdmin">
-
-  <div class="login-card">
-
-    <div class="login-logo">
-      <h1>Pérola</h1>
-      <span>Painel de Ofertas</span>
-    </div>
-
-    <h2>Acesso administrativo</h2>
-
-    <p>
-      Digite a senha para acessar o painel de ofertas.
-    </p>
-
-    <form id="formLoginAdmin">
-
-      <label>Senha de acesso</label>
-
-      <input
-        type="password"
-        id="senhaAdmin"
-        placeholder="Digite sua senha"
-        autocomplete="current-password"
-        required>
-
-      <button type="submit">
-        Entrar no painel
-      </button>
-
-    </form>
-
-    <div class="login-erro" id="loginErro"></div>
-
-  </div>
-
-</div>
-  
-<div class="layout painel-bloqueado" id="layoutAdmin">
-
-  <aside class="sidebar">
-
-    <div class="logo">
-      <h2>Painel Ofertas</h2>
-      <span>Pérola Supermercado</span>
-    </div>
-
-<button class="btn-sair" id="btnSairAdmin">
-  Sair do painel
-</button>
-    
-    <nav>
-      <button class="menu-btn active" data-aba="dashboard">
-        📊 Dashboard
-      </button>
-
-      <button class="menu-btn" data-aba="ofertas">
-        🏷️ Ofertas
-      </button>
-
-      <button class="menu-btn" data-aba="estatisticas">
-  📈 Estatísticas
-</button>
-
-      <button class="menu-btn" data-aba="configuracoes">
-        ⚙️ Configurações
-      </button>
-      
-    </nav>
-
-  </aside>
-
-  <main class="content">
-
-    <section class="aba" id="aba-estatisticas">
-
-  <header class="topbar">
-    <div>
-      <h1>Estatísticas Operacionais</h1>
-      <p>Resumo rápido das ofertas publicadas no site.</p>
-    </div>
-  </header>
-
-  <section class="cards">
-
-    <div class="card ativas">
-      <span>Ofertas Ativas</span>
-      <strong id="estatAtivas">0</strong>
-    </div>
-
-    <div class="card futuras">
-      <span>Agendadas</span>
-      <strong id="estatAgendadas">0</strong>
-    </div>
-
-    <div class="card total">
-      <span>Total de Páginas</span>
-      <strong id="estatPaginas">0</strong>
-    </div>
-
-    <div class="card encerradas">
-      <span>Encerram Hoje</span>
-      <strong id="estatEncerramHoje">0</strong>
-    </div>
-
-  </section>
-
-  <section class="tabela-section">
-
-    <div class="section-header">
-      <h2>Resumo por oferta</h2>
-    </div>
-
-    <table>
-      <thead>
-        <tr>
-          <th>Oferta</th>
-          <th>Status</th>
-          <th>Período</th>
-          <th>Páginas</th>
-          <th>Ações</th>
-        </tr>
-      </thead>
-
-      <tbody id="listaEstatisticas"></tbody>
-    </table>
-
-  </section>
-
-</section>
-
-    <section class="aba ativa" id="aba-dashboard">
-
-      <header class="topbar">
-        <div>
-          <h1>Dashboard</h1>
-          <p>Resumo geral das ofertas cadastradas.</p>
-        </div>
-
-        <button id="novaOfertaDashboard">
-          + Nova Oferta
-        </button>
-      </header>
-
-      <section class="cards">
-
-        <div class="card total">
-          <span>Total de Ofertas</span>
-          <strong id="totalOfertas">0</strong>
-        </div>
-
-        <div class="card ativas">
-          <span>Ativas</span>
-          <strong id="ativas">0</strong>
-        </div>
-
-        <div class="card futuras">
-          <span>Futuras</span>
-          <strong id="futuras">0</strong>
-        </div>
-
-        <div class="card encerradas">
-          <span>Encerradas</span>
-          <strong id="encerradas">0</strong>
-        </div>
-
-      </section>
-
-      <section class="tabela-section">
-
-        <div class="section-header">
-          <h2>Últimas ofertas</h2>
-        </div>
-
-        <table>
-          <thead>
-            <tr>
-              <th>Título</th>
-              <th>Status</th>
-              <th>Tipo</th>
-              <th>Início</th>
-              <th>Fim</th>
-              <th>Ações</th>
-            </tr>
-          </thead>
-
-          <tbody id="listaOfertasDashboard"></tbody>
-        </table>
-
-      </section>
-
-    </section>
-
-    <section class="aba" id="aba-ofertas">
-
-      <header class="topbar">
-        <div>
-          <h1>Ofertas</h1>
-          <p>Cadastre, edite e organize as ofertas do site.</p>
-        </div>
-
-        <button id="novaOferta">
-          + Nova Oferta
-        </button>
-      </header>
-
-      <section class="tabela-section">
-
-        <div class="filtros-ofertas">
-
-          <input
-            type="text"
-            id="buscaOferta"
-            placeholder="Buscar oferta pelo nome...">
-
-          <select id="filtroStatus">
-            <option value="todos">Todos os status</option>
-            <option value="Ativa">Ativas</option>
-            <option value="Futura">Futuras</option>
-            <option value="Encerrada">Encerradas</option>
-          </select>
-
-          <select id="filtroTipo">
-            <option value="todos">Todos os tipos</option>
-            <option value="oferta">Oferta</option>
-            <option value="banner">Banner</option>
-          </select>
-
-        </div>
-
-        <div class="section-header">
-          <h2>Ofertas cadastradas</h2>
-        </div>
-
-        <table>
-          <thead>
-            <tr>
-              <th>Título</th>
-              <th>Status</th>
-              <th>Tipo</th>
-              <th>Publicação</th>
-              <th>Imagens</th>
-              <th>Prioridade</th>
-              <th>Início</th>
-              <th>Fim</th>
-              <th>Ações</th>
-            </tr>
-          </thead>
-
-          <tbody id="listaOfertas"></tbody>
-        </table>
-
-      </section>
-
-    </section>
-
-    <section class="aba" id="aba-configuracoes">
-
-      <header class="topbar">
-        <div>
-          <h1>Configurações Gerais</h1>
-          <p>Controle as informações principais do site de ofertas.</p>
-        </div>
-
-        <button id="salvarConfiguracoes">
-          Salvar Configurações
-        </button>
-      </header>
-
-      <section class="form-section">
-
-        <h2>Informações do Site</h2>
-
-        <label>Título principal</label>
-        <input type="text" id="configTituloSite">
-
-        <label>Subtítulo</label>
-        <input type="text" id="configSubtituloSite">
-
-        <label>Link do grupo WhatsApp</label>
-        <input type="url" id="configLinkGrupo">
-
-      </section>
-
-      <section class="form-section">
-
-        <h2>Imagens</h2>
-
-        <label>Banner principal</label>
-        <input type="text" id="configBannerPrincipal">
-
-        <label>Placeholder</label>
-        <input type="text" id="configPlaceholder">
-
-        <label>Imagem de compartilhamento</label>
-        <input type="text" id="configImagemCompartilhamento">
-
-      </section>
-
-      <section class="form-section">
-
-        <h2>Compartilhamento</h2>
-
-        <label>Título de compartilhamento</label>
-        <input type="text" id="configTituloCompartilhamento">
-
-        <label>Descrição de compartilhamento</label>
-        <textarea id="configDescricaoCompartilhamento"></textarea>
-
-      </section>
-
-      <div class="mensagem" id="mensagemConfig"></div>
-
-    </section>
-
-  </main>
-
-</div>
-
-<div class="modal" id="modalOferta">
-
-  <div class="modal-content">
-
-    <div class="modal-header">
-      <h2 id="tituloModalOferta">Nova Oferta</h2>
-
-      <button id="fecharModal">
-        ×
-      </button>
-    </div>
-
-    <form id="formOferta">
-
-      <label>Título da oferta</label>
-      <input
-        type="text"
-        id="tituloOferta"
-        placeholder="Ex: Operação Fecha Mês"
-        required>
-
-      <label>Slug / Link da oferta</label>
-      <input
-        type="text"
-        id="slugOferta"
-        placeholder="operacao-fecha-mes"
-        readonly>
-
-      <label>Tipo</label>
-      <select id="tipoOferta">
-        <option value="oferta">Oferta</option>
-        <option value="banner">Banner principal</option>
-      </select>
-
-      <div class="grid-form">
-
-        <div>
-          <label>Data e hora de início</label>
-          <input type="datetime-local" id="dataInicio" required>
-        </div>
-
-        <div>
-          <label>Data e hora de fim</label>
-          <input type="datetime-local" id="dataFim" required>
-        </div>
-
+  <!-- LOGIN -->
+  <div
+    class="login-admin"
+    id="loginAdmin">
+
+    <div class="login-card">
+
+      <div class="login-logo">
+        <h1>Pérola</h1>
+        <span>Painel de Ofertas</span>
       </div>
 
-      <div class="grid-form">
+      <h2>Acesso administrativo</h2>
 
-        <div>
-          <label>Prioridade</label>
-          <input type="number" id="prioridadeOferta" value="999">
-        </div>
+      <p>
+        Digite a senha para acessar o painel de ofertas.
+      </p>
 
-        <div>
-          <label>Cor da categoria</label>
-          <input type="color" id="corOferta" value="#c40000">
-        </div>
+      <form id="formLoginAdmin">
 
-      </div>
-
-      <div class="checks">
-
-        <label>
-          <input type="checkbox" id="ativoOferta" checked>
-          Oferta ativa
-        </label>
-
-        <label>
-          <input type="checkbox" id="ocultarOferta">
-          Ocultar oferta
-        </label>
-
-      </div>
-
-      <label>Imagens da oferta</label>
-
-      <div class="upload-area" id="uploadArea">
+        <label>Senha de acesso</label>
 
         <input
-          type="file"
-          id="imagensOferta"
-          accept="image/*"
-          multiple>
+          type="password"
+          id="senhaAdmin"
+          placeholder="Digite sua senha"
+          autocomplete="current-password"
+          required>
 
-        <p>Clique ou arraste as imagens aqui</p>
+        <button type="submit">
+          Entrar no painel
+        </button>
 
-        <small>
-          Você pode selecionar várias páginas da oferta de uma vez.
-        </small>
+      </form>
 
-      </div>
+      <div
+        class="login-erro"
+        id="loginErro"></div>
 
-      <div class="preview-imagens" id="previewImagens"></div>
-
-      <button type="submit" class="btn-salvar">
-        Salvar oferta
-      </button>
-
-    </form>
+    </div>
 
   </div>
 
-</div>
+  <!-- PAINEL -->
+  <div
+    class="app-layout painel-bloqueado"
+    id="layoutAdmin">
 
-<script src="dashboard.js"></script>
+    <!-- SIDEBAR -->
+    <aside class="app-sidebar">
+
+      <div class="brand-card">
+
+        <div class="brand-icon">
+          P
+        </div>
+
+        <div>
+          <h2>Marketing Pérola</h2>
+          <span>Central de Ofertas</span>
+        </div>
+
+      </div>
+
+      <nav class="app-menu">
+
+        <button
+          class="menu-btn active"
+          data-aba="dashboard">
+
+          <span class="menu-icone">📊</span>
+          <span>Visão geral</span>
+
+        </button>
+
+        <button
+          class="menu-btn"
+          data-aba="ofertas">
+
+          <span class="menu-icone">🏷️</span>
+          <span>Ofertas</span>
+
+        </button>
+
+        <button
+          class="menu-btn"
+          data-aba="estatisticas">
+
+          <span class="menu-icone">📈</span>
+          <span>Estatísticas</span>
+
+        </button>
+
+        <button
+          class="menu-btn"
+          data-aba="configuracoes">
+
+          <span class="menu-icone">⚙️</span>
+          <span>Configurações</span>
+
+        </button>
+
+      </nav>
+
+      <div class="sidebar-footer">
+
+        <button
+          class="btn-sair"
+          id="btnSairAdmin">
+
+          Sair do painel
+
+        </button>
+
+      </div>
+
+    </aside>
+
+    <!-- CONTEÚDO -->
+    <main class="app-content">
+
+      <!-- DASHBOARD -->
+      <section
+        class="aba ativa"
+        id="aba-dashboard">
+
+        <header class="page-header">
+
+          <div>
+            <span class="eyebrow">Central de ofertas</span>
+
+            <h1>Visão geral</h1>
+
+            <p>
+              Acompanhe o status das campanhas publicadas no site.
+            </p>
+          </div>
+
+          <button
+            class="btn-primary"
+            id="novaOfertaDashboard">
+
+            + Nova oferta
+
+          </button>
+
+        </header>
+
+        <section class="metric-grid">
+
+          <article class="metric-card metric-total">
+            <div class="metric-icon">🏷️</div>
+
+            <div>
+              <span>Total de ofertas</span>
+              <strong id="totalOfertas">0</strong>
+            </div>
+          </article>
+
+          <article class="metric-card metric-ativas">
+            <div class="metric-icon">🟢</div>
+
+            <div>
+              <span>Ativas</span>
+              <strong id="ativas">0</strong>
+            </div>
+          </article>
+
+          <article class="metric-card metric-futuras">
+            <div class="metric-icon">🗓️</div>
+
+            <div>
+              <span>Agendadas</span>
+              <strong id="futuras">0</strong>
+            </div>
+          </article>
+
+          <article class="metric-card metric-encerradas">
+            <div class="metric-icon">⚫</div>
+
+            <div>
+              <span>Encerradas</span>
+              <strong id="encerradas">0</strong>
+            </div>
+          </article>
+
+        </section>
+
+        <section class="panel-card">
+
+          <div class="panel-header">
+            <div>
+              <h2>Últimas ofertas</h2>
+              <p>Campanhas mais recentes cadastradas no painel.</p>
+            </div>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Oferta</th>
+                  <th>Status</th>
+                  <th>Tipo</th>
+                  <th>Início</th>
+                  <th>Fim</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+
+              <tbody id="listaOfertasDashboard"></tbody>
+            </table>
+          </div>
+
+        </section>
+
+      </section>
+
+      <!-- OFERTAS -->
+      <section
+        class="aba"
+        id="aba-ofertas">
+
+        <header class="page-header">
+
+          <div>
+            <span class="eyebrow">Gestão de campanhas</span>
+
+            <h1>Ofertas</h1>
+
+            <p>
+              Cadastre, edite, publique e organize as ofertas do site.
+            </p>
+          </div>
+
+          <button
+            class="btn-primary"
+            id="novaOferta">
+
+            + Nova oferta
+
+          </button>
+
+        </header>
+
+        <section class="ofertas-workspace">
+
+          <!-- LISTA -->
+          <div class="ofertas-lista-card">
+
+            <div class="workspace-toolbar">
+
+              <input
+                type="text"
+                id="buscaOferta"
+                placeholder="Buscar oferta pelo nome...">
+
+              <div class="workspace-filtros">
+
+                <select id="filtroStatus">
+                  <option value="todos">Todos os status</option>
+                  <option value="Ativa">Ativas</option>
+                  <option value="Futura">Agendadas</option>
+                  <option value="Encerrada">Encerradas</option>
+                </select>
+
+                <select id="filtroTipo">
+                  <option value="todos">Todos os tipos</option>
+                  <option value="oferta">Oferta</option>
+                  <option value="banner">Banner</option>
+                </select>
+
+              </div>
+
+            </div>
+
+            <div
+              class="ofertas-lista"
+              id="listaOfertas"></div>
+
+          </div>
+
+          <!-- DETALHES -->
+          <aside
+            class="oferta-detalhes-card"
+            id="detalhesOferta">
+
+            <div class="detalhes-vazio">
+
+              <div class="detalhes-vazio-icone">
+                🏷️
+              </div>
+
+              <h2>Selecione uma oferta</h2>
+
+              <p>
+                Clique em uma campanha na lista para visualizar informações,
+                link, QR Code e ações rápidas.
+              </p>
+
+            </div>
+
+          </aside>
+
+        </section>
+
+      </section>
+
+      <!-- ESTATÍSTICAS -->
+      <section
+        class="aba"
+        id="aba-estatisticas">
+
+        <header class="page-header">
+
+          <div>
+            <span class="eyebrow">Operação</span>
+
+            <h1>Estatísticas operacionais</h1>
+
+            <p>
+              Resumo rápido das ofertas publicadas e agendadas.
+            </p>
+          </div>
+
+        </header>
+
+        <section class="metric-grid">
+
+          <article class="metric-card metric-ativas">
+            <div class="metric-icon">🟢</div>
+
+            <div>
+              <span>Ofertas ativas</span>
+              <strong id="estatAtivas">0</strong>
+            </div>
+          </article>
+
+          <article class="metric-card metric-futuras">
+            <div class="metric-icon">🗓️</div>
+
+            <div>
+              <span>Agendadas</span>
+              <strong id="estatAgendadas">0</strong>
+            </div>
+          </article>
+
+          <article class="metric-card metric-total">
+            <div class="metric-icon">🖼️</div>
+
+            <div>
+              <span>Total de páginas</span>
+              <strong id="estatPaginas">0</strong>
+            </div>
+          </article>
+
+          <article class="metric-card metric-encerradas">
+            <div class="metric-icon">⏳</div>
+
+            <div>
+              <span>Encerram hoje</span>
+              <strong id="estatEncerramHoje">0</strong>
+            </div>
+          </article>
+
+        </section>
+
+        <section class="panel-card">
+
+          <div class="panel-header">
+            <div>
+              <h2>Resumo por oferta</h2>
+              <p>Links rápidos, QR Code e informações operacionais.</p>
+            </div>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Oferta</th>
+                  <th>Status</th>
+                  <th>Período</th>
+                  <th>Páginas</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+
+              <tbody id="listaEstatisticas"></tbody>
+            </table>
+          </div>
+
+        </section>
+
+      </section>
+
+      <!-- CONFIGURAÇÕES -->
+      <section
+        class="aba"
+        id="aba-configuracoes">
+
+        <header class="page-header">
+
+          <div>
+            <span class="eyebrow">Preferências</span>
+
+            <h1>Configurações gerais</h1>
+
+            <p>
+              Controle as informações principais do site de ofertas.
+            </p>
+          </div>
+
+          <button
+            class="btn-primary"
+            id="salvarConfiguracoes">
+
+            Salvar configurações
+
+          </button>
+
+        </header>
+
+        <section class="config-grid">
+
+          <div class="form-section">
+
+            <h2>Informações do site</h2>
+
+            <label>Título principal</label>
+            <input
+              type="text"
+              id="configTituloSite">
+
+            <label>Subtítulo</label>
+            <input
+              type="text"
+              id="configSubtituloSite">
+
+            <label>Link do grupo WhatsApp</label>
+            <input
+              type="url"
+              id="configLinkGrupo">
+
+          </div>
+
+          <div class="form-section">
+
+            <h2>Imagens</h2>
+
+            <label>Banner principal</label>
+            <input
+              type="text"
+              id="configBannerPrincipal">
+
+            <label>Placeholder</label>
+            <input
+              type="text"
+              id="configPlaceholder">
+
+            <label>Imagem de compartilhamento</label>
+            <input
+              type="text"
+              id="configImagemCompartilhamento">
+
+          </div>
+
+          <div class="form-section form-section-full">
+
+            <h2>Compartilhamento</h2>
+
+            <label>Título de compartilhamento</label>
+            <input
+              type="text"
+              id="configTituloCompartilhamento">
+
+            <label>Descrição de compartilhamento</label>
+            <textarea id="configDescricaoCompartilhamento"></textarea>
+
+          </div>
+
+        </section>
+
+        <div
+          class="mensagem"
+          id="mensagemConfig"></div>
+
+      </section>
+
+    </main>
+
+  </div>
+
+  <!-- MODAL OFERTA -->
+  <div
+    class="modal"
+    id="modalOferta">
+
+    <div class="modal-content">
+
+      <div class="modal-header">
+
+        <div>
+          <span class="eyebrow">Campanha</span>
+          <h2 id="tituloModalOferta">Nova Oferta</h2>
+        </div>
+
+        <button id="fecharModal">
+          ×
+        </button>
+
+      </div>
+
+      <form id="formOferta">
+
+        <label>Título da oferta</label>
+
+        <input
+          type="text"
+          id="tituloOferta"
+          placeholder="Ex: Operação Fecha Mês"
+          required>
+
+        <label>Slug / Link da oferta</label>
+
+        <input
+          type="text"
+          id="slugOferta"
+          placeholder="operacao-fecha-mes"
+          readonly>
+
+        <label>Tipo</label>
+
+        <select id="tipoOferta">
+          <option value="oferta">Oferta</option>
+          <option value="banner">Banner principal</option>
+        </select>
+
+        <div class="grid-form">
+
+          <div>
+            <label>Data e hora de início</label>
+
+            <input
+              type="datetime-local"
+              id="dataInicio"
+              required>
+          </div>
+
+          <div>
+            <label>Data e hora de fim</label>
+
+            <input
+              type="datetime-local"
+              id="dataFim"
+              required>
+          </div>
+
+        </div>
+
+        <div class="grid-form">
+
+          <div>
+            <label>Prioridade</label>
+
+            <input
+              type="number"
+              id="prioridadeOferta"
+              value="999">
+          </div>
+
+          <div>
+            <label>Cor da categoria</label>
+
+            <input
+              type="color"
+              id="corOferta"
+              value="#c40000">
+          </div>
+
+        </div>
+
+        <div class="checks">
+
+          <label>
+            <input
+              type="checkbox"
+              id="ativoOferta"
+              checked>
+
+            Oferta ativa
+          </label>
+
+          <label>
+            <input
+              type="checkbox"
+              id="ocultarOferta">
+
+            Ocultar oferta
+          </label>
+
+        </div>
+
+        <label>Imagens da oferta</label>
+
+        <div
+          class="upload-area"
+          id="uploadArea">
+
+          <input
+            type="file"
+            id="imagensOferta"
+            accept="image/*"
+            multiple>
+
+          <p>Clique ou arraste as imagens aqui</p>
+
+          <small>
+            Você pode selecionar várias páginas da oferta de uma vez.
+          </small>
+
+        </div>
+
+        <div
+          class="preview-imagens"
+          id="previewImagens"></div>
+
+        <button
+          type="submit"
+          class="btn-salvar">
+
+          Salvar oferta
+
+        </button>
+
+      </form>
+
+    </div>
+
+  </div>
+
+  <script src="dashboard.js"></script>
 
 </body>
+
 </html>
