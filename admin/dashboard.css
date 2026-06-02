@@ -711,3 +711,22 @@ textarea:focus{
 .login-erro.ativo{
   display:block;
 }
+
+.btn-sair{
+  width:100%;
+  border:none;
+  background:rgba(255,255,255,.14);
+  color:white;
+  padding:12px;
+  border-radius:12px;
+  cursor:pointer;
+  font-size:14px;
+  font-weight:bold;
+  margin-bottom:24px;
+  transition:.2s;
+}
+
+.btn-sair:hover{
+  background:white;
+  color:#b30000;
+}
