@@ -40,13 +40,12 @@ async function verificarLoginAdmin() {
     formLoginAdmin.addEventListener("submit", async (evento) => {
       evento.preventDefault();
 
-      const senha = senhaAdmin.value.trim();
+      const senha = senhaAdmin.value;
 
-      if (!senha) {
-        mostrarErroLogin("Digite a senha para continuar.");
-        resolve(false);
-        return;
-      }
+if (!senha) {
+  mostrarErroLogin("Digite a senha para continuar.");
+  return;
+}
 
       try {
         const resposta = await fetch(API_AUTH, {
