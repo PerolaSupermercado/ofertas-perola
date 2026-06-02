@@ -25,110 +25,6 @@ function base64ParaBuffer(base64) {
   return Buffer.from(partes[1], "base64");
 }
 
-function extrairCaminhoStorage(urlImagem) {
-  if (!urlImagem) {
-    return null;
-  }
-
-  const marcador = "/storage/v1/object/public/ofertas-imagens/";
-  const partes = String(urlImagem).split(marcador);
-
-  if (!partes[1]) {
-    return null;
-  }
-
-  return partes[1];
-}
-
-function imagemEhDoStorage(urlImagem) {
-  return String(urlImagem || "").includes(
-    "/storage/v1/object/public/ofertas-imagens/"
-  );
-}
-
-async function excluirImagensStorage(urlsImagens = []) {
-  try {
-    const caminhos = urlsImagens
-      .map(extrairCaminhoStorage)
-      .filter(Boolean);
-
-    if (caminhos.length === 0) {
-      return;
-    }
-
-    const respostaStorage = await fetch(
-      `${SUPABASE_URL}/storage/v1/object/ofertas-imagens`,
-      {
-        method: "DELETE",
-        headers: {
-          apikey: SUPABASE_SERVICE_KEY,
-          Authorization: `Bearer ${SUPABASE_SERVICE_KEY}`,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          prefixes: caminhos
-        })
-      }
-    );
-
-    const texto = await respostaStorage.text();
-
-    if (!respostaStorage.ok) {
-      console.warn("Não foi possível excluir imagens do Storage:", texto);
-    }
-
-  } catch (erro) {
-    console.warn("Erro ao limpar imagens do Storage:", erro.message);
-  }
-}
-
-function extrairCaminhoStorage(urlImagem) {
-  if (!urlImagem) {
-    return null;
-  }
-
-  const marcador = "/storage/v1/object/public/ofertas-imagens/";
-
-  const partes = String(urlImagem).split(marcador);
-
-  if (!partes[1]) {
-    return null;
-  }
-
-  return partes[1];
-}
-
-async function excluirImagensStorage(urlsImagens = []) {
-  const caminhos = urlsImagens
-    .map(extrairCaminhoStorage)
-    .filter(Boolean);
-
-  if (caminhos.length === 0) {
-    return;
-  }
-
-  const respostaStorage = await fetch(
-    `${SUPABASE_URL}/storage/v1/object/ofertas-imagens`,
-    {
-      method: "DELETE",
-      headers: {
-        apikey: SUPABASE_SERVICE_KEY,
-        Authorization: `Bearer ${SUPABASE_SERVICE_KEY}`,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        prefixes: caminhos
-      })
-    }
-  );
-
-  const texto = await respostaStorage.text();
-
-  if (!respostaStorage.ok) {
-    throw new Error(texto);
-  }
-}
-
 async function consultarSupabase(url, opcoes = {}) {
   const respostaApi = await fetch(url, {
     ...opcoes,
@@ -279,33 +175,6 @@ if (req.method === "PUT") {
       })
     }
   );
-
-const imagensAntigas = await consultarSupabase(
-  `${SUPABASE_URL}/rest/v1/ofertas_imagens?oferta_id=eq.${oferta.id}&select=imagem_url`
-);
-
-await excluirImagensStorage(
-  imagensAntigas.map((imagem) => imagem.imagem_url)
-);
-
-const imagensAntigas = await consultarSupabase(
-  `${SUPABASE_URL}/rest/v1/ofertas_imagens?oferta_id=eq.${oferta.id}&select=imagem_url`
-);
-
-const urlsAntigas = imagensAntigas.map((imagem) => imagem.imagem_url);
-
-const urlsAtuais = (oferta.imagens || [])
-  .map((imagem) => typeof imagem === "string" ? imagem : imagem.url)
-  .filter(Boolean);
-
-const urlsRemovidas = urlsAntigas.filter((urlAntiga) => {
-  return (
-    imagemEhDoStorage(urlAntiga) &&
-    !urlsAtuais.includes(urlAntiga)
-  );
-});
-
-await excluirImagensStorage(urlsRemovidas);
   
   await consultarSupabase(
     `${SUPABASE_URL}/rest/v1/ofertas_imagens?oferta_id=eq.${oferta.id}`,
@@ -402,27 +271,6 @@ await excluirImagensStorage(urlsRemovidas);
     }
 
     if (req.method === "DELETE") {
-  const { id } = req.query;
-
-  const imagensOferta = await consultarSupabase(
-    `${SUPABASE_URL}/rest/v1/ofertas_imagens?oferta_id=eq.${id}&select=imagem_url`
-  );
-
-  await excluirImagensStorage(
-    imagensOferta.map((imagem) => imagem.imagem_url)
-  );
-
-  await consultarSupabase(
-    `${SUPABASE_URL}/rest/v1/ofertas_items?id=eq.${id}`,
-    {
-      method: "DELETE"
-    }
-  );
-
-  return resposta(res, 200, {
-    sucesso: true
-  });
-}
 
     return resposta(res, 405, {
       erro: "Método não permitido"
