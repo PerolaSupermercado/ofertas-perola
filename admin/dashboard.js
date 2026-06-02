@@ -1,7 +1,21 @@
 const API_OFERTAS = "/api/ofertas";
 const API_CONFIGURACOES = "/api/configuracoes";
 const API_UPLOAD = "/api/upload";
+const API_AUTH = "/api/auth";
+
+const TOKEN_ADMIN_KEY = "tokenAdminPerola";
 const CHAVE_CONFIG = "configuracoesOfertasPerola";
+
+function obterTokenAdmin() {
+  return sessionStorage.getItem(TOKEN_ADMIN_KEY);
+}
+
+function headersAdmin() {
+  return {
+    "Content-Type": "application/json",
+    "x-admin-token": obterTokenAdmin()
+  };
+}
 
 let ofertas = [];
 let configuracoes = {};
