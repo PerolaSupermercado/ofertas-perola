@@ -759,7 +759,14 @@ function gerarUrlDaOferta(nomeOferta) {
 }
 
 function compartilharSite() {
+  const oferta = OFERTAS_ATIVAS[categoriaAtual];
   const url = gerarUrlDaOferta(categoriaAtual);
+
+  registrarEventoAnalytics("clique_compartilhar", {
+    oferta: categoriaAtual,
+    slug: oferta ? oferta.slug || "" : ""
+  });
+   
 
   if (typeof gtag === "function") {
     gtag("event", "compartilhar_ofertas", {
@@ -957,33 +964,27 @@ document.addEventListener(
 
 /* ===== EVENTO GRUPO WHATSAPP ===== */
 
-linkGrupoFlutuante.addEventListener(
-  "click",
-  () => {
-    if (typeof gtag === "function") {
-      gtag("event", "entrar_grupo", {
-        event_category: "Engajamento",
-        event_label: "Grupo WhatsApp",
-        value: 1
-      });
-    }
-  }
-);
+if (linkGrupoFlutuante) {
+  linkGrupoFlutuante.addEventListener("click", () => {
+    const oferta = OFERTAS_ATIVAS[categoriaAtual];
 
-/* ===== EVENTO GRUPO WHATSAPP - SEM OFERTAS ===== */
+    registrarEventoAnalytics("clique_grupo_whatsapp", {
+      local: "botao_flutuante",
+      oferta: categoriaAtual,
+      slug: oferta ? oferta.slug || "" : ""
+    });
+  });
+}
 
-linkSemOfertas.addEventListener(
-  "click",
-  () => {
-    if (typeof gtag === "function") {
-      gtag("event", "entrar_grupo_sem_ofertas", {
-        event_category: "Engajamento",
-        event_label: "Botão Sem Ofertas",
-        value: 1
-      });
-    }
-  }
-);
+if (linkSemOfertas) {
+  linkSemOfertas.addEventListener("click", () => {
+    registrarEventoAnalytics("clique_grupo_whatsapp", {
+      local: "sem_ofertas",
+      oferta: categoriaAtual,
+      slug: ""
+    });
+  });
+}
 
 /* =========================================
    GRUPO FLUTUANTE MINIMIZÁVEL
