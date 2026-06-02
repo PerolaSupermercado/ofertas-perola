@@ -738,7 +738,11 @@ function gerarSlug(texto) {
 
 function gerarUrlDaOferta(nomeOferta) {
   const dominio = window.location.origin;
-  const slug = gerarSlug(nomeOferta);
+  const oferta = OFERTAS_ATIVAS[nomeOferta];
+
+  const slug = oferta && oferta.slug
+    ? oferta.slug
+    : gerarSlug(nomeOferta);
 
   return dominio + "/" + slug;
 }
@@ -1019,9 +1023,18 @@ function abrirOfertaPelaUrl() {
   const idQuery = parametros.get("id");
   const slugQuery = parametros.get("oferta");
 
+  const slugPath = window.location.pathname
+    .replace(/^\/+|\/+$/g, "")
+    .trim()
+    .toLowerCase();
+
   const nomesOfertas = Object.keys(OFERTAS_ATIVAS);
 
-  if (!idQuery && !slugQuery) {
+  if (!nomesOfertas.length) {
+    return;
+  }
+
+  if (!idQuery && !slugQuery && !slugPath) {
     categoriaAtual = nomesOfertas[0];
     paginaAtual = 0;
     return;
@@ -1030,10 +1043,18 @@ function abrirOfertaPelaUrl() {
   const ofertaEncontrada = nomesOfertas.find((nomeOferta) => {
     const oferta = OFERTAS_ATIVAS[nomeOferta];
 
-    const mesmoId = idQuery && String(oferta.id) === String(idQuery);
-    const mesmoSlug = slugQuery && String(oferta.slug) === String(slugQuery);
+    const slugBanco = String(oferta.slug || "")
+      .trim()
+      .toLowerCase();
 
-    return mesmoId || mesmoSlug;
+    const slugNome = gerarSlug(nomeOferta);
+
+    return (
+      String(oferta.id) === String(idQuery) ||
+      slugBanco === String(slugQuery || "").toLowerCase() ||
+      slugBanco === slugPath ||
+      slugNome === slugPath
+    );
   });
 
   categoriaAtual = ofertaEncontrada || nomesOfertas[0];
