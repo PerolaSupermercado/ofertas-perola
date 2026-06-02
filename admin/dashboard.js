@@ -148,6 +148,8 @@ const buscaOferta = document.getElementById("buscaOferta");
 const filtroStatus = document.getElementById("filtroStatus");
 const filtroTipo = document.getElementById("filtroTipo");
 
+const listaEstatisticas = document.getElementById("listaEstatisticas");
+
 const camposConfig = {
   tituloSite: document.getElementById("configTituloSite"),
   subtituloSite: document.getElementById("configSubtituloSite"),
@@ -173,6 +175,136 @@ async function carregarOfertasApi() {
     }
 
     ofertas = Array.isArray(dados) ? dados : [];
+
+    function gerarUrlOfertaPainel(oferta) {
+  const dominio = window.location.origin;
+  const slug = oferta.slug || gerarSlug(oferta.titulo || "");
+
+  return dominio + "/" + slug;
+}
+
+function encerraHoje(fimValor) {
+  if (!fimValor) return false;
+
+  const hoje = new Date();
+  const fim = new Date(fimValor);
+
+  return (
+    hoje.getFullYear() === fim.getFullYear() &&
+    hoje.getMonth() === fim.getMonth() &&
+    hoje.getDate() === fim.getDate()
+  );
+}
+
+function copiarLinkOferta(index) {
+  const oferta = ofertas[index];
+  const url = gerarUrlOfertaPainel(oferta);
+
+  navigator.clipboard.writeText(url).then(() => {
+    alert("Link copiado com sucesso!");
+  });
+}
+
+function abrirOfertaSite(index) {
+  const oferta = ofertas[index];
+  const url = gerarUrlOfertaPainel(oferta);
+
+  window.open(url, "_blank");
+}
+
+function abrirQrCodeOferta(index) {
+  const oferta = ofertas[index];
+  const url = gerarUrlOfertaPainel(oferta);
+
+  const qrUrl =
+    "https://api.qrserver.com/v1/create-qr-code/?size=600x600&data=" +
+    encodeURIComponent(url);
+
+  window.open(qrUrl, "_blank");
+}
+
+function renderizarEstatisticasOperacionais() {
+  if (!listaEstatisticas) return;
+
+  const statusLista = ofertas.map((oferta) => {
+    return calcularStatus(
+      oferta.inicioOriginal,
+      oferta.fimOriginal,
+      oferta.ativo
+    );
+  });
+
+  const totalAtivas = statusLista.filter(status => status === "Ativa").length;
+  const totalAgendadas = statusLista.filter(status => status === "Futura").length;
+
+  const totalPaginas = ofertas.reduce((total, oferta) => {
+    return total + ((oferta.imagens || []).length);
+  }, 0);
+
+  const totalEncerramHoje = ofertas.filter((oferta) => {
+    const status = calcularStatus(
+      oferta.inicioOriginal,
+      oferta.fimOriginal,
+      oferta.ativo
+    );
+
+    return status === "Ativa" && encerraHoje(oferta.fimOriginal);
+  }).length;
+
+  document.getElementById("estatAtivas").textContent = totalAtivas;
+  document.getElementById("estatAgendadas").textContent = totalAgendadas;
+  document.getElementById("estatPaginas").textContent = totalPaginas;
+  document.getElementById("estatEncerramHoje").textContent = totalEncerramHoje;
+
+  listaEstatisticas.innerHTML = "";
+
+  ofertas.forEach((oferta, index) => {
+    const statusAtual = calcularStatus(
+      oferta.inicioOriginal,
+      oferta.fimOriginal,
+      oferta.ativo
+    );
+
+    let classeStatus = "ativa";
+
+    if (statusAtual === "Futura") classeStatus = "futura";
+    if (statusAtual === "Encerrada") classeStatus = "encerrada";
+
+    listaEstatisticas.innerHTML += `
+      <tr>
+        <td>${oferta.titulo}</td>
+
+        <td>
+          <span class="status ${classeStatus}">
+            ${statusAtual}
+          </span>
+        </td>
+
+        <td>${oferta.inicio} a ${oferta.fim}</td>
+
+        <td>
+          <span class="qtd-imagens">
+            ${(oferta.imagens || []).length}
+          </span>
+        </td>
+
+        <td>
+          <button class="btn-preview" onclick="copiarLinkOferta(${index})">
+            Copiar Link
+          </button>
+
+          <button class="btn-editar" onclick="abrirOfertaSite(${index})">
+            Abrir
+          </button>
+
+          <button class="btn-duplicar" onclick="abrirQrCodeOferta(${index})">
+            QR Code
+          </button>
+        </td>
+      </tr>
+    `;
+  });
+}
 
     renderizarOfertas();
 
@@ -457,6 +589,7 @@ function renderizarOfertas() {
   });
 
   atualizarCards();
+  renderizarEstatisticasOperacionais();
 }
 
 function abrirModalNovaOferta() {
