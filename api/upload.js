@@ -1,6 +1,16 @@
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
 
+function tokenAdminValido(req) {
+  const tokenRecebido = req.headers["x-admin-token"];
+
+  return (
+    tokenRecebido &&
+    process.env.ADMIN_TOKEN &&
+    tokenRecebido === process.env.ADMIN_TOKEN
+  );
+}
+
 function base64ParaBuffer(base64) {
   const partes = base64.split(",");
   return Buffer.from(partes[1], "base64");
@@ -19,6 +29,12 @@ function pegarExtensao(nomeArquivo, base64) {
 
 export default async function handler(req, res) {
   try {
+    if (!tokenAdminValido(req)) {
+      return res.status(401).json({
+        erro: "Acesso não autorizado."
+      });
+    }
+
     if (req.method !== "POST") {
       return res.status(405).json({
         erro: "Método não permitido"
