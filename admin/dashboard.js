@@ -539,6 +539,96 @@ function gerarLinhaOferta(oferta, index, modoDashboard = false) {
   `;
 }
 
+function renderizarEstatisticasOperacionais() {
+  if (!listaEstatisticas) {
+    return;
+  }
+
+  const statusLista = ofertas.map((oferta) => {
+    return calcularStatus(
+      oferta.inicioOriginal,
+      oferta.fimOriginal,
+      oferta.ativo
+    );
+  });
+
+  const totalAtivas = statusLista.filter(status => status === "Ativa").length;
+  const totalAgendadas = statusLista.filter(status => status === "Futura").length;
+
+  const totalPaginas = ofertas.reduce((total, oferta) => {
+    return total + ((oferta.imagens || []).length);
+  }, 0);
+
+  const totalEncerramHoje = ofertas.filter((oferta) => {
+    const status = calcularStatus(
+      oferta.inicioOriginal,
+      oferta.fimOriginal,
+      oferta.ativo
+    );
+
+    return status === "Ativa" && encerraHoje(oferta.fimOriginal);
+  }).length;
+
+  const estatAtivas = document.getElementById("estatAtivas");
+  const estatAgendadas = document.getElementById("estatAgendadas");
+  const estatPaginas = document.getElementById("estatPaginas");
+  const estatEncerramHoje = document.getElementById("estatEncerramHoje");
+
+  if (estatAtivas) estatAtivas.textContent = totalAtivas;
+  if (estatAgendadas) estatAgendadas.textContent = totalAgendadas;
+  if (estatPaginas) estatPaginas.textContent = totalPaginas;
+  if (estatEncerramHoje) estatEncerramHoje.textContent = totalEncerramHoje;
+
+  listaEstatisticas.innerHTML = "";
+
+  ofertas.forEach((oferta, index) => {
+    const statusAtual = calcularStatus(
+      oferta.inicioOriginal,
+      oferta.fimOriginal,
+      oferta.ativo
+    );
+
+    let classeStatus = "ativa";
+
+    if (statusAtual === "Futura") classeStatus = "futura";
+    if (statusAtual === "Encerrada") classeStatus = "encerrada";
+
+    listaEstatisticas.innerHTML += `
+      <tr>
+        <td>${oferta.titulo}</td>
+
+        <td>
+          <span class="status ${classeStatus}">
+            ${statusAtual}
+          </span>
+        </td>
+
+        <td>${oferta.inicio} a ${oferta.fim}</td>
+
+        <td>
+          <span class="qtd-imagens">
+            ${(oferta.imagens || []).length}
+          </span>
+        </td>
+
+        <td>
+          <button class="btn-preview" onclick="copiarLinkOferta(${index})">
+            Copiar Link
+          </button>
+
+          <button class="btn-editar" onclick="abrirOfertaSite(${index})">
+            Abrir
+          </button>
+
+          <button class="btn-duplicar" onclick="abrirQrCodeOferta(${index})">
+            QR Code
+          </button>
+        </td>
+      </tr>
+    `;
+  });
+}
+
 function renderizarOfertas() {
   ofertas.sort((a, b) => Number(a.prioridade || 999) - Number(b.prioridade || 999));
 
