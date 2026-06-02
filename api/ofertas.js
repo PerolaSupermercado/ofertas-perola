@@ -47,33 +47,38 @@ function imagemEhDoStorage(urlImagem) {
 }
 
 async function excluirImagensStorage(urlsImagens = []) {
-  const caminhos = urlsImagens
-    .map(extrairCaminhoStorage)
-    .filter(Boolean);
+  try {
+    const caminhos = urlsImagens
+      .map(extrairCaminhoStorage)
+      .filter(Boolean);
 
-  if (caminhos.length === 0) {
-    return;
-  }
-
-  const respostaStorage = await fetch(
-    `${SUPABASE_URL}/storage/v1/object/ofertas-imagens`,
-    {
-      method: "DELETE",
-      headers: {
-        apikey: SUPABASE_SERVICE_KEY,
-        Authorization: `Bearer ${SUPABASE_SERVICE_KEY}`,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        prefixes: caminhos
-      })
+    if (caminhos.length === 0) {
+      return;
     }
-  );
 
-  const texto = await respostaStorage.text();
+    const respostaStorage = await fetch(
+      `${SUPABASE_URL}/storage/v1/object/ofertas-imagens`,
+      {
+        method: "DELETE",
+        headers: {
+          apikey: SUPABASE_SERVICE_KEY,
+          Authorization: `Bearer ${SUPABASE_SERVICE_KEY}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          prefixes: caminhos
+        })
+      }
+    );
 
-  if (!respostaStorage.ok) {
-    throw new Error(texto);
+    const texto = await respostaStorage.text();
+
+    if (!respostaStorage.ok) {
+      console.warn("Não foi possível excluir imagens do Storage:", texto);
+    }
+
+  } catch (erro) {
+    console.warn("Erro ao limpar imagens do Storage:", erro.message);
   }
 }
 
