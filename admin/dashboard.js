@@ -251,10 +251,15 @@ function renderizarEstatisticasOperacionais() {
     return status === "Ativa" && encerraHoje(oferta.fimOriginal);
   }).length;
 
-  document.getElementById("estatAtivas").textContent = totalAtivas;
-  document.getElementById("estatAgendadas").textContent = totalAgendadas;
-  document.getElementById("estatPaginas").textContent = totalPaginas;
-  document.getElementById("estatEncerramHoje").textContent = totalEncerramHoje;
+  const estatAtivas = document.getElementById("estatAtivas");
+const estatAgendadas = document.getElementById("estatAgendadas");
+const estatPaginas = document.getElementById("estatPaginas");
+const estatEncerramHoje = document.getElementById("estatEncerramHoje");
+
+if (estatAtivas) estatAtivas.textContent = totalAtivas;
+if (estatAgendadas) estatAgendadas.textContent = totalAgendadas;
+if (estatPaginas) estatPaginas.textContent = totalPaginas;
+if (estatEncerramHoje) estatEncerramHoje.textContent = totalEncerramHoje;
 
   listaEstatisticas.innerHTML = "";
 
