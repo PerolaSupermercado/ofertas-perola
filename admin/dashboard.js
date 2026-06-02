@@ -223,6 +223,21 @@ function abrirQrCodeOferta(index) {
   window.open(qrUrl, "_blank");
 }
 
+function encerraHoje(fimValor) {
+  if (!fimValor) {
+    return false;
+  }
+
+  const hoje = new Date();
+  const fim = new Date(fimValor);
+
+  return (
+    hoje.getFullYear() === fim.getFullYear() &&
+    hoje.getMonth() === fim.getMonth() &&
+    hoje.getDate() === fim.getDate()
+  );
+}
+    
 function renderizarEstatisticasOperacionais() {
   if (!listaEstatisticas) return;
 
