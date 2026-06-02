@@ -27,11 +27,60 @@ function mostrarErroLogin(mensagem) {
 async function verificarLoginAdmin() {
   const token = obterTokenAdmin();
   const loginAdmin = document.getElementById("loginAdmin");
+  const formLoginAdmin = document.getElementById("formLoginAdmin");
+  const senhaAdmin = document.getElementById("senhaAdmin");
 
   if (token) {
     loginAdmin.classList.add("oculto");
     return true;
   }
+
+  loginAdmin.classList.remove("oculto");
+
+  return new Promise((resolve) => {
+    formLoginAdmin.onsubmit = async (evento) => {
+      evento.preventDefault();
+
+      const senha = senhaAdmin.value;
+
+      if (senha === "") {
+        mostrarErroLogin("Digite a senha para continuar.");
+        return;
+      }
+
+      try {
+        const resposta = await fetch(API_AUTH, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            senha: senha
+          })
+        });
+
+        const dados = await resposta.json();
+
+        if (!resposta.ok) {
+          mostrarErroLogin(dados.erro || "Senha incorreta.");
+          senhaAdmin.value = "";
+          senhaAdmin.focus();
+          return;
+        }
+
+        sessionStorage.setItem(TOKEN_ADMIN_KEY, dados.token);
+
+        loginAdmin.classList.add("oculto");
+
+        resolve(true);
+
+      } catch (erro) {
+        console.error("Erro no login:", erro);
+        mostrarErroLogin("Erro ao conectar com o login.");
+      }
+    };
+  });
+}
 
   return new Promise((resolve) => {
     const formLoginAdmin = document.getElementById("formLoginAdmin");
