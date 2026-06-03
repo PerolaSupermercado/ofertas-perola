@@ -25,6 +25,14 @@ function base64ParaBuffer(base64) {
   return Buffer.from(partes[1], "base64");
 }
 
+function caminhoStoragePorUrl(url) {
+  if (!url || !url.includes("/ofertas-imagens/")) {
+    return null;
+  }
+
+  return url.split("/ofertas-imagens/")[1];
+}
+
 async function consultarSupabase(url, opcoes = {}) {
   const respostaApi = await fetch(url, {
     ...opcoes,
@@ -54,9 +62,30 @@ async function consultarSupabase(url, opcoes = {}) {
   return json;
 }
 
+async function apagarImagensStorage(caminhos = []) {
+  const caminhosValidos = caminhos.filter(Boolean);
+
+  if (caminhosValidos.length === 0) {
+    return;
+  }
+
+  await consultarSupabase(
+    `${SUPABASE_URL}/storage/v1/object/ofertas-imagens`,
+    {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        prefixes: caminhosValidos
+      })
+    }
+  );
+}
+
 async function uploadImagem(imagem, ofertaId, index) {
   const extensao = getExtensao(imagem.url, imagem.nome);
-  const nomeArquivo = `${ofertaId}/${Date.now()}-${index}.${extensao}`;
+  const nomeArquivo = `ofertas/${Date.now()}-${Math.random().toString(36).substring(2)}.${extensao}`;
   const buffer = base64ParaBuffer(imagem.url);
 
   const respostaUpload = await fetch(
@@ -140,6 +169,10 @@ export default async function handler(req, res) {
         });
       }
 
+      const imagensAntigas = await consultarSupabase(
+        `${SUPABASE_URL}/rest/v1/ofertas_imagens?select=imagem_url&oferta_id=eq.${oferta.id}`
+      );
+
       await consultarSupabase(
         `${SUPABASE_URL}/rest/v1/ofertas_items?id=eq.${oferta.id}`,
         {
@@ -168,6 +201,8 @@ export default async function handler(req, res) {
         }
       );
 
+      const urlsNovas = [];
+
       for (let i = 0; i < oferta.imagens.length; i++) {
         const imagem = oferta.imagens[i];
 
@@ -176,6 +211,8 @@ export default async function handler(req, res) {
         if (urlImagem.startsWith("data:image")) {
           urlImagem = await uploadImagem(imagem, oferta.id, i);
         }
+
+        urlsNovas.push(urlImagem);
 
         await consultarSupabase(
           `${SUPABASE_URL}/rest/v1/ofertas_imagens`,
@@ -192,6 +229,17 @@ export default async function handler(req, res) {
           }
         );
       }
+
+      const caminhosNovos = urlsNovas
+        .map(caminhoStoragePorUrl)
+        .filter(Boolean);
+
+      const caminhosAntigosParaApagar = imagensAntigas
+        .map((item) => caminhoStoragePorUrl(item.imagem_url))
+        .filter(Boolean)
+        .filter((caminho) => !caminhosNovos.includes(caminho));
+
+      await apagarImagensStorage(caminhosAntigosParaApagar);
 
       return resposta(res, 200, {
         sucesso: true
@@ -258,6 +306,27 @@ export default async function handler(req, res) {
     if (req.method === "DELETE") {
       const { id } = req.query;
 
+      if (!id) {
+        return resposta(res, 400, {
+          erro: "ID da oferta não informado."
+        });
+      }
+
+      const imagensOferta = await consultarSupabase(
+        `${SUPABASE_URL}/rest/v1/ofertas_imagens?select=imagem_url&oferta_id=eq.${id}`
+      );
+
+      const caminhosParaApagar = imagensOferta
+        .map((item) => caminhoStoragePorUrl(item.imagem_url))
+        .filter(Boolean);
+
+      await consultarSupabase(
+        `${SUPABASE_URL}/rest/v1/ofertas_imagens?oferta_id=eq.${id}`,
+        {
+          method: "DELETE"
+        }
+      );
+
       await consultarSupabase(
         `${SUPABASE_URL}/rest/v1/ofertas_items?id=eq.${id}`,
         {
@@ -265,8 +334,11 @@ export default async function handler(req, res) {
         }
       );
 
+      await apagarImagensStorage(caminhosParaApagar);
+
       return resposta(res, 200, {
-        sucesso: true
+        sucesso: true,
+        imagensApagadas: caminhosParaApagar.length
       });
     }
 
