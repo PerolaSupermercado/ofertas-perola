@@ -1585,3 +1585,80 @@ textarea:focus{
     white-space:normal;
   }
 }
+
+/* ===============================
+   DASHBOARD EXECUTIVO
+================================ */
+
+.executive-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:18px;
+  margin-bottom:28px;
+}
+
+.executive-card{
+  background:#ffffff;
+  border:1px solid #edf0f3;
+  border-radius:18px;
+  padding:18px;
+  box-shadow:0 1px 2px rgba(0,0,0,.08), 0 8px 24px rgba(0,0,0,.06);
+  display:flex;
+  gap:14px;
+  align-items:flex-start;
+  min-height:122px;
+  transition:.18s;
+}
+
+.executive-card:hover{
+  transform:translateY(-3px);
+  box-shadow:0 10px 26px rgba(0,0,0,.09);
+}
+
+.executive-icon{
+  width:42px;
+  height:42px;
+  border-radius:14px;
+  background:#f2f3f5;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:21px;
+  flex-shrink:0;
+}
+
+.executive-card small{
+  display:block;
+  color:#65676b;
+  font-size:12px;
+  font-weight:bold;
+  text-transform:uppercase;
+  letter-spacing:.03em;
+  margin-bottom:6px;
+}
+
+.executive-card strong{
+  display:block;
+  color:#1c1e21;
+  font-size:16px;
+  line-height:1.25;
+  margin-bottom:6px;
+}
+
+.executive-card p{
+  color:#65676b;
+  font-size:13px;
+  line-height:1.35;
+}
+
+@media(max-width:1180px){
+  .executive-grid{
+    grid-template-columns:1fr 1fr;
+  }
+}
+
+@media(max-width:680px){
+  .executive-grid{
+    grid-template-columns:1fr;
+  }
+}
