@@ -2,6 +2,7 @@ const API_OFERTAS = "/api/ofertas";
 const API_CONFIGURACOES = "/api/configuracoes";
 const API_UPLOAD = "/api/upload";
 const API_AUTH = "/api/auth";
+const API_ANALYTICS_RESUMO = "/api/analytics-resumo";
 
 const TOKEN_ADMIN_KEY = "tokenAdminPerola";
 const TOKEN_ADMIN_EXPIRA_KEY = "tokenAdminPerolaExpira";
@@ -178,6 +179,7 @@ const camposConfig = {
 const btnSalvarConfiguracoes = document.getElementById("salvarConfiguracoes");
 const mensagemConfig = document.getElementById("mensagemConfig");
 const btnSairAdmin = document.getElementById("btnSairAdmin");
+const btnAtualizarAnalytics = document.getElementById("atualizarAnalytics");
 
 /* ===============================
    API
@@ -967,6 +969,139 @@ function atualizarDashboardExecutivo() {
   }
 }
 
+function preencherTextoAnalytics(id, valor) {
+  const elemento = document.getElementById(id);
+
+  if (elemento) {
+    elemento.textContent = valor;
+  }
+}
+
+function renderizarRankingAnalytics(ranking = []) {
+  const lista = document.getElementById("analyticsRankingOfertas");
+
+  if (!lista) {
+    return;
+  }
+
+  if (!ranking.length) {
+    lista.innerHTML = `
+      <div class="analytics-loading">
+        Nenhum dado registrado ainda.
+      </div>
+    `;
+
+    return;
+  }
+
+  lista.innerHTML = "";
+
+  ranking.forEach((oferta, index) => {
+    lista.innerHTML += `
+      <div class="analytics-ranking-item">
+
+        <div class="analytics-ranking-posicao">
+          ${index + 1}
+        </div>
+
+        <div class="analytics-ranking-info">
+          <strong>${oferta.titulo}</strong>
+
+          <span>
+            ${oferta.visualizacoes} visualizações •
+            ${oferta.visitantes} visitantes •
+            ${oferta.cliquesWhatsapp} WhatsApp
+          </span>
+        </div>
+
+      </div>
+    `;
+  });
+}
+
+async function carregarAnalyticsResumo() {
+  try {
+    const botao = document.getElementById("atualizarAnalytics");
+
+    if (botao) {
+      botao.textContent = "Atualizando...";
+      botao.disabled = true;
+    }
+
+    const resposta = await fetch(API_ANALYTICS_RESUMO);
+    const dados = await resposta.json();
+
+    if (!resposta.ok) {
+      throw new Error(dados.erro || "Erro ao carregar analytics.");
+    }
+
+    preencherTextoAnalytics(
+      "analyticsVisualizacoesHoje",
+      dados.visualizacoesHoje || 0
+    );
+
+    preencherTextoAnalytics(
+      "analyticsVisitantesHoje",
+      dados.visitantesHoje || 0
+    );
+
+    preencherTextoAnalytics(
+      "analyticsVisualizacoesSemana",
+      dados.visualizacoesSemana || 0
+    );
+
+    preencherTextoAnalytics(
+      "analyticsVisitantesSemana",
+      dados.visitantesSemana || 0
+    );
+
+    preencherTextoAnalytics(
+      "analyticsTrocasPagina",
+      dados.trocasPaginaSemana || 0
+    );
+
+    preencherTextoAnalytics(
+      "analyticsWhatsapp",
+      dados.cliquesWhatsappSemana || 0
+    );
+
+    preencherTextoAnalytics(
+      "analyticsCompartilhamentos",
+      dados.compartilhamentosSemana || 0
+    );
+
+    if (dados.ofertaCampea) {
+      preencherTextoAnalytics(
+        "analyticsOfertaCampea",
+        dados.ofertaCampea.titulo || "-"
+      );
+
+      preencherTextoAnalytics(
+        "analyticsOfertaCampeaInfo",
+        `${dados.ofertaCampea.visualizacoes || 0} visualizações nos últimos 7 dias`
+      );
+    } else {
+      preencherTextoAnalytics("analyticsOfertaCampea", "-");
+      preencherTextoAnalytics("analyticsOfertaCampeaInfo", "Nenhuma oferta registrada");
+    }
+
+    renderizarRankingAnalytics(dados.rankingOfertas || []);
+
+  } catch (erro) {
+    console.error("Erro ao carregar analytics:", erro);
+
+    renderizarRankingAnalytics([]);
+
+  } finally {
+    const botao = document.getElementById("atualizarAnalytics");
+
+    if (botao) {
+      botao.textContent = "Atualizar dados";
+      botao.disabled = false;
+    }
+  }
+}
+
 function renderizarOfertas() {
   ofertas.sort((a, b) => Number(a.prioridade || 999) - Number(b.prioridade || 999));
 
@@ -1428,6 +1563,10 @@ if (modalOferta) {
     if (evento.target === modalOferta) {
       fecharModalOferta();
     }
+
+if (btnAtualizarAnalytics) {
+  btnAtualizarAnalytics.addEventListener("click", carregarAnalyticsResumo);
+}
   });
 }
 
@@ -1535,6 +1674,7 @@ if (btnSairAdmin) {
 verificarLoginAdmin().then((autorizado) => {
   if (autorizado) {
     carregarConfiguracoesApi();
-    carregarOfertasApi();
+carregarOfertasApi();
+carregarAnalyticsResumo();
   }
 });
