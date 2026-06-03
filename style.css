@@ -1107,7 +1107,19 @@ footer {
 .voltar-topo,
 .back-to-top,
 .scroll-top{
-  bottom:260px !important;
+  position:fixed !important;
   right:22px !important;
-  z-index:9999 !important;
+  bottom:120px !important;
+  z-index:10020 !important;
+}
+
+@media(max-width:700px){
+  #btnTopo,
+  .btn-topo,
+  .voltar-topo,
+  .back-to-top,
+  .scroll-top{
+    right:18px !important;
+    bottom:235px !important;
+  }
 }
