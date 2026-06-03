@@ -1523,3 +1523,65 @@ textarea:focus{
 .detalhe-capa img{
   transition:.18s;
 }
+
+/* ===============================
+   QR CODE EMBUTIDO - DETALHES
+================================ */
+
+.qr-detalhe-box{
+  background:#ffffff;
+  border:1px solid #edf0f3;
+  border-radius:18px;
+  padding:16px;
+  margin-bottom:18px;
+  box-shadow:0 1px 2px rgba(0,0,0,.04);
+}
+
+.qr-detalhe-topo{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:10px;
+  margin-bottom:14px;
+}
+
+.qr-detalhe-topo strong{
+  font-size:14px;
+  color:#1c1e21;
+}
+
+.qr-detalhe-topo span{
+  font-size:12px;
+  color:#65676b;
+  white-space:nowrap;
+}
+
+.qr-detalhe-imagem{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#f7f8fa;
+  border:1px dashed #d6dbe1;
+  border-radius:16px;
+  padding:16px;
+}
+
+.qr-detalhe-imagem img{
+  width:160px;
+  height:160px;
+  display:block;
+  border-radius:8px;
+  background:white;
+  padding:8px;
+  box-shadow:0 4px 14px rgba(0,0,0,.08);
+}
+
+@media(max-width:680px){
+  .qr-detalhe-topo{
+    flex-direction:column;
+  }
+
+  .qr-detalhe-topo span{
+    white-space:normal;
+  }
+}
