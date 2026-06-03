@@ -1102,26 +1102,51 @@ footer {
 
 }
 
-/* Correção botão voltar ao topo */
+/* Botão voltar ao topo */
 #btnTopo{
   position:fixed !important;
-  right:360px !important;
+  left:22px !important;
+  right:auto !important;
   bottom:24px !important;
+
   width:54px !important;
   height:54px !important;
+
   border:none !important;
   border-radius:50% !important;
+
   background:#c40000 !important;
   color:white !important;
+
   font-size:28px !important;
   font-weight:bold !important;
+
   cursor:pointer !important;
   z-index:10001 !important;
+
   box-shadow:0 10px 26px rgba(196,0,0,.32) !important;
+
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+
+  transform:translateY(12px);
+  transition:
+    opacity .25s ease,
+    visibility .25s ease,
+    transform .25s ease;
+}
+
+#btnTopo.ativo{
+  opacity:1;
+  visibility:visible;
+  pointer-events:auto;
+  transform:translateY(0);
 }
 
 @media(max-width:700px){
   #btnTopo{
-    display:none !important;
+    left:18px !important;
+    bottom:24px !important;
   }
 }
