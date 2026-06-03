@@ -886,6 +886,87 @@ function renderizarEstatisticasOperacionais() {
    RENDERIZAR OFERTAS
 ================================ */
 
+function atualizarDashboardExecutivo() {
+  const execMaisPaginas = document.getElementById("execMaisPaginas");
+  const execMaisPaginasInfo = document.getElementById("execMaisPaginasInfo");
+  const execProximaEncerrar = document.getElementById("execProximaEncerrar");
+  const execProximaEncerrarInfo = document.getElementById("execProximaEncerrarInfo");
+  const execUltimaPublicada = document.getElementById("execUltimaPublicada");
+  const execUltimaPublicadaInfo = document.getElementById("execUltimaPublicadaInfo");
+  const execBannerPrincipal = document.getElementById("execBannerPrincipal");
+  const execBannerPrincipalInfo = document.getElementById("execBannerPrincipalInfo");
+
+  if (!execMaisPaginas) {
+    return;
+  }
+
+  const ofertasComuns = ofertas.filter((oferta) => {
+    return (oferta.tipo || "oferta") !== "banner";
+  });
+
+  const banners = ofertas.filter((oferta) => {
+    return (oferta.tipo || "oferta") === "banner";
+  });
+
+  const maisPaginas = [...ofertasComuns].sort((a, b) => {
+    return (b.imagens || []).length - (a.imagens || []).length;
+  })[0];
+
+  const ativas = ofertasComuns.filter((oferta) => {
+    return calcularStatus(
+      oferta.inicioOriginal,
+      oferta.fimOriginal,
+      oferta.ativo
+    ) === "Ativa";
+  });
+
+  const proximaEncerrar = [...ativas].sort((a, b) => {
+    return new Date(a.fimOriginal) - new Date(b.fimOriginal);
+  })[0];
+
+  const ultimaPublicada = [...ofertasComuns].sort((a, b) => {
+    return new Date(b.inicioOriginal) - new Date(a.inicioOriginal);
+  })[0];
+
+  const bannerPrincipal = banners[0];
+
+  if (maisPaginas) {
+    execMaisPaginas.textContent = maisPaginas.titulo;
+    execMaisPaginasInfo.textContent =
+      `${(maisPaginas.imagens || []).length} páginas cadastradas`;
+  } else {
+    execMaisPaginas.textContent = "-";
+    execMaisPaginasInfo.textContent = "Nenhuma oferta encontrada";
+  }
+
+  if (proximaEncerrar) {
+    execProximaEncerrar.textContent = proximaEncerrar.titulo;
+    execProximaEncerrarInfo.textContent =
+      `Encerra em ${proximaEncerrar.fim}`;
+  } else {
+    execProximaEncerrar.textContent = "-";
+    execProximaEncerrarInfo.textContent = "Nenhuma oferta ativa";
+  }
+
+  if (ultimaPublicada) {
+    execUltimaPublicada.textContent = ultimaPublicada.titulo;
+    execUltimaPublicadaInfo.textContent =
+      `Início em ${ultimaPublicada.inicio}`;
+  } else {
+    execUltimaPublicada.textContent = "-";
+    execUltimaPublicadaInfo.textContent = "Nenhuma oferta cadastrada";
+  }
+
+  if (bannerPrincipal) {
+    execBannerPrincipal.textContent = bannerPrincipal.titulo;
+    execBannerPrincipalInfo.textContent =
+      `${(bannerPrincipal.imagens || []).length} imagem cadastrada`;
+  } else {
+    execBannerPrincipal.textContent = "-";
+    execBannerPrincipalInfo.textContent = "Nenhum banner cadastrado";
+  }
+}
+
 function renderizarOfertas() {
   ofertas.sort((a, b) => Number(a.prioridade || 999) - Number(b.prioridade || 999));
 
@@ -982,7 +1063,8 @@ function renderizarOfertas() {
   }
 
   atualizarCards();
-  renderizarEstatisticasOperacionais();
+atualizarDashboardExecutivo();
+renderizarEstatisticasOperacionais();
 }
 
 /* ===============================
