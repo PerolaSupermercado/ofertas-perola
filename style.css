@@ -1223,3 +1223,13 @@ footer {
   }
 
 }
+
+#btnTopo,
+.btn-topo,
+.voltar-topo,
+.back-to-top,
+.scroll-top{
+  bottom:130px !important;
+  right:22px !important;
+  z-index:9999 !important;
+}
