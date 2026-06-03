@@ -698,6 +698,21 @@ ${gerarGaleriaPaginasOferta(oferta)}
       <code>${url}</code>
     </div>
 
+    <div class="qr-detalhe-box">
+
+  <div class="qr-detalhe-topo">
+    <strong>QR Code da oferta</strong>
+    <span>Escaneie para acessar</span>
+  </div>
+
+  <div class="qr-detalhe-imagem">
+    <img
+      src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(url)}"
+      alt="QR Code da oferta">
+  </div>
+
+</div>
+
    <div class="detalhe-acoes acao-grid-premium">
 
   <button
@@ -735,8 +750,8 @@ ${gerarGaleriaPaginasOferta(oferta)}
     onclick="abrirQrCodeOferta(${index})">
 
     <span>📱</span>
-    <strong>QR Code</strong>
-    <small>Gerar código</small>
+    <strong>Abrir QR</strong>
+<small>Em nova aba</small>
 
   </button>
 
