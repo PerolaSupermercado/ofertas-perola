@@ -1903,7 +1903,7 @@ textarea:focus{
 }
 
 /* ===============================
-   AJUSTES FINAIS CORRIGIDOS
+   CORREÇÃO FINAL DASHBOARD
 ================================ */
 
 .app-layout{
@@ -1914,39 +1914,41 @@ textarea:focus{
 .app-content{
   flex:1;
   min-width:0;
-  width:auto;
-  max-width:calc(100vw - 292px);
+  width:100%;
+  max-width:1500px;
+  margin:0 auto;
+  padding:32px;
 }
 
 .analytics-panel{
   width:100%;
   max-width:100%;
-  overflow:hidden;
 }
 
 .analytics-grid{
-  grid-template-columns:repeat(auto-fit,minmax(130px,1fr));
-}
-
-.analytics-card{
-  min-width:0;
-  min-height:120px;
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:14px;
 }
 
 .analytics-ranking-lista{
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+  grid-template-columns:repeat(3,1fr);
   gap:10px;
 }
 
-.executive-grid,
-.metric-grid{
-  max-width:100%;
-}
+@media(max-width:1180px){
+  .analytics-grid{
+    grid-template-columns:repeat(2,1fr);
+  }
 
-.executive-card,
-.metric-card{
-  min-width:0;
+  .analytics-ranking-lista{
+    grid-template-columns:1fr;
+  }
+
+  .executive-grid{
+    grid-template-columns:repeat(2,1fr);
+  }
 }
 
 @media(max-width:980px){
@@ -1959,6 +1961,8 @@ textarea:focus{
     min-height:auto;
     position:relative;
     top:auto;
+    border-right:none;
+    border-bottom:1px solid var(--borda);
   }
 
   .app-content{
@@ -1968,17 +1972,14 @@ textarea:focus{
   }
 
   .app-menu{
+    display:grid;
     grid-template-columns:repeat(2,1fr);
   }
 
-  .executive-grid,
   .metric-grid,
+  .executive-grid,
   .analytics-grid{
-    grid-template-columns:1fr 1fr;
-  }
-
-  .analytics-ranking-lista{
-    grid-template-columns:1fr;
+    grid-template-columns:repeat(2,1fr);
   }
 
   .ofertas-workspace{
@@ -1989,132 +1990,9 @@ textarea:focus{
     position:relative;
     top:auto;
   }
-}
 
-@media(max-width:680px){
-  html,
-  body{
-    width:100%;
-    overflow-x:hidden;
-  }
-
-  .app-content{
-    padding:14px;
-  }
-
-  .page-header h1{
-    font-size:26px;
-  }
-
-  .btn-primary,
-  .btn-analytics-refresh{
-    width:100%;
-  }
-
-  .executive-grid,
-  .metric-grid,
-  .analytics-grid,
-  .config-grid,
-  .detalhe-info-grid,
-  .detalhe-acoes,
-  .acao-grid-premium,
-  .grid-form{
+  .config-grid{
     grid-template-columns:1fr;
-  }
-
-  .analytics-header{
-    flex-direction:column;
-  }
-
-  .analytics-card{
-    min-height:auto;
-  }
-
-  .workspace-filtros{
-    grid-template-columns:1fr;
-  }
-
-  .oferta-item{
-    grid-template-columns:58px 1fr;
-  }
-
-  .oferta-item-acoes{
-    grid-column:1 / -1;
-    justify-content:flex-start;
-  }
-
-  .detalhe-capa{
-    height:240px;
-  }
-
-  .modal{
-    align-items:flex-start;
-    overflow:auto;
-  }
-
-  .modal-content{
-    max-height:none;
-    padding:20px;
-    border-radius:22px;
-  }
-
-  .table-wrap{
-    overflow-x:auto;
-  }
-
-  table{
-    min-width:720px;
-  }
-}
-
-/* ===============================
-   RESPONSIVIDADE REFORÇADA
-================================ */
-
-@media(max-width:1400px){
-  .analytics-grid{
-    grid-template-columns:repeat(4,1fr);
-  }
-
-  .analytics-ranking-lista{
-    grid-template-columns:1fr;
-  }
-}
-
-@media(max-width:980px){
-  .app-layout{
-    flex-direction:column;
-  }
-
-  .app-sidebar{
-    width:100%;
-    min-height:auto;
-    position:relative;
-    top:auto;
-  }
-
-  .app-content{
-    width:100%;
-    padding:18px;
-  }
-
-  .app-menu{
-    grid-template-columns:repeat(2,1fr);
-  }
-
-  .executive-grid,
-  .metric-grid,
-  .analytics-grid{
-    grid-template-columns:1fr 1fr;
-  }
-
-  .ofertas-workspace{
-    grid-template-columns:1fr;
-  }
-
-  .oferta-detalhes-card{
-    position:relative;
-    top:auto;
   }
 }
 
@@ -2134,6 +2012,7 @@ textarea:focus{
   }
 
   .page-header{
+    flex-direction:column;
     gap:14px;
   }
 
@@ -2146,14 +2025,15 @@ textarea:focus{
     width:100%;
   }
 
-  .executive-grid,
   .metric-grid,
+  .executive-grid,
   .analytics-grid,
   .config-grid,
   .detalhe-info-grid,
   .detalhe-acoes,
   .acao-grid-premium,
-  .grid-form{
+  .grid-form,
+  .workspace-filtros{
     grid-template-columns:1fr;
   }
 
@@ -2169,7 +2049,7 @@ textarea:focus{
     grid-template-columns:1fr;
   }
 
-  .workspace-filtros{
+  .ofertas-workspace{
     grid-template-columns:1fr;
   }
 
@@ -2180,6 +2060,11 @@ textarea:focus{
   .oferta-item-acoes{
     grid-column:1 / -1;
     justify-content:flex-start;
+  }
+
+  .oferta-thumb{
+    width:58px;
+    height:76px;
   }
 
   .detalhe-capa{
