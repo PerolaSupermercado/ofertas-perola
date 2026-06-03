@@ -41,11 +41,12 @@ export default async function handler(req, res) {
           Prefer: "return=minimal"
         },
         body: JSON.stringify({
-          evento: evento,
-          oferta_slug: corpo.oferta_slug || null,
-          oferta_titulo: corpo.oferta_titulo || null,
-          pagina: corpo.pagina || null
-        })
+  evento: evento,
+  oferta_slug: corpo.oferta_slug || null,
+  oferta_titulo: corpo.oferta_titulo || null,
+  pagina: corpo.pagina || null,
+  sessao_id: corpo.sessao_id || null
+})
       }
     );
 
