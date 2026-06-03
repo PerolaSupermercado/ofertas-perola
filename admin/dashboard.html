@@ -247,6 +247,101 @@
     </div>
   </article>
 
+<section class="analytics-panel">
+
+  <div class="analytics-header">
+    <div>
+      <span class="eyebrow">Analytics próprio</span>
+      <h2>Desempenho das ofertas</h2>
+      <p>Dados coletados diretamente pelo site de ofertas Pérola.</p>
+    </div>
+
+    <button
+      class="btn-analytics-refresh"
+      type="button"
+      id="atualizarAnalytics">
+
+      Atualizar dados
+
+    </button>
+  </div>
+
+  <div class="analytics-grid">
+
+    <article class="analytics-card">
+      <span class="analytics-icon">👁️</span>
+      <small>Visualizações hoje</small>
+      <strong id="analyticsVisualizacoesHoje">0</strong>
+    </article>
+
+    <article class="analytics-card">
+      <span class="analytics-icon">👤</span>
+      <small>Visitantes hoje</small>
+      <strong id="analyticsVisitantesHoje">0</strong>
+    </article>
+
+    <article class="analytics-card">
+      <span class="analytics-icon">📈</span>
+      <small>Visualizações 7 dias</small>
+      <strong id="analyticsVisualizacoesSemana">0</strong>
+    </article>
+
+    <article class="analytics-card">
+      <span class="analytics-icon">👥</span>
+      <small>Visitantes 7 dias</small>
+      <strong id="analyticsVisitantesSemana">0</strong>
+    </article>
+
+    <article class="analytics-card">
+      <span class="analytics-icon">📄</span>
+      <small>Trocas de página</small>
+      <strong id="analyticsTrocasPagina">0</strong>
+    </article>
+
+    <article class="analytics-card">
+      <span class="analytics-icon">📱</span>
+      <small>Cliques WhatsApp</small>
+      <strong id="analyticsWhatsapp">0</strong>
+    </article>
+
+    <article class="analytics-card">
+      <span class="analytics-icon">🔗</span>
+      <small>Compartilhamentos</small>
+      <strong id="analyticsCompartilhamentos">0</strong>
+    </article>
+
+    <article class="analytics-card analytics-campea">
+      <span class="analytics-icon">🏆</span>
+      <small>Oferta campeã</small>
+      <strong id="analyticsOfertaCampea">-</strong>
+      <p id="analyticsOfertaCampeaInfo">-</p>
+    </article>
+
+  </div>
+
+  <div class="analytics-ranking">
+
+    <div class="analytics-ranking-header">
+      <div>
+        <h3>Ranking de ofertas</h3>
+        <p>Top ofertas dos últimos 7 dias.</p>
+      </div>
+    </div>
+
+    <div
+      class="analytics-ranking-lista"
+      id="analyticsRankingOfertas">
+
+      <div class="analytics-loading">
+        Carregando dados...
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+  
 </section>
         
         <section class="panel-card">
