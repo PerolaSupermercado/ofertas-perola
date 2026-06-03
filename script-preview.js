@@ -160,17 +160,35 @@ function registrarEventoProprio(evento, dados = {}) {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        evento: evento,
-        oferta_slug: dados.oferta_slug || "",
-        oferta_titulo: dados.oferta_titulo || "",
-        pagina: dados.pagina || null
-      })
+  evento: evento,
+  oferta_slug: dados.oferta_slug || "",
+  oferta_titulo: dados.oferta_titulo || "",
+  pagina: dados.pagina || null,
+  sessao_id: obterSessaoAnalytics()
+})
     }).catch((erro) => {
       console.warn("Erro ao registrar analytics próprio:", erro);
     });
   } catch (erro) {
     console.warn("Erro ao registrar analytics próprio:", erro);
   }
+}
+
+function obterSessaoAnalytics() {
+  let sessaoId = localStorage.getItem("analytics_sessao_id");
+
+  if (!sessaoId) {
+    sessaoId =
+      Date.now().toString(36) +
+      Math.random().toString(36).substring(2);
+
+    localStorage.setItem(
+      "analytics_sessao_id",
+      sessaoId
+    );
+  }
+
+  return sessaoId;
 }
 
 /* =========================================
