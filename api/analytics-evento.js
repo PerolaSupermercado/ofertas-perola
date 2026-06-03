@@ -80,10 +80,10 @@ export default async function handler(req, res) {
     });
 
   } catch (erro) {
-    console.error("Erro analytics-evento:", erro);
+  console.error("Erro analytics-evento:", erro);
 
-    return resposta(res, 500, {
-      erro: "Erro ao registrar evento."
-    });
-  }
+  return resposta(res, 500, {
+    erro: "Erro ao registrar evento.",
+    detalhe: erro.message
+  });
 }
