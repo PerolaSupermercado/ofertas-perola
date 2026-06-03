@@ -152,6 +152,27 @@ function registrarEventoAnalytics(nomeEvento, parametros = {}) {
   }
 }
 
+function registrarEventoProprio(evento, dados = {}) {
+  try {
+    fetch("/api/analytics-evento", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        evento: evento,
+        oferta_slug: dados.oferta_slug || "",
+        oferta_titulo: dados.oferta_titulo || "",
+        pagina: dados.pagina || null
+      })
+    }).catch((erro) => {
+      console.warn("Erro ao registrar analytics próprio:", erro);
+    });
+  } catch (erro) {
+    console.warn("Erro ao registrar analytics próprio:", erro);
+  }
+}
+
 /* =========================================
    CARREGAR DADOS DA API
 ========================================= */
@@ -462,11 +483,19 @@ function atualizarCarrossel() {
   atualizarSetas(imagens);
   criarMiniaturas(imagens);
   preCarregarImagens(imagens);
+   
    registrarEventoAnalytics("oferta_aberta", {
   oferta: categoriaAtual,
   slug: oferta.slug || "",
   quantidade_paginas: imagens.length
 });
+
+   registrarEventoProprio("oferta_aberta", {
+  oferta_slug: oferta.slug || categoriaAtual,
+  oferta_titulo: oferta.titulo || categoriaAtual,
+  pagina: paginaAtual + 1
+});
+   
 }
 
 /* =========================================
@@ -572,6 +601,12 @@ function proximaPagina() {
     pagina: paginaAtual + 1
   });
 
+   registrarEventoProprio("trocar_pagina", {
+  oferta_slug: oferta.slug || categoriaAtual,
+  oferta_titulo: oferta.titulo || categoriaAtual,
+  pagina: paginaAtual + 1
+});
+
   atualizarCarrossel();
 }
 
@@ -587,6 +622,12 @@ function paginaAnterior() {
     oferta: categoriaAtual,
     pagina: paginaAtual + 1
   });
+
+   registrarEventoProprio("trocar_pagina", {
+  oferta_slug: oferta.slug || categoriaAtual,
+  oferta_titulo: oferta.titulo || categoriaAtual,
+  pagina: paginaAtual + 1
+});
 
   atualizarCarrossel();
 }
@@ -784,8 +825,13 @@ function compartilharSite() {
     oferta: categoriaAtual,
     slug: oferta ? oferta.slug || "" : ""
   });
-   
 
+   registrarEventoProprio("clique_compartilhar", {
+  oferta_slug: oferta ? oferta.slug || categoriaAtual : categoriaAtual,
+  oferta_titulo: oferta ? oferta.titulo || categoriaAtual : categoriaAtual,
+  pagina: paginaAtual + 1
+});
+   
   if (typeof gtag === "function") {
     gtag("event", "compartilhar_ofertas", {
       event_category: "Engajamento",
@@ -1002,6 +1048,13 @@ if (linkGrupoFlutuante) {
       oferta: categoriaAtual,
       slug: oferta ? oferta.slug || "" : ""
     });
+
+     registrarEventoProprio("clique_grupo_whatsapp", {
+  oferta_slug: oferta ? oferta.slug || categoriaAtual : categoriaAtual,
+  oferta_titulo: oferta ? oferta.titulo || categoriaAtual : categoriaAtual,
+  pagina: paginaAtual + 1
+});
+     
   });
 }
 
@@ -1012,6 +1065,12 @@ if (linkSemOfertas) {
       oferta: categoriaAtual,
       slug: ""
     });
+
+     registrarEventoProprio("clique_grupo_whatsapp", {
+  oferta_slug: oferta ? oferta.slug || categoriaAtual : categoriaAtual,
+  oferta_titulo: oferta ? oferta.titulo || categoriaAtual : categoriaAtual,
+  pagina: paginaAtual + 1
+});
   });
 }
 
