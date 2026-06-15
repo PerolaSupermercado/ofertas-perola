@@ -63,18 +63,13 @@ async function consultarSupabase(url, opcoes = {}) {
 }
 
 async function apagarImagensStorage(caminhos = []) {
-  const caminhosValidos = caminhos
-    .filter(Boolean)
-    .filter((item) => item.startsWith("ofertas/"));
+  const caminhosValidos = caminhos.filter(Boolean);
 
   if (caminhosValidos.length === 0) {
-    return {
-      enviados: 0,
-      resposta: null
-    };
+    return;
   }
 
-  const respostaDelete = await consultarSupabase(
+  await consultarSupabase(
     `${SUPABASE_URL}/storage/v1/object/ofertas-imagens`,
     {
       method: "DELETE",
@@ -86,11 +81,6 @@ async function apagarImagensStorage(caminhos = []) {
       })
     }
   );
-
-  return {
-    enviados: caminhosValidos.length,
-    resposta: respostaDelete
-  };
 }
 
 async function uploadImagem(imagem, ofertaId, index) {
@@ -330,8 +320,6 @@ export default async function handler(req, res) {
     .map((item) => caminhoStoragePorUrl(item.imagem_url))
     .filter(Boolean);
 
-  const resultadoStorage = await apagarImagensStorage(caminhosParaApagar);
-
   await consultarSupabase(
     `${SUPABASE_URL}/rest/v1/ofertas_imagens?oferta_id=eq.${id}`,
     {
@@ -346,11 +334,10 @@ export default async function handler(req, res) {
     }
   );
 
+  await apagarImagensStorage(caminhosParaApagar);
+
   return resposta(res, 200, {
     sucesso: true,
-    imagensEncontradasNoBanco: imagensOferta.length,
-    caminhosParaApagar,
-    imagensEnviadasParaExcluir: resultadoStorage.enviados,
-    respostaStorage: resultadoStorage.resposta
+    imagensApagadas: caminhosParaApagar.length
   });
 }
