@@ -49,8 +49,15 @@ const tituloCategoria = document.getElementById("tituloCategoria");
 const imagemOferta = document.getElementById("imagemOferta");
 const contador = document.getElementById("contador");
 const miniaturas = document.getElementById("miniaturas");
-const btnAnterior = document.getElementById("Anterior");
-const btnProximo = document.getElementById("Proximo");
+const btnAnterior =
+  document.getElementById("Anterior") ||
+  document.getElementById("btnAnterior") ||
+  document.querySelector(".seta-esquerda");
+
+const btnProximo =
+  document.getElementById("Proximo") ||
+  document.getElementById("btnProximo") ||
+  document.querySelector(".seta-direita");
 const bannerTopo = document.getElementById("bannerTopo");
 const semOfertas = document.getElementById("semOfertas");
 
@@ -538,18 +545,25 @@ function atualizarCarrossel() {
 ========================================= */
 
 function atualizarSetas(imagens) {
+  if (!btnAnterior || !btnProximo) {
+    return;
+  }
+
   if (imagens.length <= 1) {
     btnAnterior.style.display = "none";
     btnProximo.style.display = "none";
-    contador.style.display = "none";
-    miniaturas.style.display = "none";
+
+    if (contador) contador.style.display = "none";
+    if (miniaturas) miniaturas.style.display = "none";
+
     return;
   }
 
   btnAnterior.style.display = "block";
   btnProximo.style.display = "block";
-  contador.style.display = "block";
-  miniaturas.style.display = "flex";
+
+  if (contador) contador.style.display = "block";
+  if (miniaturas) miniaturas.style.display = "flex";
 
   if (paginaAtual === 0) {
     btnAnterior.classList.add("desativada");
