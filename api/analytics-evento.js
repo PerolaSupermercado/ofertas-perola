@@ -44,6 +44,8 @@ export default async function handler(req, res) {
   evento: evento,
   oferta_slug: corpo.oferta_slug || null,
   oferta_titulo: corpo.oferta_titulo || null,
+  oferta_inicio: corpo.oferta_inicio || null,
+  oferta_fim: corpo.oferta_fim || null,
   pagina: corpo.pagina || null,
   sessao_id: corpo.sessao_id || null
 })
