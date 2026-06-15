@@ -660,6 +660,12 @@ function proximaPagina() {
 }
 
 function paginaAnterior() {
+  const oferta = OFERTAS_ATIVAS[categoriaAtual];
+
+  if (!oferta || !oferta.imagens) {
+    return;
+  }
+
   if (paginaAtual <= 0) {
     return;
   }
@@ -672,11 +678,11 @@ function paginaAnterior() {
     pagina: paginaAtual + 1
   });
 
-   registrarEventoProprio("trocar_pagina", {
-  oferta_slug: oferta.slug || categoriaAtual,
-  oferta_titulo: oferta.titulo || categoriaAtual,
-  pagina: paginaAtual + 1
-});
+  registrarEventoProprio("trocar_pagina", {
+    oferta_slug: oferta.slug || categoriaAtual,
+    oferta_titulo: oferta.titulo || categoriaAtual,
+    pagina: paginaAtual + 1
+  });
 
   atualizarCarrossel();
 }
