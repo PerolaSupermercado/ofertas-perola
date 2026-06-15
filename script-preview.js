@@ -21,6 +21,7 @@ let OFERTAS_ATIVAS = {};
 let BANNER_ATIVO = "";
 let categoriaAtual = "";
 let paginaAtual = 0;
+let ofertasJaRegistradas = {};
 
 /* ===== ZOOM ===== */
 let escalaZoom = 1;
@@ -526,17 +527,26 @@ function atualizarCarrossel() {
   criarMiniaturas(imagens);
   preCarregarImagens(imagens);
    
-   registrarEventoAnalytics("oferta_aberta", {
-  oferta: categoriaAtual,
-  slug: oferta.slug || "",
-  quantidade_paginas: imagens.length
-});
+   const chaveRegistroOferta =
+  `${categoriaAtual}-${oferta.slug || ""}`;
 
-   registrarEventoProprio("oferta_aberta", {
-  oferta_slug: oferta.slug || categoriaAtual,
-  oferta_titulo: oferta.titulo || categoriaAtual,
-  pagina: paginaAtual + 1
-});
+if (!ofertasJaRegistradas[chaveRegistroOferta]) {
+
+  ofertasJaRegistradas[chaveRegistroOferta] = true;
+
+  registrarEventoAnalytics("oferta_aberta", {
+    oferta: categoriaAtual,
+    slug: oferta.slug || "",
+    quantidade_paginas: imagens.length
+  });
+
+  registrarEventoProprio("oferta_aberta", {
+    oferta_slug: oferta.slug || categoriaAtual,
+    oferta_titulo: oferta.titulo || categoriaAtual,
+    pagina: paginaAtual + 1
+  });
+
+}
    
 }
 
@@ -617,7 +627,12 @@ function criarMiniaturas(imagens) {
 ========================================= */
 
 function preCarregarImagens(imagens) {
-  imagens.forEach((imagem) => {
+  const proximas = [
+    imagens[paginaAtual + 1],
+    imagens[paginaAtual - 1]
+  ].filter(Boolean);
+
+  proximas.forEach((imagem) => {
     const img = new Image();
 
     aplicarPlaceholderNaImagem(img);
