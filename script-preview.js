@@ -49,8 +49,8 @@ const tituloCategoria = document.getElementById("tituloCategoria");
 const imagemOferta = document.getElementById("imagemOferta");
 const contador = document.getElementById("contador");
 const miniaturas = document.getElementById("miniaturas");
-const Anterior = document.getElementById("Anterior");
-const Proximo = document.getElementById("Proximo");
+const btnAnterior = document.getElementById("Anterior");
+const btnProximo = document.getElementById("Proximo");
 const bannerTopo = document.getElementById("bannerTopo");
 const semOfertas = document.getElementById("semOfertas");
 
@@ -907,17 +907,21 @@ function detectarSwipe() {
    EVENTOS
 ========================================= */
 
-btnProximo.addEventListener("click", (evento) => {
-  evento.preventDefault();
-  evento.stopPropagation();
-  proximaPagina();
-});
+if (btnProximo) {
+  btnProximo.addEventListener("click", (evento) => {
+    evento.preventDefault();
+    evento.stopPropagation();
+    proximaPagina();
+  });
+}
 
-btnAnterior.addEventListener("click", (evento) => {
-  evento.preventDefault();
-  evento.stopPropagation();
-  paginaAnterior();
-});
+if (btnAnterior) {
+  btnAnterior.addEventListener("click", (evento) => {
+    evento.preventDefault();
+    evento.stopPropagation();
+    paginaAnterior();
+  });
+}
 
 imagemOferta.addEventListener("click", abrirZoom);
 
