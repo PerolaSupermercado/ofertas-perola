@@ -188,6 +188,8 @@ function registrarEventoProprio(evento, dados = {}) {
   evento: evento,
   oferta_slug: dados.oferta_slug || "",
   oferta_titulo: dados.oferta_titulo || "",
+  oferta_inicio: dados.oferta_inicio || "",
+  oferta_fim: dados.oferta_fim || "",
   pagina: dados.pagina || null,
   sessao_id: obterSessaoAnalytics()
 })
@@ -541,10 +543,12 @@ if (!ofertasJaRegistradas[chaveRegistroOferta]) {
   });
 
   registrarEventoProprio("oferta_aberta", {
-    oferta_slug: oferta.slug || categoriaAtual,
-    oferta_titulo: oferta.titulo || categoriaAtual,
-    pagina: paginaAtual + 1
-  });
+  oferta_slug: oferta.slug || categoriaAtual,
+  oferta_titulo: oferta.titulo || categoriaAtual,
+  oferta_inicio: oferta.inicio || "",
+  oferta_fim: oferta.fim || "",
+  pagina: paginaAtual + 1
+});
 
 }
    
@@ -667,6 +671,8 @@ function proximaPagina() {
 
    registrarEventoProprio("trocar_pagina", {
   oferta_slug: oferta.slug || categoriaAtual,
+  oferta_inicio: oferta.inicio || "",
+  oferta_fim: oferta.fim || "",    
   oferta_titulo: oferta.titulo || categoriaAtual,
   pagina: paginaAtual + 1
 });
@@ -898,6 +904,8 @@ function compartilharSite() {
 
    registrarEventoProprio("clique_compartilhar", {
   oferta_slug: oferta ? oferta.slug || categoriaAtual : categoriaAtual,
+  oferta_inicio: oferta.inicio || "",
+  oferta_fim: oferta.fim || "",    
   oferta_titulo: oferta ? oferta.titulo || categoriaAtual : categoriaAtual,
   pagina: paginaAtual + 1
 });
@@ -1125,6 +1133,8 @@ if (linkGrupoFlutuante) {
 
      registrarEventoProprio("clique_grupo_whatsapp", {
   oferta_slug: oferta ? oferta.slug || categoriaAtual : categoriaAtual,
+  oferta_inicio: oferta.inicio || "",
+  oferta_fim: oferta.fim || "",      
   oferta_titulo: oferta ? oferta.titulo || categoriaAtual : categoriaAtual,
   pagina: paginaAtual + 1
 });
@@ -1142,6 +1152,8 @@ if (linkSemOfertas) {
 
      registrarEventoProprio("clique_grupo_whatsapp", {
   oferta_slug: oferta ? oferta.slug || categoriaAtual : categoriaAtual,
+  oferta_inicio: oferta.inicio || "",
+  oferta_fim: oferta.fim || "",     
   oferta_titulo: oferta ? oferta.titulo || categoriaAtual : categoriaAtual,
   pagina: paginaAtual + 1
 });
