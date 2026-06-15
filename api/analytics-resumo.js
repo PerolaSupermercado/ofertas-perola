@@ -77,7 +77,7 @@ function encontrarOfertaCampea(eventos) {
       if (!mapa[chave]) {
         mapa[chave] = {
           slug: item.oferta_slug,
-          titulo: item.oferta_titulo || item.oferta_slug || "Sem título",
+          titulo: formatarTituloAnalytics(item),
           visualizacoes: 0
         };
       }
@@ -92,6 +92,37 @@ function encontrarOfertaCampea(eventos) {
   return ranking[0] || null;
 }
 
+function formatarTituloAnalytics(item) {
+  const titulo = item.oferta_titulo || item.oferta_slug || "Sem título";
+
+  if (!item.oferta_inicio || !item.oferta_fim) {
+    return titulo;
+  }
+
+  const inicio = new Date(item.oferta_inicio);
+  const fim = new Date(item.oferta_fim);
+
+  if (isNaN(inicio) || isNaN(fim)) {
+    return titulo;
+  }
+
+  const inicioFormatado = inicio.toLocaleDateString("pt-BR", {
+    day: "2-digit",
+    month: "2-digit"
+  });
+
+  const fimFormatado = fim.toLocaleDateString("pt-BR", {
+    day: "2-digit",
+    month: "2-digit"
+  });
+
+  if (inicioFormatado === fimFormatado) {
+    return `${titulo} | ${inicioFormatado}`;
+  }
+
+  return `${titulo} | ${inicioFormatado} a ${fimFormatado}`;
+}
+
 function montarRankingOfertas(eventos) {
   const mapa = {};
 
@@ -101,7 +132,7 @@ function montarRankingOfertas(eventos) {
     if (!mapa[chave]) {
       mapa[chave] = {
         slug: item.oferta_slug,
-        titulo: item.oferta_titulo || item.oferta_slug || "Sem título",
+        titulo: formatarTituloAnalytics(item),
         visualizacoes: 0,
         visitantes: new Set(),
         trocasPagina: 0,
