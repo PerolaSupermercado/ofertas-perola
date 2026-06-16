@@ -35,18 +35,14 @@ async function consultarSupabase(url, opcoes = {}) {
 
 function inicioDoDiaISO() {
   const data = new Date();
-
   data.setHours(0, 0, 0, 0);
-
   return data.toISOString();
 }
 
 function seteDiasAtrasISO() {
   const data = new Date();
-
   data.setDate(data.getDate() - 7);
   data.setHours(0, 0, 0, 0);
-
   return data.toISOString();
 }
 
@@ -67,9 +63,7 @@ function contarSessoesUnicas(eventos) {
 }
 
 function formatarDataCurta(valor) {
-  if (!valor) {
-    return "";
-  }
+  if (!valor) return "";
 
   const data = new Date(valor);
 
@@ -100,17 +94,21 @@ function formatarTituloAnalytics(item) {
   return `${titulo} | ${inicio} a ${fim}`;
 }
 
+function criarChaveOferta(item) {
+  return [
+    item.oferta_slug || item.oferta_titulo || "sem-identificacao",
+    item.oferta_inicio || "",
+    item.oferta_fim || ""
+  ].join("|");
+}
+
 function encontrarOfertaCampea(eventos) {
   const mapa = {};
 
   eventos
     .filter((item) => item.evento === "oferta_aberta")
     .forEach((item) => {
-      const chave = [
-  item.oferta_slug || item.oferta_titulo || "sem-identificacao",
-  item.oferta_inicio || "",
-  item.oferta_fim || ""
-].join("|");
+      const chave = criarChaveOferta(item);
 
       if (!mapa[chave]) {
         mapa[chave] = {
@@ -130,46 +128,11 @@ function encontrarOfertaCampea(eventos) {
   return ranking[0] || null;
 }
 
-function formatarTituloAnalytics(item) {
-  const titulo = item.oferta_titulo || item.oferta_slug || "Sem título";
-
-  if (!item.oferta_inicio || !item.oferta_fim) {
-    return titulo;
-  }
-
-  const inicio = new Date(item.oferta_inicio);
-  const fim = new Date(item.oferta_fim);
-
-  if (isNaN(inicio) || isNaN(fim)) {
-    return titulo;
-  }
-
-  const inicioFormatado = inicio.toLocaleDateString("pt-BR", {
-    day: "2-digit",
-    month: "2-digit"
-  });
-
-  const fimFormatado = fim.toLocaleDateString("pt-BR", {
-    day: "2-digit",
-    month: "2-digit"
-  });
-
-  if (inicioFormatado === fimFormatado) {
-    return `${titulo} | ${inicioFormatado}`;
-  }
-
-  return `${titulo} | ${inicioFormatado} a ${fimFormatado}`;
-}
-
 function montarRankingOfertas(eventos) {
   const mapa = {};
 
   eventos.forEach((item) => {
-    const chave = [
-  item.oferta_slug || item.oferta_titulo || "sem-identificacao",
-  item.oferta_inicio || "",
-  item.oferta_fim || ""
-].join("|");
+    const chave = criarChaveOferta(item);
 
     if (!mapa[chave]) {
       mapa[chave] = {
@@ -245,9 +208,6 @@ export default async function handler(req, res) {
       `${SUPABASE_URL}/rest/v1/analytics_eventos?select=*&created_at=gte.${encodeURIComponent(inicioSemana)}`
     );
 
-    const ofertaCampea = encontrarOfertaCampea(eventosSemana);
-    const rankingOfertas = montarRankingOfertas(eventosSemana);
-
     return enviarJson(res, 200, {
       visualizacoesHoje: contarPorEvento(eventosHoje, "oferta_aberta"),
       visitantesHoje: contarSessoesUnicas(eventosHoje),
@@ -256,8 +216,8 @@ export default async function handler(req, res) {
       trocasPaginaSemana: contarPorEvento(eventosSemana, "trocar_pagina"),
       compartilhamentosSemana: contarPorEvento(eventosSemana, "clique_compartilhar"),
       cliquesWhatsappSemana: contarPorEvento(eventosSemana, "clique_grupo_whatsapp"),
-      ofertaCampea: ofertaCampea,
-      rankingOfertas: rankingOfertas
+      ofertaCampea: encontrarOfertaCampea(eventosSemana),
+      rankingOfertas: montarRankingOfertas(eventosSemana)
     });
 
   } catch (erro) {
