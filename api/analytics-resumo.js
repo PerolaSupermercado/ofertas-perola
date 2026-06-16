@@ -66,13 +66,51 @@ function contarSessoesUnicas(eventos) {
   return sessoes.size;
 }
 
+function formatarDataCurta(valor) {
+  if (!valor) {
+    return "";
+  }
+
+  const data = new Date(valor);
+
+  if (Number.isNaN(data.getTime())) {
+    return "";
+  }
+
+  return data.toLocaleDateString("pt-BR", {
+    day: "2-digit",
+    month: "2-digit"
+  });
+}
+
+function formatarTituloAnalytics(item) {
+  const titulo = item.oferta_titulo || item.oferta_slug || "Sem título";
+
+  const inicio = formatarDataCurta(item.oferta_inicio);
+  const fim = formatarDataCurta(item.oferta_fim);
+
+  if (!inicio || !fim) {
+    return titulo;
+  }
+
+  if (inicio === fim) {
+    return `${titulo} | ${inicio}`;
+  }
+
+  return `${titulo} | ${inicio} a ${fim}`;
+}
+
 function encontrarOfertaCampea(eventos) {
   const mapa = {};
 
   eventos
     .filter((item) => item.evento === "oferta_aberta")
     .forEach((item) => {
-      const chave = item.oferta_slug || item.oferta_titulo || "sem-identificacao";
+      const chave = [
+  item.oferta_slug || item.oferta_titulo || "sem-identificacao",
+  item.oferta_inicio || "",
+  item.oferta_fim || ""
+].join("|");
 
       if (!mapa[chave]) {
         mapa[chave] = {
@@ -127,7 +165,11 @@ function montarRankingOfertas(eventos) {
   const mapa = {};
 
   eventos.forEach((item) => {
-    const chave = item.oferta_slug || item.oferta_titulo || "sem-identificacao";
+    const chave = [
+  item.oferta_slug || item.oferta_titulo || "sem-identificacao",
+  item.oferta_inicio || "",
+  item.oferta_fim || ""
+].join("|");
 
     if (!mapa[chave]) {
       mapa[chave] = {
