@@ -1028,7 +1028,7 @@ async function carregarAnalyticsResumo() {
       botao.disabled = true;
     }
 
-    const resposta = await fetch(API_ANALYTICS_RESUMO);
+    const resposta = await fetch(`${API_ANALYTICS_RESUMO}?t=${Date.now()}`);
     const dados = await resposta.json();
 
     if (!resposta.ok) {
@@ -1563,10 +1563,6 @@ if (modalOferta) {
     if (evento.target === modalOferta) {
       fecharModalOferta();
     }
-
-if (btnAtualizarAnalytics) {
-  btnAtualizarAnalytics.addEventListener("click", carregarAnalyticsResumo);
-}
   });
 }
 
@@ -1665,6 +1661,10 @@ if (btnSairAdmin) {
     limparSessaoAdmin();
     location.reload();
   });
+
+   if (btnAtualizarAnalytics) {
+  btnAtualizarAnalytics.addEventListener("click", carregarAnalyticsResumo);
+}
 }
 
 /* ===============================
